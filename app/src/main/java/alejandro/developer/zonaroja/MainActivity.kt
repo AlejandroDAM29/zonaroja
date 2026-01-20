@@ -1,5 +1,6 @@
 package alejandro.developer.zonaroja
 
+import alejandro.developer.zonaroja.navigation.NavigationWapper
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,28 +21,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             ZonarojaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    NavigationWapper()
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ZonarojaTheme {
-        Greeting("Android")
     }
 }
