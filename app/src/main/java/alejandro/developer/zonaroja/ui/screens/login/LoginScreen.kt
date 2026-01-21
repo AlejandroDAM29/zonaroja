@@ -11,12 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier) {
+fun LoginScreen(navigateToMain: () -> Unit, modifier: Modifier = Modifier) {
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(Modifier.weight(1f))
         Text("Login SCREEN", fontSize = 30.sp)
         Spacer(Modifier.weight(1f))
-        Button(onClick = {}) {
+        Button(onClick = navigateToMain) {
             Text("Navegar")
         }
         Spacer(Modifier.weight(1f))
