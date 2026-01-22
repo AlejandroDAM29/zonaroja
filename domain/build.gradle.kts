@@ -1,47 +1,18 @@
 plugins {
-    alias(libs.plugins.android.application)
+    kotlin("jvm")
 }
 
-android {
-    namespace = "alejandro.developer.domain"
-    compileSdk {
-        version = release(36)
-    }
-
-    defaultConfig {
-        applicationId = "alejandro.developer.domain"
-        minSdk = 24
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
 dependencies {
-    // Domain
-    implementation(project(":domain"))
-    implementation(project(":core"))
+    // Coroutines (opcional pero habitual)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.javax.inject)
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    // Unit tests (JVM)
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }
