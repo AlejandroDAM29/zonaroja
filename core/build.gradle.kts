@@ -1,5 +1,7 @@
 plugins {
     id("com.android.library")
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -19,6 +21,9 @@ android {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.transport.runtime)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     //Testing
     testImplementation(libs.junit)

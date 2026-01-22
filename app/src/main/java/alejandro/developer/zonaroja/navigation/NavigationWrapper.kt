@@ -10,13 +10,13 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun NavigationWapper() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Main){
-        composable<Main>{
-            MainScreen({navController.navigate(Login)})
+    NavHost(navController = navController, startDestination = Main) {
+        composable<Main> {
+            MainScreen({ navController.navigate(Login) })
         }
 
-        composable<Login>{
-            LoginScreen({navController.navigate(Main)})
+        composable<Login> {
+            LoginScreen({ navController.navigate(Main) })
         }
     }
 }

@@ -13,7 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import alejandro.developer.zonaroja.ui.theme.ZonarojaTheme
+import androidx.compose.foundation.layout.Column
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +24,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             ZonarojaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    NavigationWapper()
+                    Column(modifier = Modifier.padding(innerPadding)) {
+                        NavigationWapper()
+                    }
                 }
             }
         }

@@ -1,5 +1,7 @@
 plugins {
     id("com.android.library")
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 
@@ -22,6 +24,8 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     //Testing
     testImplementation(libs.junit)
