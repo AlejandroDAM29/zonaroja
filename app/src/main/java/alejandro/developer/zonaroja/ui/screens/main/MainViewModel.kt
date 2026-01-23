@@ -52,7 +52,7 @@ class MainViewModel @Inject constructor(
     fun onLoginClicked() {
         viewModelScope.launch {
             _uiEvents.emit(
-                MainUiEvent.ShowError(
+                MainUiEvent.ShowWarning(
                     message = "Error al cargar los datos"
                 )
             )
