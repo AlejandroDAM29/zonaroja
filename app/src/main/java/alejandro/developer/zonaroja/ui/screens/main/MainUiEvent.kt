@@ -2,4 +2,5 @@ package alejandro.developer.zonaroja.ui.screens.main
 
 sealed interface MainUiEvent {
     data object NavigateToLogin : MainUiEvent
+    data class ShowError(val message: String) : MainUiEvent
 }

@@ -1,11 +1,14 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
+import alejandro.developer.zonaroja.ui.common.AppUiEvent
+import alejandro.developer.zonaroja.ui.common.AppViewModel
+import alejandro.developer.zonaroja.ui.common.BaseScreen
+import alejandro.developer.zonaroja.ui.common.snackbar.LocalSnackbarController
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,36 +25,52 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarController = LocalSnackbarController.current
 
     LaunchedEffect(Unit) {
         viewModel.uiEvents.collect { event ->
             when (event) {
-                MainUiEvent.NavigateToLogin -> onNavigateToLogin()
-            }
-        }
-    }
-
-    if (uiState.isLoading){
-        CircularProgressIndicator()
-    } else {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = uiState.currentText,
-                modifier = Modifier.clickable {
-                    viewModel.onTextClicked()
+                is MainUiEvent.NavigateToLogin -> onNavigateToLogin()
+                is MainUiEvent.ShowError -> {
+                    snackbarController.showError(event.message)
                 }
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            Button(onClick = viewModel::onLoginClicked) {
-                Text("Ir a Login")
             }
-
         }
     }
 
+    BaseScreen(
+        isLoading = uiState.isLoading,
+    ) {
+    ContentMainScreen(
+        uiState = uiState,
+        viewModel = viewModel
+    )
 
+    }
+
+}
+
+
+@Composable
+fun ContentMainScreen(
+    uiState: MainUiState,
+    viewModel: MainViewModel
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = uiState.currentText,
+            modifier = Modifier.clickable {
+                viewModel.onTextClicked()
+            }
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        Button(onClick = viewModel::onLoginClicked) {
+            Text("Ir a Login")
+        }
+
+    }
 }

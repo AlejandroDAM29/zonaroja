@@ -1,7 +1,6 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
 import alejandro.developer.domain.usecases.GetTextsUseCase
-import alejandro.developer.zonaroja.ui.screens.main.MainUiEvent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -51,7 +50,16 @@ class MainViewModel @Inject constructor(
     }
 
     fun onLoginClicked() {
-        emitEvent(MainUiEvent.NavigateToLogin)
+        viewModelScope.launch {
+            _uiEvents.emit(
+                MainUiEvent.ShowError(
+                    message = "Error al cargar los datos"
+                )
+            )
+        }
+
+
+        /*emitEvent(MainUiEvent.NavigateToLogin)*/
     }
 
     private fun emitEvent(event: MainUiEvent) {
