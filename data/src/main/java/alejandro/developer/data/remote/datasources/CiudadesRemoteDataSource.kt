@@ -1,0 +1,10 @@
+package alejandro.developer.data.remote.datasources
+
+import alejandro.developer.data.remote.apis.GetCiudadesApi
+
+class CiudadesRemoteDataSource(
+    private val api: GetCiudadesApi
+) {
+    suspend fun getCiudades(): List<String> =
+        api.getCiudades()
+}

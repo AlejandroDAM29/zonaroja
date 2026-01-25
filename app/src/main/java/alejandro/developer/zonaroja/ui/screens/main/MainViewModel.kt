@@ -1,6 +1,6 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
-import alejandro.developer.domain.usecases.GetTextsUseCase
+import alejandro.developer.domain.usecases.GetCiudadesUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getTextsUseCase: GetTextsUseCase
+    private val getCiudadesUseCase: GetCiudadesUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState(isLoading = true))
@@ -32,7 +32,7 @@ class MainViewModel @Inject constructor(
 
     private fun loadTexts() {
         viewModelScope.launch {
-            texts = getTextsUseCase()
+            texts = getCiudadesUseCase()
             _uiState.value = MainUiState(
                 currentText = texts.firstOrNull().orEmpty(),
                 isLoading = false
