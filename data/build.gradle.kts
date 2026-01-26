@@ -27,14 +27,13 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
-    implementation("com.google.firebase:firebase-analytics")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.google.firebase.analytics)
 // Retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
+    implementation(libs.retrofit)
+    implementation(libs.converter.moshi)
 
-    // Moshi (si no lo tienes ya)
-    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+    implementation(libs.moshi.kotlin)
 
     //Testing
     testImplementation(libs.junit)
