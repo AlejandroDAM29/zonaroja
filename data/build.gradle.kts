@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.browser)
     ksp(libs.hilt.compiler)
     implementation(platform(libs.firebase.bom))
     implementation(libs.google.firebase.analytics)
@@ -34,6 +35,8 @@ dependencies {
     implementation(libs.converter.moshi)
 
     implementation(libs.moshi.kotlin)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
 
     //Testing
     testImplementation(libs.junit)
