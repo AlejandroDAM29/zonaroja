@@ -22,6 +22,7 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":core"))
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
@@ -36,7 +37,6 @@ dependencies {
 
     implementation(libs.moshi.kotlin)
     implementation(libs.okhttp)
-    implementation(libs.logging.interceptor)
 
     //Testing
     testImplementation(libs.junit)

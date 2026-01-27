@@ -1,6 +1,5 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
-import alejandro.developer.data.remote.TokenStore
 import alejandro.developer.domain.usecases.GetCiudadesUseCase
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -16,8 +15,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getCiudadesUseCase: GetCiudadesUseCase,
-    private val tokenStore: TokenStore
+    private val getCiudadesUseCase: GetCiudadesUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState(isLoading = true))
@@ -54,8 +52,6 @@ class MainViewModel @Inject constructor(
 
     fun onLoginClicked() {
         viewModelScope.launch {
-            Log.i("test-100", "Entrada 2: ${tokenStore.token}");
-            tokenStore.token
             loadTexts()
             /*_uiEvents.emit(
                 MainUiEvent.ShowWarning(

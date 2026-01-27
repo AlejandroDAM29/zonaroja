@@ -1,7 +1,7 @@
 package alejandro.developer.data.di
 
-import alejandro.developer.data.remote.AuthInterceptor
-import alejandro.developer.data.remote.TokenStore
+import alejandro.developer.core.auth.AuthInterceptor
+import alejandro.developer.core.auth.AuthRetryInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +17,17 @@ object DataNetworkModule {
 
     @Provides
     @Singleton
+    fun provideOkHttp(
+        authInterceptor: AuthInterceptor,
+        authRetryInterceptor: AuthRetryInterceptor
+    ): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .addInterceptor(authRetryInterceptor)
+            .build()
+
+    @Provides
+    @Singleton
     fun provideRetrofit(
         okHttpClient: OkHttpClient
     ): Retrofit =
@@ -24,13 +35,5 @@ object DataNetworkModule {
             .baseUrl("https://alejandroexpdeveloper.com/zona_roja_app_api/")
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create())
-            .build()
-
-    @Provides
-    fun provideOkHttp(
-        tokenStore: TokenStore
-    ): OkHttpClient =
-        OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor { tokenStore.token })
             .build()
 }

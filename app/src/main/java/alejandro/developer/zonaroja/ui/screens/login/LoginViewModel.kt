@@ -1,6 +1,5 @@
 package alejandro.developer.zonaroja.ui.screens.login
 
-import alejandro.developer.data.remote.TokenStore
 import alejandro.developer.zonaroja.ui.screens.main.MainUiState
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    val tokenStore: TokenStore
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState(isLoading = true))
@@ -26,7 +24,6 @@ class LoginViewModel @Inject constructor(
                 result.user?.getIdToken(true)?.addOnSuccessListener { tokenResult ->
                     val idToken = tokenResult.token
                     Log.i("test-100",idToken!!)
-                    tokenStore.token = idToken
                 }
             }
 
