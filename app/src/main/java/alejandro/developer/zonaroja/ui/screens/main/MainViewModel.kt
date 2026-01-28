@@ -1,6 +1,6 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
-import alejandro.developer.domain.usecases.GetCiudadesUseCase
+import alejandro.developer.domain.main.GetCiudadesUseCase
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -2,6 +2,7 @@ package alejandro.developer.data.di
 
 import alejandro.developer.core.auth.AuthInterceptor
 import alejandro.developer.core.auth.AuthRetryInterceptor
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,4 +37,8 @@ object DataNetworkModule {
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
+
+    @Provides
+    fun provideFirebaseAuth(): FirebaseAuth =
+        FirebaseAuth.getInstance()
 }

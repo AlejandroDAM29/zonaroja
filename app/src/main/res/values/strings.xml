@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">zonaroja</string>
+
+    <!--Login-->
+    <string name="mail_placeholder">Correo Electronico</string>
+    <string name="password_placeholder">Contraseña</string>
+    <string name="show_password_button">Mostrar</string>
+    <string name="hide_password_button">Ocultar</string>
+    <string name="init_session_button">Iniciar sesión</string>
+    <string name="cerrar">close_snackbar_button</string>
+    <string name="error_auth_invalid_credentials">Credenciales incorrectas</string>
+    <string name="error_auth_user_exists">El usuario ya existe</string>
+    <string name="error_auth_weak_password">La contraseña es demasiado débil</string>
+    <string name="error_auth_network">Error de conexión</string>
+    <string name="error_auth_generic">Error al registrarse</string>
+
 </resources>

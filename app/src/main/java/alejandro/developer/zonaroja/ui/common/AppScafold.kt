@@ -6,6 +6,7 @@ import alejandro.developer.zonaroja.ui.common.snackbar.AppSnackbarModel
 import alejandro.developer.zonaroja.ui.common.snackbar.LocalSnackbarController
 import alejandro.developer.zonaroja.ui.common.snackbar.SnackbarType
 import alejandro.developer.zonaroja.ui.theme.SnackBarInfoColor
+import alejandro.developer.zonaroja.ui.theme.SnackBarSuccessColor
 import alejandro.developer.zonaroja.ui.theme.SnackbarErrorColor
 import alejandro.developer.zonaroja.ui.theme.SnackbarWarningColor
 import androidx.compose.foundation.layout.Box
@@ -56,6 +57,7 @@ fun AppScaffold(
                         SnackbarType.ERROR -> SnackbarErrorColor
                         SnackbarType.WARNING -> SnackbarWarningColor
                         SnackbarType.INFO -> SnackBarInfoColor
+                        SnackbarType.SUCCESS -> SnackBarSuccessColor
                     }
 
 

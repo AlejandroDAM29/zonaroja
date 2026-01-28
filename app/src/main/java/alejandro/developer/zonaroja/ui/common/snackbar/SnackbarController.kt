@@ -69,4 +69,15 @@ class SnackbarController(
             )
         )
     }
+
+    suspend fun showSuccess(
+        message: String
+    ) {
+        show(
+            AppSnackbarModel(
+                message = message,
+                type = SnackbarType.SUCCESS
+            )
+        )
+    }
 }
