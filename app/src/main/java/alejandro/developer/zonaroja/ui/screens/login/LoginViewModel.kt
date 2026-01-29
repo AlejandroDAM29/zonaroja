@@ -1,6 +1,7 @@
 package alejandro.developer.zonaroja.ui.screens.login
 
 import alejandro.developer.domain.auth.LoginWithEmailUseCase
+import alejandro.developer.domain.auth.LoginWithGoogleUseCase
 import alejandro.developer.domain.auth.RegisterWithEmailUseCase
 import alejandro.developer.zonaroja.R
 import androidx.lifecycle.ViewModel
@@ -22,7 +23,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginWithEmailUseCase: LoginWithEmailUseCase,
-    private val registerWithEmail: RegisterWithEmailUseCase
+    private val registerWithEmail: RegisterWithEmailUseCase,
+    private val loginWithGoogle: LoginWithGoogleUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState(isLoading = false))
@@ -123,6 +125,44 @@ class LoginViewModel @Inject constructor(
             else ->
                 R.string.error_auth_generic
         }
+
+    fun onGoogleTokenReceived(idToken: String?) {
+        if (idToken.isNullOrBlank()) {
+            emitGoogleError()
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+
+            val result = loginWithGoogle(idToken)
+
+            _uiState.update { it.copy(isLoading = false) }
+
+            result.fold(
+                onSuccess = {
+                    _uiEvents.emit(LoginUiEvent.NavigateToMain)
+                },
+                onFailure = {
+                    emitGoogleError()
+                }
+            )
+        }
+    }
+
+    fun onGoogleError() {
+        emitGoogleError()
+    }
+
+    private fun emitGoogleError() {
+        viewModelScope.launch {
+            _uiEvents.emit(
+                LoginUiEvent.ShowErrorRegister(
+                    R.string.error_auth_generic
+                )
+            )
+        }
+    }
 }
 
 

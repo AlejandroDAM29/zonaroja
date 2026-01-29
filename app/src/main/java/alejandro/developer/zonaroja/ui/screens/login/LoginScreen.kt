@@ -6,23 +6,28 @@ import alejandro.developer.zonaroja.ui.common.snackbar.LocalSnackbarController
 import alejandro.developer.zonaroja.ui.components.EmailTextField
 import alejandro.developer.zonaroja.ui.components.LoginButton
 import alejandro.developer.zonaroja.ui.components.RedCircularProgress
-import alejandro.developer.zonaroja.ui.screens.main.MainUiEvent
+import android.app.Activity
+import android.content.Intent
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Password
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +40,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 
 @Composable
 fun LoginScreen(
@@ -46,6 +55,32 @@ fun LoginScreen(
     val snackbarController = LocalSnackbarController.current
     val currentContext by rememberUpdatedState(LocalContext.current)
 
+    val googleSignInOptions = remember {
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(currentContext.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+    }
+
+    val googleSignInClient = remember {
+        GoogleSignIn.getClient(currentContext, googleSignInOptions)
+    }
+
+    val googleLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                viewModel.onGoogleTokenReceived(account.idToken)
+            } catch (e: ApiException) {
+                viewModel.onGoogleError()
+            }
+        } else {
+            viewModel.onGoogleError()
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.uiEvents.collect { event ->
@@ -72,8 +107,9 @@ fun LoginScreen(
     ) {
         ContentLoginScreen(
             uiState = uiState,
-            navigateToMain = navigateToMain,
-            viewModel = viewModel
+            viewModel = viewModel,
+            googleLauncher = googleLauncher,
+            googleSignInClient = googleSignInClient
         )
     }
 }
@@ -81,8 +117,9 @@ fun LoginScreen(
 @Composable
 fun ContentLoginScreen(
     uiState: LoginUiState,
-    navigateToMain: () -> Unit,
-    viewModel: LoginViewModel
+    viewModel: LoginViewModel,
+    googleLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>,
+    googleSignInClient: GoogleSignInClient
 ){
     Box(
         modifier = Modifier
@@ -116,8 +153,20 @@ fun ContentLoginScreen(
                 uiState.canSubmit,
                 onClick = viewModel::doLogin
             )
+            LoginButton(
+                onClick = {
+                    googleLauncher.launch(
+                        googleSignInClient.signInIntent
+                    )
+                },
+                enabled = true,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
+
+
+
 
     if (uiState.isLoading) {
         Box(
