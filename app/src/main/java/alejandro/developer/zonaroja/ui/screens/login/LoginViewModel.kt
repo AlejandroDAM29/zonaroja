@@ -150,10 +150,6 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onGoogleError() {
-        emitGoogleError()
-    }
-
     private fun emitGoogleError() {
         viewModelScope.launch {
             _uiEvents.emit(

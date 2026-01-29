@@ -2,6 +2,7 @@
 agp = "9.0.0"
 converterMoshi = "3.0.0"
 coreKtx = "1.17.0"
+credentials = "1.5.0"
 firebaseBom = "34.8.0"
 hiltNavigationCompose = "1.3.0"
 junit = "4.13.2"
@@ -29,11 +30,13 @@ javaxInject = "1"
 firebaseConfig = "4.4.4"
 browser = "1.9.0"
 firebaseAuthKtx = "24.0.1"
+googleid = "1.2.0"
 
 
 [libraries]
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converterMoshi" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
@@ -70,6 +73,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 transport-runtime = { group = "com.google.android.datatransport", name = "transport-runtime", version.ref = "transportRuntime" }
 javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
+googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
 
 
 

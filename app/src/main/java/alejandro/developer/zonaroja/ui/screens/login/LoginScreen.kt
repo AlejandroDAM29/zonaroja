@@ -5,20 +5,17 @@ import alejandro.developer.zonaroja.ui.common.BaseScreen
 import alejandro.developer.zonaroja.ui.common.snackbar.LocalSnackbarController
 import alejandro.developer.zonaroja.ui.components.EmailTextField
 import alejandro.developer.zonaroja.ui.components.LoginButton
+import alejandro.developer.zonaroja.ui.components.LoginWithGoogleButton
+import alejandro.developer.zonaroja.ui.components.OrDivider
 import alejandro.developer.zonaroja.ui.components.RedCircularProgress
-import android.app.Activity
-import android.content.Intent
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import alejandro.developer.zonaroja.ui.components.ZonaRojaTitle
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -28,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,12 +36,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialException
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
@@ -54,33 +54,26 @@ fun LoginScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarController = LocalSnackbarController.current
     val currentContext by rememberUpdatedState(LocalContext.current)
+    val credentialManager = remember {
+        CredentialManager.create(currentContext)
+    }
 
-    val googleSignInOptions = remember {
-        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(currentContext.getString(R.string.default_web_client_id))
-            .requestEmail()
+    //Google login system - - - - - - - - - -
+    val googleIdOption = remember {
+        GetGoogleIdOption.Builder()
+            .setFilterByAuthorizedAccounts(false)
+            .setServerClientId(
+                currentContext.getString(R.string.default_web_client_id)
+            )
             .build()
     }
 
-    val googleSignInClient = remember {
-        GoogleSignIn.getClient(currentContext, googleSignInOptions)
+    val getCredentialRequest = remember {
+        GetCredentialRequest.Builder()
+            .addCredentialOption(googleIdOption)
+            .build()
     }
-
-    val googleLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                viewModel.onGoogleTokenReceived(account.idToken)
-            } catch (e: ApiException) {
-                viewModel.onGoogleError()
-            }
-        } else {
-            viewModel.onGoogleError()
-        }
-    }
+    // - - - - - - - - - - - - - - - - - - - -
 
     LaunchedEffect(Unit) {
         viewModel.uiEvents.collect { event ->
@@ -108,8 +101,9 @@ fun LoginScreen(
         ContentLoginScreen(
             uiState = uiState,
             viewModel = viewModel,
-            googleLauncher = googleLauncher,
-            googleSignInClient = googleSignInClient
+            credentialManager = credentialManager,
+            getCredentialRequest = getCredentialRequest,
+            currentContext = currentContext
         )
     }
 }
@@ -118,9 +112,11 @@ fun LoginScreen(
 fun ContentLoginScreen(
     uiState: LoginUiState,
     viewModel: LoginViewModel,
-    googleLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>,
-    googleSignInClient: GoogleSignInClient
+    credentialManager: CredentialManager,
+    getCredentialRequest: GetCredentialRequest,
+    currentContext: Context
 ){
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -132,8 +128,14 @@ fun ContentLoginScreen(
 
         Column(
             modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            ZonaRojaTitle(
+                text1 = stringResource(R.string.title_text_1),
+                text2 = stringResource(R.string.title_text_2)
+            )
+            Spacer(Modifier.height(20.dp))
             EmailTextField(
                 value = uiState.email,
                 textPlaceHolder = stringResource(R.string.mail_placeholder),
@@ -153,14 +155,31 @@ fun ContentLoginScreen(
                 uiState.canSubmit,
                 onClick = viewModel::doLogin
             )
-            LoginButton(
+            Spacer(Modifier.height(16.dp))
+            OrDivider()
+            Spacer(Modifier.height(16.dp))
+            LoginWithGoogleButton(
                 onClick = {
-                    googleLauncher.launch(
-                        googleSignInClient.signInIntent
-                    )
-                },
-                enabled = true,
-                modifier = Modifier.fillMaxWidth()
+                    coroutineScope.launch {
+                        try {
+                            val result = credentialManager.getCredential(
+                                context = currentContext,
+                                request = getCredentialRequest
+                            )
+
+                            val credential = result.credential
+
+                            if (credential is GoogleIdTokenCredential) {
+                                viewModel.onGoogleTokenReceived(credential.idToken)
+                            } else {
+                                viewModel.onGoogleTokenReceived(null)
+                            }
+
+                        } catch (e: GetCredentialException) {
+                            viewModel.onGoogleTokenReceived(null)
+                        }
+                    }
+                }
             )
         }
     }
