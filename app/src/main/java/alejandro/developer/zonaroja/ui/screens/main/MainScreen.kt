@@ -1,5 +1,6 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
+import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.AppUiEvent
 import alejandro.developer.zonaroja.ui.common.AppViewModel
 import alejandro.developer.zonaroja.ui.common.BaseScreen
@@ -15,24 +16,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun MainScreen(
-    onNavigateToLogin: () -> Unit,
+    onNavigateToLogin: (String) -> Unit,
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarController = LocalSnackbarController.current
+    val currentContext by rememberUpdatedState(LocalContext.current)
 
     LaunchedEffect(Unit) {
         viewModel.uiEvents.collect { event ->
             when (event) {
-                is MainUiEvent.NavigateToLogin -> onNavigateToLogin()
                 is MainUiEvent.ShowError -> {
                     snackbarController.showWarning(event.message)
                 }
@@ -40,6 +43,12 @@ fun MainScreen(
                     snackbarController.showWarning(
                         message = event.message
                     )
+                }
+                is MainUiEvent.ShowLogoutSuccessAndNavigateToLogin -> {
+                    onNavigateToLogin(currentContext.getString(R.string.logout_snackbar_success))
+                }
+                is MainUiEvent.ShowLogoutError -> {
+                    snackbarController.showError(currentContext.getString(R.string.logout_snackbar_error))
                 }
             }
         }
@@ -75,7 +84,7 @@ fun ContentMainScreen(
 
         Spacer(Modifier.height(16.dp))
 
-        Button(onClick = viewModel::onLoginClicked) {
+        Button(onClick = viewModel::onLogoutClicked) {
             Text("Ir a Login")
         }
 

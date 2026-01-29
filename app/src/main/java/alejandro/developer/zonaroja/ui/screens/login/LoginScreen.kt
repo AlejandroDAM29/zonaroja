@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     navigateToMain: () -> Unit,
+    successMessage: String? = null,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
 
@@ -74,6 +75,12 @@ fun LoginScreen(
             .build()
     }
     // - - - - - - - - - - - - - - - - - - - -
+
+    LaunchedEffect(successMessage) {
+        successMessage?.let {
+            snackbarController.showSuccess(it)
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.uiEvents.collect { event ->

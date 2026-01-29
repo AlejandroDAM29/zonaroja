@@ -35,4 +35,12 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
             val credential = GoogleAuthProvider.getCredential(idToken, null)
             firebaseAuth.signInWithCredential(credential).await()
         }
+
+    override fun isUserLoggedIn(): Boolean {
+        return firebaseAuth.currentUser != null
+    }
+
+    override suspend fun logout() {
+        firebaseAuth.signOut()
+    }
 }

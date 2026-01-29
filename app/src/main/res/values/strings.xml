@@ -16,5 +16,7 @@
     <string name="login_with_google">Continuar con Google</string>
     <string name="title_text_1">Zona</string>
     <string name="title_text_2">Roja</string>
+    <string name="logout_snackbar_success">¡Has salido con exito!</string>
+    <string name="logout_snackbar_error">Hubo un error. Intentalo de nuevo</string>
 
 </resources>

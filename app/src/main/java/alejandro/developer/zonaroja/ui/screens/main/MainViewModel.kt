@@ -1,5 +1,6 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
+import alejandro.developer.domain.auth.LogoutUseCase
 import alejandro.developer.domain.main.GetCiudadesUseCase
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -15,7 +16,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getCiudadesUseCase: GetCiudadesUseCase
+    private val getCiudadesUseCase: GetCiudadesUseCase,
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState(isLoading = true))
@@ -69,4 +71,17 @@ class MainViewModel @Inject constructor(
             _uiEvents.emit(event)
         }
     }
+
+    fun onLogoutClicked() {
+        viewModelScope.launch {
+            try {
+                logoutUseCase()
+                _uiEvents.emit(MainUiEvent.ShowLogoutSuccessAndNavigateToLogin)
+
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "Error during logout", e)
+            }
+        }
+    }
+
 }

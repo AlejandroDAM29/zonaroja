@@ -2,8 +2,8 @@ package alejandro.developer.zonaroja.navigation
 
 import kotlinx.serialization.Serializable
 
-@Serializable
-object Main
-
-@Serializable
-object Login
+object Routes {
+    const val SPLASH = "splash"
+    const val MAIN = "main"
+    const val LOGIN = "login"
+}
