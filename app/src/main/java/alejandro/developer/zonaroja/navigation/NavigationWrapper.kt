@@ -3,12 +3,11 @@ package alejandro.developer.zonaroja.navigation
 import alejandro.developer.zonaroja.ui.screens.login.LoginScreen
 import alejandro.developer.zonaroja.ui.screens.main.MainScreen
 import alejandro.developer.zonaroja.ui.screens.splash.SplashScreen
+import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 
 
@@ -18,53 +17,46 @@ fun NavigationWapper() {
 
     NavHost(
         navController = navController,
-        startDestination = Routes.SPLASH
+        startDestination = Splash
     ) {
 
-        composable(Routes.SPLASH) {
+        composable<Splash> {
             SplashScreen(
                 navigateToLogin = {
-                    navController.navigate(Routes.LOGIN) {
-                        popUpTo(Routes.SPLASH) { inclusive = true }
+                    navController.navigate(Login()) {
+                        popUpTo(Splash) { inclusive = true }
                     }
                 },
                 navigateToMain = {
-                    navController.navigate(Routes.MAIN) {
-                        popUpTo(Routes.SPLASH) { inclusive = true }
+                    navController.navigate(Main) {
+                        popUpTo(Splash) { inclusive = true }
                     }
                 }
             )
         }
 
-        composable(Routes.MAIN) {
+        composable<Main> {
             MainScreen(
-                onNavigateToLogin = { message ->
-                    navController.navigate("${Routes.LOGIN}?message=$message") {
-                        popUpTo(Routes.MAIN) { inclusive = true }
-                    }
+                onNavigateToLoginLogout = {
+                navController.navigate(Login(true)) {
+                    popUpTo(Main) { inclusive = true }
                 }
+            }
             )
         }
 
-        composable(
-            route = "${Routes.LOGIN}?message={message}",
-            arguments = listOf(
-                navArgument("message") {
-                    type = NavType.StringType
-                    nullable = true
-                }
-            )
-        ) { backStackEntry ->
-            val message = backStackEntry.arguments?.getString("message")
+        composable<Login> { navBackStackEntry ->
+
+            val navBackStackEntryLogin: Login = navBackStackEntry.toRoute()
 
             LoginScreen(
                 navigateToMain = {
-                    navController.navigate(Routes.MAIN) {
-                        popUpTo(Routes.LOGIN) { inclusive = true }
-                    }
-                },
-                successMessage = message
-            )
+                navController.navigate(Main) {
+                    popUpTo(Login()) { inclusive = true }
+                }
+            },
+                successMessage = navBackStackEntryLogin.snackBarMessage
+          )
         }
     }
 }

@@ -1,5 +1,6 @@
 package alejandro.developer.zonaroja.ui.screens.splash
 
+import alejandro.developer.data.providers.FeatureFlagsProvider
 import alejandro.developer.domain.auth.CheckUserSessionUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,11 +12,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val checkUserSession: CheckUserSessionUseCase
+    private val checkUserSession: CheckUserSessionUseCase,
+    private val featureFlagsProvider: FeatureFlagsProvider
 ) : ViewModel() {
 
     private val _uiEvent = MutableSharedFlow<SplashUiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
+
+    init {
+        viewModelScope.launch {
+            featureFlagsProvider.get() // 👈 bloquea aquí
+        }
+    }
 
     fun onSplashShown() {
         viewModelScope.launch {

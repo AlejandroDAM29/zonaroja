@@ -10,6 +10,7 @@ import alejandro.developer.zonaroja.ui.components.OrDivider
 import alejandro.developer.zonaroja.ui.components.RedCircularProgress
 import alejandro.developer.zonaroja.ui.components.ZonaRojaTitle
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -48,38 +50,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     navigateToMain: () -> Unit,
-    successMessage: String? = null,
+    successMessage: Boolean,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarController = LocalSnackbarController.current
     val currentContext by rememberUpdatedState(LocalContext.current)
-    val credentialManager = remember {
-        CredentialManager.create(currentContext)
-    }
-
-    //Google login system - - - - - - - - - -
-    val googleIdOption = remember {
-        GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(false)
-            .setServerClientId(
-                currentContext.getString(R.string.default_web_client_id)
-            )
-            .build()
-    }
-
-    val getCredentialRequest = remember {
-        GetCredentialRequest.Builder()
-            .addCredentialOption(googleIdOption)
-            .build()
-    }
-    // - - - - - - - - - - - - - - - - - - - -
 
     LaunchedEffect(successMessage) {
-        successMessage?.let {
-            snackbarController.showSuccess(it)
-        }
+        if (successMessage)
+            snackbarController.showSuccess(currentContext.getString(R.string.logout_snackbar_success))
     }
 
     LaunchedEffect(Unit) {
@@ -108,8 +89,6 @@ fun LoginScreen(
         ContentLoginScreen(
             uiState = uiState,
             viewModel = viewModel,
-            credentialManager = credentialManager,
-            getCredentialRequest = getCredentialRequest,
             currentContext = currentContext
         )
     }
@@ -119,11 +98,8 @@ fun LoginScreen(
 fun ContentLoginScreen(
     uiState: LoginUiState,
     viewModel: LoginViewModel,
-    credentialManager: CredentialManager,
-    getCredentialRequest: GetCredentialRequest,
     currentContext: Context
 ){
-    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -134,22 +110,39 @@ fun ContentLoginScreen(
     ) {
 
         Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            Spacer(modifier = Modifier.weight(0.1f))
+
+            // ICONO
+            Image(
+                painter = painterResource(id = R.drawable.zona_roja_warning_icon),
+                contentDescription = null,
+                modifier = Modifier.size(200.dp)
+            )
+
+            // TÍTULO
             ZonaRojaTitle(
                 text1 = stringResource(R.string.title_text_1),
                 text2 = stringResource(R.string.title_text_2)
             )
-            Spacer(Modifier.height(20.dp))
+
+            Spacer(modifier = Modifier.weight(0.2f))
+
+            // FORMULARIO
             EmailTextField(
                 value = uiState.email,
                 textPlaceHolder = stringResource(R.string.mail_placeholder),
                 leadingIcon = Icons.Default.Email,
                 onValueChange = viewModel::onEmailChange,
             )
+
             Spacer(Modifier.height(8.dp))
+
             EmailTextField(
                 value = uiState.password,
                 textPlaceHolder = stringResource(R.string.password_placeholder),
@@ -157,42 +150,28 @@ fun ContentLoginScreen(
                 onValueChange = viewModel::onPasswordChange,
                 isPassword = true
             )
+
             Spacer(Modifier.height(16.dp))
+
             LoginButton(
                 uiState.canSubmit,
                 onClick = viewModel::doLogin
             )
-            Spacer(Modifier.height(16.dp))
-            OrDivider()
-            Spacer(Modifier.height(16.dp))
-            LoginWithGoogleButton(
-                onClick = {
-                    coroutineScope.launch {
-                        try {
-                            val result = credentialManager.getCredential(
-                                context = currentContext,
-                                request = getCredentialRequest
-                            )
 
-                            val credential = result.credential
+            if (uiState.isGoogleLoginEnabled) {
+                Spacer(Modifier.height(12.dp))
+                OrDivider()
+                Spacer(Modifier.height(12.dp))
+                LoginGoogle(
+                    viewModel = viewModel,
+                    currentContext = currentContext
+                )
+            }
 
-                            if (credential is GoogleIdTokenCredential) {
-                                viewModel.onGoogleTokenReceived(credential.idToken)
-                            } else {
-                                viewModel.onGoogleTokenReceived(null)
-                            }
-
-                        } catch (e: GetCredentialException) {
-                            viewModel.onGoogleTokenReceived(null)
-                        }
-                    }
-                }
-            )
+            Spacer(modifier = Modifier.weight(1f))
         }
+
     }
-
-
-
 
     if (uiState.isLoading) {
         Box(
@@ -205,4 +184,58 @@ fun ContentLoginScreen(
         }
     }
 
+}
+
+@Composable
+fun LoginGoogle(
+    viewModel: LoginViewModel,
+    currentContext: Context
+){
+    val credentialManager = remember {
+        CredentialManager.create(currentContext)
+    }
+
+    val googleIdOption = remember {
+        GetGoogleIdOption.Builder()
+            .setFilterByAuthorizedAccounts(false)
+            .setServerClientId(
+                currentContext.getString(R.string.default_web_client_id)
+            )
+            .build()
+    }
+
+    val getCredentialRequest = remember {
+        GetCredentialRequest.Builder()
+            .addCredentialOption(googleIdOption)
+            .build()
+    }
+
+    val coroutineScope = rememberCoroutineScope()
+    Spacer(Modifier.height(16.dp))
+    OrDivider()
+    Spacer(Modifier.height(16.dp))
+
+    LoginWithGoogleButton(
+        onClick = {
+            coroutineScope.launch {
+                try {
+                    val result = credentialManager.getCredential(
+                        context = currentContext,
+                        request = getCredentialRequest
+                    )
+
+                    val credential = result.credential
+
+                    if (credential is GoogleIdTokenCredential) {
+                        viewModel.onGoogleTokenReceived(credential.idToken)
+                    } else {
+                        viewModel.onGoogleTokenReceived(null)
+                    }
+
+                } catch (e: GetCredentialException) {
+                    viewModel.onGoogleTokenReceived(null)
+                }
+            }
+        }
+    )
 }

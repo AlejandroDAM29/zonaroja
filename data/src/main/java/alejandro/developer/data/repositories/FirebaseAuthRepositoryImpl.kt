@@ -1,6 +1,7 @@
 package alejandro.developer.data.repositories
 
 import alejandro.developer.domain.auth.AuthRepository
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
@@ -33,7 +34,11 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     ): Result<Unit> =
         runCatching {
             val credential = GoogleAuthProvider.getCredential(idToken, null)
-            firebaseAuth.signInWithCredential(credential).await()
+            firebaseAuth.signInWithCredential(credential)
+                .addOnFailureListener { e ->
+                    Log.e("Google error:",  e.message.toString())
+                }
+                .await()
         }
 
     override fun isUserLoggedIn(): Boolean {

@@ -3,8 +3,10 @@ package alejandro.developer.data.di
 import alejandro.developer.data.repositories.CiudadesRepositoryImpl
 import alejandro.developer.data.remote.apis.GetCiudadesApi
 import alejandro.developer.data.remote.datasources.CiudadesRemoteDataSource
+import alejandro.developer.data.remote.datasources.FeatureFlagsRepositoryImpl
 import alejandro.developer.data.repositories.FirebaseAuthRepositoryImpl
 import alejandro.developer.domain.auth.AuthRepository
+import alejandro.developer.domain.common.FeatureFlagsRepository
 import alejandro.developer.domain.main.CiudadesRepository
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Binds
@@ -30,5 +32,8 @@ abstract class DataRepositoryHiltModule {
         impl: CiudadesRepositoryImpl
     ): CiudadesRepository
 
-
+    @Binds
+    abstract fun bindFeatureFlagsRepository(
+        impl: FeatureFlagsRepositoryImpl
+    ): FeatureFlagsRepository
 }

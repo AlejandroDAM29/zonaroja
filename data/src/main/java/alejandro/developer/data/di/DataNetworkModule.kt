@@ -2,7 +2,12 @@ package alejandro.developer.data.di
 
 import alejandro.developer.core.auth.AuthInterceptor
 import alejandro.developer.core.auth.AuthRetryInterceptor
+import alejandro.developer.data.remote.general.RemoteConfigKeys
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.remoteConfig
+import com.google.firebase.remoteconfig.remoteConfigSettings
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,4 +46,22 @@ object DataNetworkModule {
     @Provides
     fun provideFirebaseAuth(): FirebaseAuth =
         FirebaseAuth.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideRemoteConfig(): FirebaseRemoteConfig =
+        Firebase.remoteConfig.apply {
+
+
+            val settings = remoteConfigSettings {
+                minimumFetchIntervalInSeconds = 0
+            }
+            setConfigSettingsAsync(settings)
+
+            setDefaultsAsync(
+                mapOf(
+                    RemoteConfigKeys.GOOGLE_LOGIN_ENABLED to false
+                )
+            )
+        }
 }

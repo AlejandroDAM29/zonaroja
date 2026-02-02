@@ -32,6 +32,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(platform(libs.firebase.bom))
     implementation(libs.google.firebase.analytics)
+    implementation(libs.google.firebase.config.ktx)
 // Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)

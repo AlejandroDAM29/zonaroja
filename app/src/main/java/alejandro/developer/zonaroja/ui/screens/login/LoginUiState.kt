@@ -5,7 +5,8 @@ import androidx.annotation.StringRes
 data class LoginUiState (
     val email: String = "",
     val password: String = "",
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isGoogleLoginEnabled: Boolean = false
 ){
     val canSubmit: Boolean
         get() =

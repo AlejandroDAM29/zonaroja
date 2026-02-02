@@ -1,9 +1,12 @@
 package alejandro.developer.zonaroja.ui.screens.login
 
+import alejandro.developer.data.providers.FeatureFlagsProvider
 import alejandro.developer.domain.auth.LoginWithEmailUseCase
 import alejandro.developer.domain.auth.LoginWithGoogleUseCase
 import alejandro.developer.domain.auth.RegisterWithEmailUseCase
+import alejandro.developer.domain.common.FeatureFlagsRepository
 import alejandro.developer.zonaroja.R
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.FirebaseNetworkException
@@ -24,7 +27,8 @@ import kotlinx.coroutines.launch
 class LoginViewModel @Inject constructor(
     private val loginWithEmailUseCase: LoginWithEmailUseCase,
     private val registerWithEmail: RegisterWithEmailUseCase,
-    private val loginWithGoogle: LoginWithGoogleUseCase
+    private val loginWithGoogle: LoginWithGoogleUseCase,
+    private val featureFlagsProvider: FeatureFlagsProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState(isLoading = false))
@@ -33,6 +37,15 @@ class LoginViewModel @Inject constructor(
     private val _uiEvents = MutableSharedFlow<LoginUiEvent>()
     val uiEvents = _uiEvents.asSharedFlow()
 
+
+    init {
+        viewModelScope.launch {
+            val flags = featureFlagsProvider.get()
+            _uiState.value = LoginUiState(
+                isGoogleLoginEnabled = flags.googleLoginEnabled
+            )
+        }
+    }
 
     fun onEmailChange(email: String) {
         _uiState.update { it.copy(email = email) }
@@ -127,6 +140,7 @@ class LoginViewModel @Inject constructor(
         }
 
     fun onGoogleTokenReceived(idToken: String?) {
+        Log.i("test-100", "El token es: $idToken");
         if (idToken.isNullOrBlank()) {
             emitGoogleError()
             return
