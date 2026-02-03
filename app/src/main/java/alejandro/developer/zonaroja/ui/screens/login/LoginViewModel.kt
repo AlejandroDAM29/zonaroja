@@ -26,7 +26,6 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginWithEmailUseCase: LoginWithEmailUseCase,
-    private val registerWithEmail: RegisterWithEmailUseCase,
     private val loginWithGoogle: LoginWithGoogleUseCase,
     private val featureFlagsProvider: FeatureFlagsProvider
 ) : ViewModel() {
@@ -87,57 +86,6 @@ class LoginViewModel @Inject constructor(
             )
         }
     }
-
-    fun onRegisterClick() {
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(isLoading = true)
-            }
-
-            val result = registerWithEmail(
-                _uiState.value.email,
-                _uiState.value.password
-            )
-
-            result.fold(
-                onSuccess = {
-                    _uiEvents.emit(
-                        LoginUiEvent.ShowSuccessRegister(
-                            "Registro exitoso"
-                        )
-                    )
-                    _uiEvents.emit(
-                        LoginUiEvent.NavigateToMain)
-                },
-                onFailure = { throwable ->
-                    _uiEvents.emit(
-                        LoginUiEvent.ShowErrorRegister(
-                            mapErrorToStringRes(throwable)
-                        )
-                    )
-                }
-            )
-            _uiState.update { it.copy(isLoading = false) }
-        }
-    }
-
-    private fun mapErrorToStringRes(t: Throwable): Int =
-        when (t) {
-            is FirebaseAuthUserCollisionException ->
-                R.string.error_auth_user_exists
-
-            is FirebaseAuthWeakPasswordException ->
-                R.string.error_auth_weak_password
-
-            is FirebaseAuthInvalidCredentialsException ->
-                R.string.error_auth_invalid_credentials
-
-            is FirebaseNetworkException ->
-                R.string.error_auth_network
-
-            else ->
-                R.string.error_auth_generic
-        }
 
     fun onGoogleTokenReceived(idToken: String?) {
         Log.i("test-100", "El token es: $idToken");

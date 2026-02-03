@@ -27,11 +27,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun MainScreen(
     onNavigateToLoginLogout: () -> Unit,
+    showSnackbarRegisterSuccess: Boolean,
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarController = LocalSnackbarController.current
     val currentContext by rememberUpdatedState(LocalContext.current)
+
+    LaunchedEffect(showSnackbarRegisterSuccess) {
+        if (showSnackbarRegisterSuccess)
+            snackbarController.showSuccess(currentContext.getString(R.string.register_success_snackbar)
+            )
+    }
 
     LaunchedEffect(Unit) {
         viewModel.uiEvents.collect { event ->

@@ -4,6 +4,7 @@ import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.BaseScreen
 import alejandro.developer.zonaroja.ui.common.snackbar.LocalSnackbarController
 import alejandro.developer.zonaroja.ui.components.EmailTextField
+import alejandro.developer.zonaroja.ui.components.LitleWhiteText
 import alejandro.developer.zonaroja.ui.components.LoginButton
 import alejandro.developer.zonaroja.ui.components.LoginWithGoogleButton
 import alejandro.developer.zonaroja.ui.components.OrDivider
@@ -12,17 +13,19 @@ import alejandro.developer.zonaroja.ui.components.ZonaRojaTitle
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,7 +54,8 @@ import kotlinx.coroutines.launch
 fun LoginScreen(
     navigateToMain: () -> Unit,
     successMessage: Boolean,
-    viewModel: LoginViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel(),
+    navigateToRegister: () -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -71,11 +75,14 @@ fun LoginScreen(
                     snackbarController.showErrorWithActionButton(
                         event.message,
                         event.actionLabelText,
-                        event.onAction)
+                        event.onAction
+                    )
                 }
+
                 is LoginUiEvent.ShowErrorRegister -> {
                     snackbarController.showError(currentContext.getString(event.messageRes))
                 }
+
                 is LoginUiEvent.ShowSuccessRegister -> {
                     snackbarController.showSuccess(event.message)
                 }
@@ -89,7 +96,8 @@ fun LoginScreen(
         ContentLoginScreen(
             uiState = uiState,
             viewModel = viewModel,
-            currentContext = currentContext
+            currentContext = currentContext,
+            navigateToRegister = navigateToRegister
         )
     }
 }
@@ -98,8 +106,9 @@ fun LoginScreen(
 fun ContentLoginScreen(
     uiState: LoginUiState,
     viewModel: LoginViewModel,
-    currentContext: Context
-){
+    currentContext: Context,
+    navigateToRegister: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -116,24 +125,25 @@ fun ContentLoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Spacer(modifier = Modifier.weight(0.1f))
+            // ───────── TOP ─────────
+            Spacer(modifier = Modifier.height(24.dp))
 
-            // ICONO
             Image(
                 painter = painterResource(id = R.drawable.zona_roja_warning_icon),
                 contentDescription = null,
                 modifier = Modifier.size(200.dp)
             )
 
-            // TÍTULO
+            Spacer(modifier = Modifier.height(8.dp))
+
             ZonaRojaTitle(
                 text1 = stringResource(R.string.title_text_1),
                 text2 = stringResource(R.string.title_text_2)
             )
 
-            Spacer(modifier = Modifier.weight(0.2f))
+            Spacer(modifier = Modifier.height(32.dp))
 
-            // FORMULARIO
+            // ───────── FORMULARIO ─────────
             EmailTextField(
                 value = uiState.email,
                 textPlaceHolder = stringResource(R.string.mail_placeholder),
@@ -154,35 +164,54 @@ fun ContentLoginScreen(
             Spacer(Modifier.height(16.dp))
 
             LoginButton(
-                uiState.canSubmit,
-                onClick = viewModel::doLogin
+                enabled = uiState.canSubmit,
+                onClick = viewModel::doLogin,
+                textButton = R.string.init_session_button
             )
 
+            Spacer(Modifier.height(16.dp))
+
+            // ───────── GOOGLE ─────────
             if (uiState.isGoogleLoginEnabled) {
-                Spacer(Modifier.height(12.dp))
-                OrDivider()
-                Spacer(Modifier.height(12.dp))
+
                 LoginGoogle(
                     viewModel = viewModel,
                     currentContext = currentContext
                 )
+
+                Spacer(Modifier.height(12.dp))
+
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.White.copy(alpha = 0.4f),
+                    thickness = 1.dp
+                )
+
+                Spacer(Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    LitleWhiteText(
+                        text = "¿Olvidaste tu contraseña?",
+                        onClick = {},
+                        modifier = Modifier.weight(1f)
+                    )
+                    LitleWhiteText(
+                        text = "Crear cuenta",
+                        onClick = navigateToRegister
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
-
-            Spacer(modifier = Modifier.weight(1f))
         }
+
 
     }
 
-    if (uiState.isLoading) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.3f)),
-            contentAlignment = Alignment.Center
-        ) {
-            RedCircularProgress()
-        }
-    }
+    RedCircularProgress(uiState.isLoading)
 
 }
 
@@ -190,7 +219,7 @@ fun ContentLoginScreen(
 fun LoginGoogle(
     viewModel: LoginViewModel,
     currentContext: Context
-){
+) {
     val credentialManager = remember {
         CredentialManager.create(currentContext)
     }
