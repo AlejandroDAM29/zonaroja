@@ -22,18 +22,22 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":core"))
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.browser)
+    implementation(libs.firebase.auth)
     ksp(libs.hilt.compiler)
     implementation(platform(libs.firebase.bom))
     implementation(libs.google.firebase.analytics)
-// Retrofit
+    implementation(libs.google.firebase.config.ktx)
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
-
     implementation(libs.moshi.kotlin)
+    implementation(libs.okhttp)
+    implementation(libs.firebase.auth)
 
     //Testing
     testImplementation(libs.junit)

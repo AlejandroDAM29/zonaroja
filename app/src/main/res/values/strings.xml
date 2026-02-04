@@ -1,3 +1,39 @@
 <resources>
     <string name="app_name">zonaroja</string>
+    <string name="close_snackbar_button">Cerrar</string>
+
+    <!--Splash-->
+    <string name="alejandro_studios">Alejandro Studios</string>
+
+    <!--Login-->
+    <string name="mail_placeholder">Correo Electronico</string>
+    <string name="password_placeholder">Contraseña</string>
+    <string name="show_password_button">Mostrar</string>
+    <string name="hide_password_button">Ocultar</string>
+    <string name="init_session_button">Iniciar sesión</string>
+    <string name="error_auth_invalid_credentials">Credenciales incorrectas</string>
+    <string name="error_auth_user_exists">El usuario ya existe</string>
+    <string name="error_auth_weak_password">La contraseña es demasiado débil</string>
+    <string name="error_auth_network">Error de conexión</string>
+    <string name="error_auth_generic">Error al registrarse</string>
+    <string name="login_with_google">Continuar con Google</string>
+    <string name="title_text_1">Zona</string>
+    <string name="title_text_2">Roja</string>
+    <string name="logout_snackbar_success">¡Has salido con exito!</string>
+    <string name="logout_snackbar_error">Hubo un error. Intentalo de nuevo</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="create_account_login">Crear cuenta</string>
+
+    <!--Register-->
+    <string name="register_new_user_button">Crea tu cuenta</string>
+    <string name="have_account">"¿Ya tienes cuenta? "</string>
+    <string name="init_session_text_bottom">Iniciar sesión</string>
+    <string name="confirm_password_register">Confirmar contraseña</string>
+    <string name="password_register">Contraseña</string>
+    <string name="email_register">Correo electrónico</string>
+    <string name="create_new_account">CREAR CUENTA</string>
+    <string name="register_success_snackbar">Registro realizado con exito</string>
+    <string name="email_format_invalid">El email no es válido</string>
+    <string name="passwords_not_match">Las contraseñas no coinciden</string>
+
 </resources>

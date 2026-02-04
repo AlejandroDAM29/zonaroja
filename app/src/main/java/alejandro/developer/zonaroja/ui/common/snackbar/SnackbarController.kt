@@ -43,7 +43,7 @@ class SnackbarController(
     suspend fun showErrorWithActionButton(
         message: String,
         actionLabel: String,
-        onAction: () -> Unit
+        onAction: () -> Unit = {}
     ) {
         show(
             AppSnackbarModel(
@@ -66,6 +66,17 @@ class SnackbarController(
                 type = SnackbarType.WARNING,
                 actionLabel = actionLabel,
                 onAction = onAction
+            )
+        )
+    }
+
+    suspend fun showSuccess(
+        message: String
+    ) {
+        show(
+            AppSnackbarModel(
+                message = message,
+                type = SnackbarType.SUCCESS
             )
         )
     }

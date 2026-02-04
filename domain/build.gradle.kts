@@ -9,10 +9,8 @@ java {
 }
 
 dependencies {
-    // Coroutines (opcional pero habitual)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.javax.inject)
 
-    // Unit tests (JVM)
     testImplementation(libs.junit)
 }

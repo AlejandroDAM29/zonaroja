@@ -1,31 +1,32 @@
 package alejandro.developer.data.di
 
-import alejandro.developer.data.CiudadesRepositoryImpl
-import alejandro.developer.data.remote.apis.GetCiudadesApi
-import alejandro.developer.data.remote.datasources.CiudadesRemoteDataSource
-import alejandro.developer.domain.repositories.CiudadesRepository
+import alejandro.developer.data.remote.datasources.FeatureFlagsRepositoryImpl
+import alejandro.developer.data.repositories.CiudadesRepositoryImpl
+import alejandro.developer.data.repositories.FirebaseAuthRepositoryImpl
+import alejandro.developer.domain.auth.AuthRepository
+import alejandro.developer.domain.common.FeatureFlagsRepository
+import alejandro.developer.domain.main.CiudadesRepository
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataRepositoryHiltModule {
+abstract class DataRepositoryHiltModule {
 
-    @Provides
-    fun provideGetCiudadesApi(
-        retrofit: Retrofit
-    ): GetCiudadesApi =
-        retrofit.create(GetCiudadesApi::class.java)
+    @Binds
+    abstract fun bindAuthRepository(
+        impl: FirebaseAuthRepositoryImpl
+    ): AuthRepository
 
-    @Provides
-    fun provideCiudadesRepository(
-        remote: CiudadesRemoteDataSource
-    ): CiudadesRepository =
-        CiudadesRepositoryImpl(remote)
+    @Binds
+    abstract fun bindCiudadesRepository(
+        impl: CiudadesRepositoryImpl
+    ): CiudadesRepository
 
-
+    @Binds
+    abstract fun bindFeatureFlagsRepository(
+        impl: FeatureFlagsRepositoryImpl
+    ): FeatureFlagsRepository
 }

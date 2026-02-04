@@ -1,6 +1,5 @@
-package alejandro.developer.domain.usecases
+package alejandro.developer.domain.main
 
-import alejandro.developer.domain.repositories.CiudadesRepository
 import javax.inject.Inject
 
 class GetCiudadesUseCase @Inject constructor(

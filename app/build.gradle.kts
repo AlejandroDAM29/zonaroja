@@ -61,12 +61,14 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.hilt.android)
+    implementation(libs.googleid)
     ksp(libs.hilt.compiler)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
-
-    // Opcional (Compose + Navigation)
+    implementation(libs.play.services.auth)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.credentials)
     implementation(libs.androidx.hilt.navigation.compose)
 
     //Testing

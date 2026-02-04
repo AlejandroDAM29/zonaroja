@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1039725734105",
+    "project_id": "zona-roja-7e2e1",
+    "storage_bucket": "zona-roja-7e2e1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1039725734105:android:c96fb486cb76365bcfb6c8",
+        "android_client_info": {
+          "package_name": "alejandro.developer.zonaroja"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1039725734105-5t70non1hhper47ls1geqd492kaemomd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "alejandro.developer.zonaroja",
+            "certificate_hash": "5e97a837cf924093417a9a82e2d32b50a4282c52"
+          }
+        },
+        {
+          "client_id": "1039725734105-lu8pjgb26r70di25kihu7m3651ejdh33.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfg7KWBTxEq7TkM4Wy9K3h-cGzxf4mktQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1039725734105-lu8pjgb26r70di25kihu7m3651ejdh33.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
