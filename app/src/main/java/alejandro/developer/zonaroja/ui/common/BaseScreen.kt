@@ -1,5 +1,6 @@
 package alejandro.developer.zonaroja.ui.common
 
+import alejandro.developer.zonaroja.ui.components.RedCircularProgress
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -17,8 +18,12 @@ fun BaseScreen(
         ) {
             content()
 
-            if (isLoading && loadingContent != null) {
-                loadingContent()
+            if (isLoading){
+                if (loadingContent != null) {
+                    loadingContent()
+                } else {
+                    RedCircularProgress()
+                }
             }
         }
 

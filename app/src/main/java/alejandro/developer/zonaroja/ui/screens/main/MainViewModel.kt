@@ -20,7 +20,7 @@ class MainViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(MainUiState(isLoading = true))
+    private val _uiState = MutableStateFlow(MainUiState(isLoading = false))
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
     private val _uiEvents = MutableSharedFlow<MainUiEvent>()

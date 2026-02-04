@@ -1,9 +1,9 @@
 package alejandro.developer.zonaroja.ui.screens.register
 
 import alejandro.developer.zonaroja.R
+import alejandro.developer.zonaroja.ui.common.BaseScreen
 import alejandro.developer.zonaroja.ui.common.snackbar.LocalSnackbarController
 import alejandro.developer.zonaroja.ui.components.ErrorEmailAndPasswordText
-import alejandro.developer.zonaroja.ui.components.RedCircularProgress
 import alejandro.developer.zonaroja.ui.components.RedOutlinedTextField
 import alejandro.developer.zonaroja.ui.components.RegisterButton
 import androidx.compose.foundation.background
@@ -62,40 +62,41 @@ fun RegisterScreen(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF7F7F7))
-    ) {
-        Column(
+    BaseScreen(uiState.isLoading) {
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 20.dp)
-                .background(Color(0xFFF7F7F7)),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .background(Color(0xFFF7F7F7))
         ) {
-
-            Spacer(Modifier.height(56.dp))
-
-            Text(
-                text = stringResource(R.string.create_new_account),
-                color = Color(0xFFD32F2F),
-                fontSize = 30.sp,
-                fontWeight = FontWeight.ExtraBold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Box(
+            Column(
                 modifier = Modifier
-                    .width(122.dp)
-                    .height(1.dp)
-                    .background(
-                        color = Color(0xFFD32F2F),
-                        shape = RoundedCornerShape(2.dp)
-                    )
-            )
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp)
+                    .background(Color(0xFFF7F7F7)),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-            Spacer(Modifier.height(32.dp))
+                Spacer(Modifier.height(56.dp))
+
+                Text(
+                    text = stringResource(R.string.create_new_account),
+                    color = Color(0xFFD32F2F),
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Box(
+                    modifier = Modifier
+                        .width(122.dp)
+                        .height(1.dp)
+                        .background(
+                            color = Color(0xFFD32F2F),
+                            shape = RoundedCornerShape(2.dp)
+                        )
+                )
+
+                Spacer(Modifier.height(32.dp))
 
                 RedOutlinedTextField(
                     value = uiState.email,
@@ -142,28 +143,29 @@ fun RegisterScreen(
                     textButton = R.string.register_new_user_button
                 )
 
-            Spacer(Modifier.weight(1f))
+                Spacer(Modifier.weight(1f))
 
-            Row {
-                Text(
-                    text = stringResource(R.string.have_account),
-                    color = Color.Gray,
-                    fontSize = 14.sp
-                )
-                Spacer(Modifier.width(6.dp))
-                Text(
-                    text = stringResource(R.string.init_session_text_bottom),
-                    color = Color(0xFFD32F2F),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    textDecoration = TextDecoration.Underline,
-                    modifier = Modifier.clickable { viewModel.backToLogin() }
-                )
+                Row {
+                    Text(
+                        text = stringResource(R.string.have_account),
+                        color = Color.Gray,
+                        fontSize = 14.sp
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = stringResource(R.string.init_session_text_bottom),
+                        color = Color(0xFFD32F2F),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.clickable { viewModel.backToLogin() }
+                    )
+                }
+
+                Spacer(Modifier.height(24.dp))
             }
-
-            Spacer(Modifier.height(24.dp))
         }
     }
 
-    RedCircularProgress(uiState.isLoading)
+
 }

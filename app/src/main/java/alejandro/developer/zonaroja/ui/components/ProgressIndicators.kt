@@ -12,10 +12,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun RedCircularProgress(
-    isLoading: Boolean,
     modifier: Modifier = Modifier
 ) {
-    if (isLoading)
         Box(
             modifier = modifier
                 .fillMaxSize()

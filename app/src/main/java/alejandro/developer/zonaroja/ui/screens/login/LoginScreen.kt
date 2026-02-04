@@ -208,8 +208,6 @@ fun ContentLoginScreen(
 
     }
 
-    RedCircularProgress(uiState.isLoading)
-
 }
 
 @Composable
