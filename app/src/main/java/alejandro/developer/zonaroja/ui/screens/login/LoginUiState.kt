@@ -1,7 +1,5 @@
 package alejandro.developer.zonaroja.ui.screens.login
 
-import androidx.annotation.StringRes
-
 data class LoginUiState (
     val email: String = "",
     val password: String = "",

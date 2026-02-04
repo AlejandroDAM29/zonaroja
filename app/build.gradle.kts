@@ -69,8 +69,6 @@ dependencies {
     implementation(libs.play.services.auth)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.credentials)
-
-    // Opcional (Compose + Navigation)
     implementation(libs.androidx.hilt.navigation.compose)
 
     //Testing

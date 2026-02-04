@@ -33,10 +33,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.google.firebase.analytics)
     implementation(libs.google.firebase.config.ktx)
-// Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
-
     implementation(libs.moshi.kotlin)
     implementation(libs.okhttp)
     implementation(libs.firebase.auth)

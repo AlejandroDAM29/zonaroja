@@ -3,16 +3,9 @@ package alejandro.developer.zonaroja.ui.screens.login
 import alejandro.developer.data.providers.FeatureFlagsProvider
 import alejandro.developer.domain.auth.LoginWithEmailUseCase
 import alejandro.developer.domain.auth.LoginWithGoogleUseCase
-import alejandro.developer.domain.auth.RegisterWithEmailUseCase
-import alejandro.developer.domain.common.FeatureFlagsRepository
 import alejandro.developer.zonaroja.R
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.FirebaseNetworkException
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -88,7 +81,6 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onGoogleTokenReceived(idToken: String?) {
-        Log.i("test-100", "El token es: $idToken");
         if (idToken.isNullOrBlank()) {
             emitGoogleError()
             return

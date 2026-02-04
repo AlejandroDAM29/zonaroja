@@ -1,12 +1,8 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
 import alejandro.developer.zonaroja.R
-import alejandro.developer.zonaroja.ui.common.AppUiEvent
-import alejandro.developer.zonaroja.ui.common.AppViewModel
 import alejandro.developer.zonaroja.ui.common.BaseScreen
-import alejandro.developer.zonaroja.ui.common.snackbar.AppSnackbarModel
 import alejandro.developer.zonaroja.ui.common.snackbar.LocalSnackbarController
-import alejandro.developer.zonaroja.ui.common.snackbar.SnackbarType
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

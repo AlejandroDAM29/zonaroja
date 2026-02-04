@@ -2,9 +2,6 @@ package alejandro.developer.zonaroja.ui.screens.register
 
 import alejandro.developer.domain.auth.RegisterWithEmailUseCase
 import alejandro.developer.zonaroja.R
-import alejandro.developer.zonaroja.ui.screens.login.LoginUiEvent
-import android.util.Log
-import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.FirebaseNetworkException
@@ -31,10 +28,9 @@ class RegisterViewModel @Inject constructor(
     private val _uiEvents = MutableSharedFlow<RegisterUiEvent>()
     val uiEvents = _uiEvents.asSharedFlow()
 
-    fun onEmailChange(value: String) {
-        Log.i("test-100", "Entra con email $value");
+    fun onEmailChange(value: String) =
         _uiState.update { it.copy(email = value) }
-    }
+
 
     fun onPasswordChange(value: String) =
         _uiState.update { it.copy(password = value) }

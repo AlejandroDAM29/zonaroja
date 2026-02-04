@@ -1,6 +1,5 @@
 package alejandro.developer.zonaroja.ui.components
 
-import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import alejandro.developer.zonaroja.ui.theme.greaseTextFieldText
 import androidx.compose.foundation.background
@@ -9,17 +8,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Mail
-import androidx.compose.material.icons.filled.PanoramaFishEye
-import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -33,8 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -82,6 +77,14 @@ fun EmailTextField(
                 )
             }
         },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = if (isPassword)
+                KeyboardType.Password
+            else
+                KeyboardType.Email,
+            imeAction = ImeAction.Next,
+            autoCorrectEnabled = false
+        ),
         visualTransformation =
             if (isPassword && !passwordVisible)
                 PasswordVisualTransformation()
@@ -119,19 +122,16 @@ fun RedOutlinedTextField(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
-            // 👇 sombra = profundidad
             .shadow(
                 elevation = 6.dp,
                 shape = RoundedCornerShape(14.dp),
                 ambientColor = Color.Black.copy(alpha = 0.08f),
                 spotColor = Color.Black.copy(alpha = 0.12f)
             )
-            // 👇 fondo blanco tipo card
             .background(
                 color = Color.White,
                 shape = RoundedCornerShape(14.dp)
             )
-            // 👇 borde rojo MUY sutil
             .border(
                 width = 1.dp,
                 color = RedZoneColor.copy(alpha = 0.25f),
@@ -174,6 +174,14 @@ fun RedOutlinedTextField(
                     )
                 }
             },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = if (isPassword)
+                    KeyboardType.Password
+                else
+                    KeyboardType.Email,
+                imeAction = ImeAction.Next,
+                autoCorrectEnabled = false
+            ),
             visualTransformation =
                 if (isPassword && !passwordVisible)
                     PasswordVisualTransformation()

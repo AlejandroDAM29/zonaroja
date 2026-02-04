@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +28,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,9 +36,9 @@ import androidx.compose.ui.unit.sp
 fun LoginButton(
     enabled: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     @StringRes textButton: Int,
-    elevation: ButtonElevation = ButtonDefaults.buttonElevation(),
-    modifier: Modifier = Modifier
+    elevation: ButtonElevation = ButtonDefaults.buttonElevation()
 ) {
     Button(
         onClick = onClick,
@@ -115,7 +113,7 @@ fun LoginWithGoogleButton(
 }
 
 @Composable
-fun PrimaryRedButton(
+fun RegisterButton(
     enabled: Boolean,
     onClick: () -> Unit,
     @StringRes textButton: Int,
@@ -123,8 +121,8 @@ fun PrimaryRedButton(
 ) {
     val gradient = if (enabled) {
         listOf(
-            Color(0xFFE53935), // rojo claro arriba
-            Color(0xFFC62828)  // rojo oscuro abajo
+            Color(0xFFE53935),
+            Color(0xFFC62828)
         )
     } else {
         listOf(
@@ -137,19 +135,19 @@ fun PrimaryRedButton(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
-            // 👇 sombra = profundidad
+
             .shadow(
                 elevation = if (enabled) 12.dp else 0.dp,
                 shape = RoundedCornerShape(14.dp),
                 ambientColor = Color.Black.copy(alpha = 0.2f),
                 spotColor = Color.Black.copy(alpha = 0.3f)
             )
-            // 👇 degradado
+
             .background(
                 brush = Brush.verticalGradient(gradient),
                 shape = RoundedCornerShape(14.dp)
             )
-            // 👇 highlight superior
+
             .border(
                 width = 1.dp,
                 color = Color.White.copy(alpha = 0.25f),

@@ -12,7 +12,6 @@ import alejandro.developer.zonaroja.ui.components.RedCircularProgress
 import alejandro.developer.zonaroja.ui.components.ZonaRojaTitle
 import android.content.Context
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -125,7 +124,6 @@ fun ContentLoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // ───────── TOP ─────────
             Spacer(modifier = Modifier.height(24.dp))
 
             Image(
@@ -143,7 +141,6 @@ fun ContentLoginScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // ───────── FORMULARIO ─────────
             EmailTextField(
                 value = uiState.email,
                 textPlaceHolder = stringResource(R.string.mail_placeholder),
@@ -171,7 +168,7 @@ fun ContentLoginScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            // ───────── GOOGLE ─────────
+            //Google functions
             if (uiState.isGoogleLoginEnabled) {
 
                 LoginGoogle(
@@ -194,12 +191,12 @@ fun ContentLoginScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     LitleWhiteText(
-                        text = "¿Olvidaste tu contraseña?",
+                        text = stringResource(R.string.forgot_password),
                         onClick = {},
                         modifier = Modifier.weight(1f)
                     )
                     LitleWhiteText(
-                        text = "Crear cuenta",
+                        text = stringResource(R.string.create_account_login),
                         onClick = navigateToRegister
                     )
                 }
@@ -261,7 +258,7 @@ fun LoginGoogle(
                         viewModel.onGoogleTokenReceived(null)
                     }
 
-                } catch (e: GetCredentialException) {
+                } catch (_: GetCredentialException) {
                     viewModel.onGoogleTokenReceived(null)
                 }
             }

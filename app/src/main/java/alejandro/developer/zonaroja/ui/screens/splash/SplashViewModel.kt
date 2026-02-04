@@ -21,7 +21,7 @@ class SplashViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            featureFlagsProvider.get() // 👈 bloquea aquí
+            featureFlagsProvider.get()
         }
     }
 

@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -53,10 +54,10 @@ fun ContentSplashScreen(){
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Alejandro Studios",
+            text = stringResource(R.string.alejandro_studios),
             modifier = Modifier.fillMaxWidth(),
             color = Color(0xFFD32F2F),
-            fontFamily = FontFamily(Font(R.font.ochenta_db)),// rojo potente
+            fontFamily = FontFamily(Font(R.font.ochenta_db)),
             fontSize = 50.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = (-0.5).sp,

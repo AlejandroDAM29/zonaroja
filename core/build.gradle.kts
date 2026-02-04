@@ -25,8 +25,6 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.firebase.auth)
     implementation(platform(libs.firebase.bom))
-
-    // Necesario para await()
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.logging.interceptor)
     ksp(libs.hilt.compiler)

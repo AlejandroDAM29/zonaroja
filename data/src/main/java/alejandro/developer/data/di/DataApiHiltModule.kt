@@ -1,7 +1,6 @@
 package alejandro.developer.data.di
 
 import alejandro.developer.data.remote.apis.GetCiudadesApi
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
