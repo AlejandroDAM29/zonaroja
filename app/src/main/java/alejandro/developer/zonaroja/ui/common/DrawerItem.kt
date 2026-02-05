@@ -4,24 +4,26 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
 
-enum class DrawerItem(
-    val label: String,
+sealed interface DrawerItem {
+    val label: String
     val icon: ImageVector
-) {
-    MAIN(
-        label = "Zonas peligrosas",
-        icon = Icons.Default.Warning
-    ),
-    STATS(
-        label = "Estadísticas",
-        icon = Icons.Default.BarChart
-    ),
-    SETTINGS(
-        label = "Ajustes",
-        icon = Icons.Default.Settings
-    ),
-    LOGOUT(
-        label = "Cerrar sesión",
-        icon = Icons.Default.Logout
-    )
+
+    object Main : DrawerItem {
+        override val label = "Zonas peligrosas"
+        override val icon = Icons.Default.Warning
+    }
+
+    object Settings : DrawerItem {
+        override val label = "Ajustes"
+        override val icon = Icons.Default.Settings
+    }
+
+    object Logout : DrawerItem {
+        override val label = "Cerrar sesión"
+        override val icon = Icons.Default.Logout
+    }
+
+    companion object {
+        val items = listOf(Main, Settings, Logout)
+    }
 }

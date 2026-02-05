@@ -1,12 +1,9 @@
 package alejandro.developer.zonaroja.ui.common
 
 import SnackbarController
-import alejandro.developer.zonaroja.navigation.NavigationWapper
-import alejandro.developer.zonaroja.ui.common.globalApp.AppViewModel
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.common.globalApp.rememberAppController
 import alejandro.developer.zonaroja.ui.common.snackbar.AppSnackbarModel
-import alejandro.developer.zonaroja.ui.common.snackbar.LocalSnackbarController
 import alejandro.developer.zonaroja.ui.common.snackbar.SnackbarType
 import alejandro.developer.zonaroja.ui.components.AppDrawer
 import alejandro.developer.zonaroja.ui.components.AppTopBar
@@ -15,7 +12,11 @@ import alejandro.developer.zonaroja.ui.theme.SnackBarSuccessColor
 import alejandro.developer.zonaroja.ui.theme.SnackbarErrorColor
 import alejandro.developer.zonaroja.ui.theme.SnackbarWarningColor
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -33,52 +34,60 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 
 @Composable
 fun AppScaffold(
-    appViewModel: AppViewModel = hiltViewModel()
+    showTopBar: Boolean,
+    onDrawerItemSelected: (DrawerItem) -> Unit,
+    content: @Composable () -> Unit
 ) {
-    val uiState by appViewModel.uiState.collectAsStateWithLifecycle()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    //This will be te model that is captured in the snackbar UI event from screen
+    var currentSnackbar by remember { mutableStateOf<AppSnackbarModel?>(null) }
+    val snackbarController = remember {
+        SnackbarController(snackbarHostState)
+    }
+
+
+    LaunchedEffect(snackbarController) {
+        snackbarController.currentSnackbar = { snackbar ->
+            currentSnackbar = snackbar
+        }
+    }
+
+    val appUiController = rememberAppController(
+        snackbarController = snackbarController
+    )
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            AppDrawer(
-                onItemSelected = {
-                    scope.launch { drawerState.close() }
-                    // navegación aquí
-                }
-            )
-        }
+
+    CompositionLocalProvider(
+        LocalAppUiController provides appUiController
     ) {
-
-        val snackbarHostState = remember { SnackbarHostState() }
-        //This will be te model that is captured in the snackbar UI event from screen
-        var currentSnackbar by remember { mutableStateOf<AppSnackbarModel?>(null) }
-        val snackbarController = remember {
-            SnackbarController(snackbarHostState)
-        }
-
-        LaunchedEffect(snackbarController) {
-            snackbarController.currentSnackbar = { snackbar ->
-                currentSnackbar = snackbar
+        ModalNavigationDrawer(
+            modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
+            drawerState = drawerState,
+            drawerContent = {
+                AppDrawer(
+                    onItemSelected = {
+                        scope.launch { drawerState.close() }
+                        onDrawerItemSelected(it)
+                    }
+                )
             }
-        }
-
-        CompositionLocalProvider(
-            LocalSnackbarController provides snackbarController
         ) {
             Scaffold(
-                topBar =  {
-                    if (uiState.showTopBar) {
+                topBar = {
+                    if (showTopBar) {
                         AppTopBar(
-                            title = uiState.topBarTitle,
+                            title = "Zona Roja",
                             onMenuClick = {
                                 scope.launch { drawerState.open() }
                             }
@@ -106,14 +115,12 @@ fun AppScaffold(
                     }
                 }
             ) { padding ->
-                CompositionLocalProvider(
-                    LocalAppUiController provides rememberAppController(appViewModel)
-                ) {
-                    Box(Modifier.padding(padding)) {
-                        NavigationWapper()
-                    }
+                Box(Modifier.padding(padding)) {
+                    content()
                 }
             }
+
+
         }
     }
 }

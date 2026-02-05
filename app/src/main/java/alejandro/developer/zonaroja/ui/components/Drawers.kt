@@ -14,8 +14,6 @@ fun AppDrawer(
     onItemSelected: (DrawerItem) -> Unit
 ) {
     ModalDrawerSheet {
-
-        // 🔹 Header
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -27,7 +25,7 @@ fun AppDrawer(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Seguridad por zonas",
+                text = "Selecciona una categoría",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -35,8 +33,7 @@ fun AppDrawer(
 
         HorizontalDivider(color = RedZoneColor)
 
-        // 🔹 Items
-        DrawerItem.entries.forEach { item ->
+        DrawerItem.items.forEach { item ->
             NavigationDrawerItem(
                 label = { Text(item.label) },
                 icon = {
@@ -46,10 +43,7 @@ fun AppDrawer(
                     )
                 },
                 selected = item == selectedItem,
-                onClick = { onItemSelected(item) },
-                modifier = Modifier.padding(
-                    NavigationDrawerItemDefaults.ItemPadding
-                )
+                onClick = { onItemSelected(item) }
             )
         }
     }
