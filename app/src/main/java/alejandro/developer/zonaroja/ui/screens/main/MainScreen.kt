@@ -2,6 +2,8 @@ package alejandro.developer.zonaroja.ui.screens.main
 
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.BaseScreen
+import alejandro.developer.zonaroja.ui.common.globalApp.AppViewModel
+import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.common.snackbar.LocalSnackbarController
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -30,11 +32,16 @@ fun MainScreen(
     val snackbarController = LocalSnackbarController.current
     val currentContext by rememberUpdatedState(LocalContext.current)
 
+
+    val appController = LocalAppUiController.current
+
     LaunchedEffect(showSnackbarRegisterSuccess) {
         if (showSnackbarRegisterSuccess)
             snackbarController.showSuccess(currentContext.getString(R.string.register_success_snackbar)
             )
     }
+
+    appController.showTopBar("hola")
 
     LaunchedEffect(Unit) {
         viewModel.uiEvents.collect { event ->
@@ -58,7 +65,7 @@ fun MainScreen(
     }
 
     BaseScreen(
-        isLoading = uiState.isLoading,
+        isLoading = uiState.isLoading
     ) {
     ContentMainScreen(
         uiState = uiState,

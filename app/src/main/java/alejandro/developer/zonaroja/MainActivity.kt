@@ -2,7 +2,7 @@ package alejandro.developer.zonaroja
 
 
 import alejandro.developer.zonaroja.ui.common.AppScaffold
-import alejandro.developer.zonaroja.ui.common.AppViewModel
+import alejandro.developer.zonaroja.ui.common.globalApp.AppViewModel
 import alejandro.developer.zonaroja.ui.theme.ZonarojaTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -22,9 +22,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ZonarojaTheme {
-                AppScaffold(
-                    appUiEvents = appViewModel.uiEvents
-                )
+                AppScaffold()
             }
         }
     }
