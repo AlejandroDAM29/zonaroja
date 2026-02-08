@@ -1,6 +1,7 @@
 package alejandro.developer.zonaroja.navigation
 
-import alejandro.developer.zonaroja.ui.common.AppScaffold
+import alejandro.developer.zonaroja.navigation.NavigationChromePolicy.showTopBar
+import alejandro.developer.zonaroja.ui.common.globalApp.AppScaffold
 import alejandro.developer.zonaroja.ui.common.DrawerItem
 import alejandro.developer.zonaroja.ui.screens.login.LoginScreen
 import alejandro.developer.zonaroja.ui.screens.main.MainScreen
@@ -26,13 +27,8 @@ fun NavigationWrapper() {
 
     val currentScreen = backStackEntry?.currentScreenType()
 
-    val showTopBar = currentScreen !in setOf(
-        Splash::class,
-        Login::class
-    )
-
     AppScaffold(
-        showTopBar = showTopBar,
+        showTopBar = showTopBar(currentScreen),
         onDrawerItemSelected = { item ->
             when (item) {
                 DrawerItem.Main -> {

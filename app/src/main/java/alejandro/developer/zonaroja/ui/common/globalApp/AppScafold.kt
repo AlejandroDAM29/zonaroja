@@ -1,8 +1,7 @@
-package alejandro.developer.zonaroja.ui.common
+package alejandro.developer.zonaroja.ui.common.globalApp
 
 import SnackbarController
-import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
-import alejandro.developer.zonaroja.ui.common.globalApp.rememberAppController
+import alejandro.developer.zonaroja.ui.common.DrawerItem
 import alejandro.developer.zonaroja.ui.common.snackbar.AppSnackbarModel
 import alejandro.developer.zonaroja.ui.common.snackbar.SnackbarType
 import alejandro.developer.zonaroja.ui.components.AppDrawer
@@ -14,7 +13,6 @@ import alejandro.developer.zonaroja.ui.theme.SnackbarWarningColor
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.DrawerValue
@@ -34,9 +32,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 
 @Composable
@@ -72,7 +67,7 @@ fun AppScaffold(
         LocalAppUiController provides appUiController
     ) {
         ModalNavigationDrawer(
-            modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
+            modifier = Modifier.Companion.windowInsetsPadding(WindowInsets.Companion.statusBars),
             drawerState = drawerState,
             drawerContent = {
                 AppDrawer(
@@ -110,12 +105,12 @@ fun AppScaffold(
                         Snackbar(
                             snackbarData = data,
                             containerColor = backgroundColor,
-                            contentColor = Color.White
+                            contentColor = Color.Companion.White
                         )
                     }
                 }
             ) { padding ->
-                Box(Modifier.padding(padding)) {
+                Box(Modifier.Companion.padding(padding)) {
                     content()
                 }
             }
