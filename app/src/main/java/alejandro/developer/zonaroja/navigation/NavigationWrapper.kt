@@ -1,96 +1,133 @@
 package alejandro.developer.zonaroja.navigation
 
+import alejandro.developer.zonaroja.navigation.NavigationChromePolicy.showTopBar
+import alejandro.developer.zonaroja.ui.common.globalApp.AppScaffold
+import alejandro.developer.zonaroja.ui.common.DrawerItem
 import alejandro.developer.zonaroja.ui.screens.login.LoginScreen
 import alejandro.developer.zonaroja.ui.screens.main.MainScreen
 import alejandro.developer.zonaroja.ui.screens.register.RegisterScreen
+import alejandro.developer.zonaroja.ui.screens.setting.SettingScreen
 import alejandro.developer.zonaroja.ui.screens.splash.SplashScreen
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 
-
 @Composable
-fun NavigationWapper() {
+fun NavigationWrapper() {
     val navController = rememberNavController()
+    val backStackEntry by navController.currentBackStackEntryAsState()
 
-    NavHost(
-        navController = navController,
-        startDestination = Splash,
-        enterTransition = {
-            fadeIn(
-                animationSpec = tween(
-                    400, easing = LinearEasing
-                )
-            )
-        },
-        exitTransition = {
-            fadeOut(
-                animationSpec = tween(
-                    400, easing = LinearEasing
-                )
-            )
-        }
-    ) {
+    val currentScreen = backStackEntry?.currentScreenType()
 
-        composable<Splash> {
-            SplashScreen(
-                navigateToLogin = {
-                    navController.navigate(Login()) {
-                        popUpTo(Splash) { inclusive = true }
-                    }
-                },
-                navigateToMain = {
+    AppScaffold(
+        showTopBar = showTopBar(currentScreen),
+        onDrawerItemSelected = { item ->
+            when (item) {
+                DrawerItem.Main -> {
                     navController.navigate(Main()) {
-                        popUpTo(Splash) { inclusive = true }
+                        launchSingleTop = true
+                        popUpTo(Main()) { inclusive = true }
                     }
                 }
-            )
-        }
 
-        composable<Main> { navBackStackEntry ->
+                DrawerItem.Settings -> {
+                    navController.navigate(Setting)
+                }
 
-            val navBackStackEntryLogin: Main = navBackStackEntry.toRoute()
-
-            MainScreen(
-                onNavigateToLoginLogout = {
+                DrawerItem.Logout -> {
                     navController.navigate(Login(snackBarMessage = true)) {
                         popUpTo(Main()) { inclusive = true }
                     }
-                },
-                showSnackbarRegisterSuccess = navBackStackEntryLogin.showSnackbarRegisterSuccess
-            )
-        }
-
-        composable<Login>{ navBackStackEntry ->
-
-            val navBackStackEntryLogin: Login = navBackStackEntry.toRoute()
-
-            LoginScreen(
-                navigateToMain = {
-                    navController.navigate(Main()) {
-                        popUpTo(Login()) { inclusive = true }
-                    }
-                },
-                navigateToRegister = { navController.navigate(Register) },
-                successMessage = navBackStackEntryLogin.snackBarMessage,
-            )
-        }
-
-        composable<Register> {
-            RegisterScreen(
-                onBackToLogin = {
-                    navController.popBackStack()
-                },
-                onNavigateToMain = {
-                    navController.navigate(Main(showSnackbarRegisterSuccess = true))
                 }
-            )
+            }
+        }
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = Splash,
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        400, easing = LinearEasing
+                    )
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        400, easing = LinearEasing
+                    )
+                )
+            }
+        ) {
+
+            composable<Splash> {
+                SplashScreen(
+                    navigateToLogin = {
+                        navController.navigate(Login()) {
+                            popUpTo(Splash) { inclusive = true }
+                        }
+                    },
+                    navigateToMain = {
+                        navController.navigate(Main()) {
+                            popUpTo(Splash) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
+            composable<Main> { navBackStackEntry ->
+
+                val navBackStackEntryLogin: Main = navBackStackEntry.toRoute()
+
+                MainScreen(
+                    onNavigateToLoginLogout = {
+                        navController.navigate(Login(snackBarMessage = true)) {
+                            popUpTo(Main()) { inclusive = true }
+                        }
+                    },
+                    showSnackbarRegisterSuccess = navBackStackEntryLogin.showSnackbarRegisterSuccess
+                )
+            }
+
+            composable<Login>{ navBackStackEntry ->
+
+                val navBackStackEntryLogin: Login = navBackStackEntry.toRoute()
+
+                LoginScreen(
+                    navigateToMain = {
+                        navController.navigate(Main()) {
+                            popUpTo(Login()) { inclusive = true }
+                        }
+                    },
+                    navigateToRegister = { navController.navigate(Register) },
+                    successMessage = navBackStackEntryLogin.snackBarMessage,
+                )
+            }
+
+            composable<Register> {
+                RegisterScreen(
+                    onBackToLogin = {
+                        navController.popBackStack()
+                    },
+                    onNavigateToMain = {
+                        navController.navigate(Main(showSnackbarRegisterSuccess = true))
+                    }
+                )
+            }
+
+            composable<Setting> {
+                SettingScreen()
+            }
         }
     }
 }
+

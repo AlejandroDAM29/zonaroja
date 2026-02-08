@@ -12,19 +12,11 @@ fun BaseScreen(
     loadingContent: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            content()
+    Box {
+        content()
 
-            if (isLoading){
-                if (loadingContent != null) {
-                    loadingContent()
-                } else {
-                    RedCircularProgress()
-                }
-            }
+        if (isLoading) {
+            loadingContent?.invoke() ?: RedCircularProgress()
         }
-
+    }
 }

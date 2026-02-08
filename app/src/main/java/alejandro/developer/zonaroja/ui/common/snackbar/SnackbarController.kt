@@ -22,7 +22,7 @@ class SnackbarController(
         }
     }
 
-    suspend fun showError(message: String) {
+    suspend fun showSnackbarError(message: String) {
         show(
             AppSnackbarModel(
                 message = message,
@@ -31,7 +31,7 @@ class SnackbarController(
         )
     }
 
-    suspend fun showWarning(message: String) {
+    suspend fun showSnackbarWarning(message: String) {
         show(
             AppSnackbarModel(
                 message = message,
@@ -40,7 +40,7 @@ class SnackbarController(
         )
     }
 
-    suspend fun showErrorWithActionButton(
+    suspend fun showSnackbarErrorWithActionButton(
         message: String,
         actionLabel: String,
         onAction: () -> Unit = {}
@@ -55,7 +55,7 @@ class SnackbarController(
         )
     }
 
-    suspend fun showWarningWithButton(
+    suspend fun showSnackbarWarningWithActionButton(
         message: String,
         actionLabel: String,
         onAction: () -> Unit
@@ -70,7 +70,7 @@ class SnackbarController(
         )
     }
 
-    suspend fun showSuccess(
+    suspend fun showSnackbarSuccess(
         message: String
     ) {
         show(

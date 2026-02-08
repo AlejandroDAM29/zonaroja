@@ -2,7 +2,7 @@ package alejandro.developer.zonaroja.ui.screens.main
 
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.BaseScreen
-import alejandro.developer.zonaroja.ui.common.snackbar.LocalSnackbarController
+import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,12 +27,12 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val snackbarController = LocalSnackbarController.current
     val currentContext by rememberUpdatedState(LocalContext.current)
+    val appUiEvents = LocalAppUiController.current
 
     LaunchedEffect(showSnackbarRegisterSuccess) {
         if (showSnackbarRegisterSuccess)
-            snackbarController.showSuccess(currentContext.getString(R.string.register_success_snackbar)
+            appUiEvents.showSnackbarSuccess(currentContext.getString(R.string.register_success_snackbar)
             )
     }
 
@@ -40,10 +40,10 @@ fun MainScreen(
         viewModel.uiEvents.collect { event ->
             when (event) {
                 is MainUiEvent.ShowError -> {
-                    snackbarController.showWarning(event.message)
+                    appUiEvents.showSnackbarWarning(event.message)
                 }
                 is MainUiEvent.ShowWarning -> {
-                    snackbarController.showWarning(
+                    appUiEvents.showSnackbarWarning(
                         message = event.message
                     )
                 }
@@ -51,14 +51,14 @@ fun MainScreen(
                     onNavigateToLoginLogout()
                 }
                 is MainUiEvent.ShowLogoutError -> {
-                    snackbarController.showError(currentContext.getString(R.string.logout_snackbar_error))
+                    appUiEvents.showSnackbarError(currentContext.getString(R.string.logout_snackbar_error))
                 }
             }
         }
     }
 
     BaseScreen(
-        isLoading = uiState.isLoading,
+        isLoading = uiState.isLoading
     ) {
     ContentMainScreen(
         uiState = uiState,

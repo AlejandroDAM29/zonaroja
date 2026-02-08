@@ -2,7 +2,7 @@ package alejandro.developer.zonaroja.ui.screens.register
 
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.BaseScreen
-import alejandro.developer.zonaroja.ui.common.snackbar.LocalSnackbarController
+import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.components.ErrorEmailAndPasswordText
 import alejandro.developer.zonaroja.ui.components.RedOutlinedTextField
 import alejandro.developer.zonaroja.ui.components.RegisterButton
@@ -44,7 +44,7 @@ fun RegisterScreen(
     viewModel: RegisterViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val snackbarController = LocalSnackbarController.current
+    val appUiEvents = LocalAppUiController.current
     val currentContext by rememberUpdatedState(LocalContext.current)
 
     LaunchedEffect(Unit) {
@@ -53,7 +53,7 @@ fun RegisterScreen(
                 is RegisterUiEvent.BackToLogin -> onBackToLogin()
                 is RegisterUiEvent.NavigateToMain -> onNavigateToMain()
                 is RegisterUiEvent.ShowErrorRegister -> {
-                    snackbarController.showErrorWithActionButton(
+                    appUiEvents.showSnackbarErrorWithActionButton(
                         message = currentContext.getString(event.messageRes),
                         actionLabel = currentContext.getString(R.string.close_snackbar_button)
                     )

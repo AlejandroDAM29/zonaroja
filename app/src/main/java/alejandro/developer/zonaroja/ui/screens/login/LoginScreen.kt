@@ -2,13 +2,12 @@ package alejandro.developer.zonaroja.ui.screens.login
 
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.BaseScreen
-import alejandro.developer.zonaroja.ui.common.snackbar.LocalSnackbarController
+import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.components.EmailTextField
 import alejandro.developer.zonaroja.ui.components.LitleWhiteText
 import alejandro.developer.zonaroja.ui.components.LoginButton
 import alejandro.developer.zonaroja.ui.components.LoginWithGoogleButton
 import alejandro.developer.zonaroja.ui.components.OrDivider
-import alejandro.developer.zonaroja.ui.components.RedCircularProgress
 import alejandro.developer.zonaroja.ui.components.ZonaRojaTitle
 import android.content.Context
 import androidx.compose.foundation.Image
@@ -58,12 +57,12 @@ fun LoginScreen(
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val snackbarController = LocalSnackbarController.current
+    val appUiEvents = LocalAppUiController.current
     val currentContext by rememberUpdatedState(LocalContext.current)
 
     LaunchedEffect(successMessage) {
         if (successMessage)
-            snackbarController.showSuccess(currentContext.getString(R.string.logout_snackbar_success))
+            appUiEvents.showSnackbarSuccess(currentContext.getString(R.string.logout_snackbar_success))
     }
 
     LaunchedEffect(Unit) {
@@ -71,7 +70,7 @@ fun LoginScreen(
             when (event) {
                 is LoginUiEvent.NavigateToMain -> navigateToMain()
                 is LoginUiEvent.ShowErrorLogin -> {
-                    snackbarController.showErrorWithActionButton(
+                    appUiEvents.showSnackbarErrorWithActionButton(
                         event.message,
                         event.actionLabelText,
                         event.onAction
@@ -79,11 +78,11 @@ fun LoginScreen(
                 }
 
                 is LoginUiEvent.ShowErrorRegister -> {
-                    snackbarController.showError(currentContext.getString(event.messageRes))
+                    appUiEvents.showSnackbarError(currentContext.getString(event.messageRes))
                 }
 
                 is LoginUiEvent.ShowSuccessRegister -> {
-                    snackbarController.showSuccess(event.message)
+                    appUiEvents.showSnackbarSuccess(event.message)
                 }
             }
         }

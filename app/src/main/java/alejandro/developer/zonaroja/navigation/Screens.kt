@@ -13,3 +13,6 @@ data class Login(val snackBarMessage: Boolean = false)
 
 @Serializable
 object Register
+
+@Serializable
+object Setting
