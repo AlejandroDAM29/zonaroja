@@ -1,9 +1,11 @@
 package alejandro.developer.zonaroja.ui.common.globalApp
 
 import SnackbarController
-import alejandro.developer.zonaroja.ui.common.DrawerItem
+import alejandro.developer.zonaroja.ui.common.bottombar.BottomBarItem
+import alejandro.developer.zonaroja.ui.common.topbar.DrawerItem
 import alejandro.developer.zonaroja.ui.common.snackbar.AppSnackbarModel
 import alejandro.developer.zonaroja.ui.common.snackbar.SnackbarType
+import alejandro.developer.zonaroja.ui.components.AppBottomBar
 import alejandro.developer.zonaroja.ui.components.AppDrawer
 import alejandro.developer.zonaroja.ui.components.AppTopBar
 import alejandro.developer.zonaroja.ui.theme.SnackBarInfoColor
@@ -37,7 +39,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun AppScaffold(
     showTopBar: Boolean,
+    showBottomBar: Boolean,
+    selectedBottomItem: BottomBarItem?,
     onDrawerItemSelected: (DrawerItem) -> Unit,
+    onBottomItemSelected: (BottomBarItem) -> Unit,
     content: @Composable () -> Unit
 ) {
 
@@ -86,6 +91,14 @@ fun AppScaffold(
                             onMenuClick = {
                                 scope.launch { drawerState.open() }
                             }
+                        )
+                    }
+                },
+                bottomBar = {
+                    if (showBottomBar) {
+                        AppBottomBar(
+                            selectedItem = selectedBottomItem,
+                            onItemSelected = onBottomItemSelected
                         )
                     }
                 },

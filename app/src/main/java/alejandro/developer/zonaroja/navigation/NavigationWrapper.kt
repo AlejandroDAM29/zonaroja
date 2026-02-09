@@ -1,8 +1,10 @@
 package alejandro.developer.zonaroja.navigation
 
+import alejandro.developer.zonaroja.navigation.NavigationChromePolicy.showBottomBar
 import alejandro.developer.zonaroja.navigation.NavigationChromePolicy.showTopBar
+import alejandro.developer.zonaroja.ui.common.bottombar.BottomBarItem
 import alejandro.developer.zonaroja.ui.common.globalApp.AppScaffold
-import alejandro.developer.zonaroja.ui.common.DrawerItem
+import alejandro.developer.zonaroja.ui.common.topbar.DrawerItem
 import alejandro.developer.zonaroja.ui.screens.login.LoginScreen
 import alejandro.developer.zonaroja.ui.screens.main.MainScreen
 import alejandro.developer.zonaroja.ui.screens.register.RegisterScreen
@@ -27,8 +29,16 @@ fun NavigationWrapper() {
 
     val currentScreen = backStackEntry?.currentScreenType()
 
+    val selectedBottomItem = when (currentScreen) {
+        Main::class -> BottomBarItem.Home
+        Setting::class -> BottomBarItem.Settings
+        else -> null
+    }
+
     AppScaffold(
         showTopBar = showTopBar(currentScreen),
+        showBottomBar = showBottomBar(currentScreen),
+        selectedBottomItem = selectedBottomItem,
         onDrawerItemSelected = { item ->
             when (item) {
                 DrawerItem.Main -> {
@@ -46,6 +56,16 @@ fun NavigationWrapper() {
                     navController.navigate(Login(snackBarMessage = true)) {
                         popUpTo(Main()) { inclusive = true }
                     }
+                }
+            }
+        },
+        onBottomItemSelected =  { item ->
+            when (item) {
+                BottomBarItem.Home -> navController.navigate(Main()) {
+                    popUpTo(Main()) { inclusive = true }
+                }
+                BottomBarItem.Settings -> navController.navigate(Setting) {
+                    popUpTo(Setting) { inclusive = true }
                 }
             }
         }

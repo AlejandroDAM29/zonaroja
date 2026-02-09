@@ -1,7 +1,7 @@
 package alejandro.developer.zonaroja.ui.screens.login
 
 import alejandro.developer.zonaroja.R
-import alejandro.developer.zonaroja.ui.common.BaseScreen
+import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.components.EmailTextField
 import alejandro.developer.zonaroja.ui.components.LitleWhiteText
