@@ -1,9 +1,11 @@
 package alejandro.developer.zonaroja.ui.common.globalApp
 
 import SnackbarController
-import alejandro.developer.zonaroja.ui.common.DrawerItem
+import alejandro.developer.zonaroja.ui.common.bottombar.BottomBarItem
+import alejandro.developer.zonaroja.ui.common.topbar.DrawerItem
 import alejandro.developer.zonaroja.ui.common.snackbar.AppSnackbarModel
 import alejandro.developer.zonaroja.ui.common.snackbar.SnackbarType
+import alejandro.developer.zonaroja.ui.components.AppBottomBar
 import alejandro.developer.zonaroja.ui.components.AppDrawer
 import alejandro.developer.zonaroja.ui.components.AppTopBar
 import alejandro.developer.zonaroja.ui.theme.SnackBarInfoColor
@@ -37,35 +39,22 @@ import kotlinx.coroutines.launch
 @Composable
 fun AppScaffold(
     showTopBar: Boolean,
+    snackbarHostState: SnackbarHostState,
+    currentSnackbar: AppSnackbarModel?,
+    showBottomBar: Boolean,
+    selectedBottomItem: BottomBarItem?,
     onDrawerItemSelected: (DrawerItem) -> Unit,
+    onBottomItemSelected: (BottomBarItem) -> Unit,
     content: @Composable () -> Unit
 ) {
-
-    val snackbarHostState = remember { SnackbarHostState() }
-    //This will be te model that is captured in the snackbar UI event from screen
-    var currentSnackbar by remember { mutableStateOf<AppSnackbarModel?>(null) }
-    val snackbarController = remember {
-        SnackbarController(snackbarHostState)
-    }
-
-
-    LaunchedEffect(snackbarController) {
-        snackbarController.currentSnackbar = { snackbar ->
-            currentSnackbar = snackbar
-        }
-    }
-
-    val appUiController = rememberAppController(
-        snackbarController = snackbarController
-    )
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
 
-    CompositionLocalProvider(
+    /*CompositionLocalProvider(
         LocalAppUiController provides appUiController
-    ) {
+    ) {*/
         ModalNavigationDrawer(
             modifier = Modifier.Companion.windowInsetsPadding(WindowInsets.Companion.statusBars),
             drawerState = drawerState,
@@ -86,6 +75,14 @@ fun AppScaffold(
                             onMenuClick = {
                                 scope.launch { drawerState.open() }
                             }
+                        )
+                    }
+                },
+                bottomBar = {
+                    if (showBottomBar) {
+                        AppBottomBar(
+                            selectedItem = selectedBottomItem,
+                            onItemSelected = onBottomItemSelected
                         )
                     }
                 },
@@ -117,5 +114,5 @@ fun AppScaffold(
 
 
         }
-    }
+    /*}*/
 }

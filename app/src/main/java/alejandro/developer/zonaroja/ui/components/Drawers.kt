@@ -1,6 +1,6 @@
 package alejandro.developer.zonaroja.ui.components
 
-import alejandro.developer.zonaroja.ui.common.DrawerItem
+import alejandro.developer.zonaroja.ui.common.topbar.DrawerItem
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

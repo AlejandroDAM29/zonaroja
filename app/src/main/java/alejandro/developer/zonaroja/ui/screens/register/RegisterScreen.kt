@@ -1,7 +1,7 @@
 package alejandro.developer.zonaroja.ui.screens.register
 
 import alejandro.developer.zonaroja.R
-import alejandro.developer.zonaroja.ui.common.BaseScreen
+import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.components.ErrorEmailAndPasswordText
 import alejandro.developer.zonaroja.ui.components.RedOutlinedTextField

@@ -4,20 +4,16 @@ import kotlin.reflect.KClass
 
 object NavigationChromePolicy {
 
-    private val noTopBarScreens = setOf(
-        Splash::class,
-        Login::class
-    )
-
-    /*private val bottomBarScreens = setOf(
-        Main::class
-    )*/
-
     fun showTopBar(screen: KClass<*>?): Boolean {
-        return screen !in noTopBarScreens
+        return screen in setOf(
+            Main::class
+        )
     }
 
-    /*fun showBottomBar(screen: KClass<*>?): Boolean {
-        return screen in bottomBarScreens
-    }*/
+    fun showBottomBar(screen: KClass<*>?): Boolean {
+        return screen in setOf(
+            Main::class,
+            Setting::class
+        )
+    }
 }
