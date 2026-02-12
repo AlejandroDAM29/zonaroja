@@ -39,6 +39,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun AppScaffold(
     showTopBar: Boolean,
+    snackbarHostState: SnackbarHostState,
+    currentSnackbar: AppSnackbarModel?,
     showBottomBar: Boolean,
     selectedBottomItem: BottomBarItem?,
     onDrawerItemSelected: (DrawerItem) -> Unit,
@@ -46,31 +48,13 @@ fun AppScaffold(
     content: @Composable () -> Unit
 ) {
 
-    val snackbarHostState = remember { SnackbarHostState() }
-    //This will be te model that is captured in the snackbar UI event from screen
-    var currentSnackbar by remember { mutableStateOf<AppSnackbarModel?>(null) }
-    val snackbarController = remember {
-        SnackbarController(snackbarHostState)
-    }
-
-
-    LaunchedEffect(snackbarController) {
-        snackbarController.currentSnackbar = { snackbar ->
-            currentSnackbar = snackbar
-        }
-    }
-
-    val appUiController = rememberAppController(
-        snackbarController = snackbarController
-    )
-
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
 
-    CompositionLocalProvider(
+    /*CompositionLocalProvider(
         LocalAppUiController provides appUiController
-    ) {
+    ) {*/
         ModalNavigationDrawer(
             modifier = Modifier.Companion.windowInsetsPadding(WindowInsets.Companion.statusBars),
             drawerState = drawerState,
@@ -130,5 +114,5 @@ fun AppScaffold(
 
 
         }
-    }
+    /*}*/
 }
