@@ -23,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun MainScreen(
     onNavigateToLoginLogout: () -> Unit,
+    onNavigateToSettings: () -> Unit = {},
     showSnackbarRegisterSuccess: Boolean,
     viewModel: MainViewModel = hiltViewModel()
 ) {
@@ -48,7 +49,7 @@ fun MainScreen(
                     )
                 }
                 is MainUiEvent.ShowLogoutSuccessAndNavigateToLogin -> {
-                    onNavigateToLoginLogout()
+                    onNavigateToSettings()
                 }
                 is MainUiEvent.ShowLogoutError -> {
                     appUiEvents.showSnackbarError(currentContext.getString(R.string.logout_snackbar_error))

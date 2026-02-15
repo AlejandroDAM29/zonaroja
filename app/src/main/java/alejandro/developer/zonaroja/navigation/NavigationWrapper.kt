@@ -1,8 +1,6 @@
 package alejandro.developer.zonaroja.navigation
 
 import SnackbarController
-import alejandro.developer.zonaroja.navigation.NavigationChromePolicy.showBottomBar
-import alejandro.developer.zonaroja.navigation.NavigationChromePolicy.showTopBar
 import alejandro.developer.zonaroja.ui.common.bottombar.BottomBarItem
 import alejandro.developer.zonaroja.ui.common.globalApp.AppScaffold
 import alejandro.developer.zonaroja.ui.common.globalApp.AppUiEffectHandler
@@ -41,13 +39,6 @@ fun NavigationWrapper() {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val appViewmodel: AppViewModel = hiltViewModel()
     val currentScreen = backStackEntry?.currentScreenType()
-
-    val selectedBottomItem = when (currentScreen) {
-        Main::class -> BottomBarItem.Home
-        Setting::class -> BottomBarItem.Settings
-        else -> null
-    }
-
     val snackbarHostState = remember { SnackbarHostState() }
     var currentSnackbar by remember { mutableStateOf<AppSnackbarModel?>(null) }
 
@@ -68,33 +59,40 @@ fun NavigationWrapper() {
     CompositionLocalProvider(
         LocalAppUiController provides appUiController
     ) {
-    AppUiEffectHandler(
-        appViewModel = appViewmodel,
-        navigateToLoginLogout = {
-            navController.navigate(Login()) {
-                popUpTo(Main()) { inclusive = true }
+        AppUiEffectHandler(
+            appViewModel = appViewmodel,
+            navigateToLoginLogout = {
+                navController.navigate(Login()) {
+                    popUpTo(Main()) { inclusive = true }
+                }
             }
-        })
-
+        )
 
         AppScaffold(
-            showTopBar = showTopBar(currentScreen),
+            currentScreen = currentScreen,
             snackbarHostState = snackbarHostState,
             currentSnackbar = currentSnackbar,
-            showBottomBar = showBottomBar(currentScreen),
-            selectedBottomItem = selectedBottomItem,
             onDrawerItemSelected = { item ->
                 when (item) {
                     DrawerItem.Main -> {
                         navController.navigate(Main()) {
+                            popUpTo(Main()) {
+                                inclusive = false
+                            }
                             launchSingleTop = true
-                            popUpTo(Main()) { inclusive = true }
                         }
                     }
 
                     DrawerItem.Settings -> {
-                        navController.navigate(Setting)
+                        navController.navigate(Setting) {
+                            popUpTo(Main()) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
                     }
+
+
 
                     DrawerItem.Logout -> {
                         appViewmodel.onLogoutClicked()
@@ -153,7 +151,12 @@ fun NavigationWrapper() {
 
                     MainScreen(
                         onNavigateToLoginLogout = {
-                            navController.navigate(Login(snackBarMessage = true)) {
+                            navController.navigate(Login(snackBarMessage = true)){
+                                popUpTo(Main()) { inclusive = true }
+                            }
+                        },
+                        onNavigateToSettings ={
+                            navController.navigate(Setting) {
                                 popUpTo(Main()) { inclusive = true }
                             }
                         },

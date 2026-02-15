@@ -75,7 +75,7 @@ class MainViewModel @Inject constructor(
     fun onLogoutClicked() {
         viewModelScope.launch {
             try {
-                logoutUseCase()
+                /*logoutUseCase()*/
                 _uiEvents.emit(MainUiEvent.ShowLogoutSuccessAndNavigateToLogin)
 
             } catch (e: Exception) {
