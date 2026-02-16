@@ -36,5 +36,6 @@
     <string name="register_success_snackbar">Registro realizado con exito</string>
     <string name="email_format_invalid">El email no es válido</string>
     <string name="passwords_not_match">Las contraseñas no coinciden</string>
+    <string name="select_category">Selecciona una categoría</string>
 
 </resources>

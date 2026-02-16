@@ -1,21 +1,23 @@
 package alejandro.developer.zonaroja.navigation
 
 import SnackbarController
-import alejandro.developer.zonaroja.navigation.NavigationChromePolicy.showBottomBar
-import alejandro.developer.zonaroja.navigation.NavigationChromePolicy.showTopBar
+import alejandro.developer.zonaroja.navigation.graphs.AuthGraph
+import alejandro.developer.zonaroja.navigation.graphs.MainGraph
+import alejandro.developer.zonaroja.navigation.graphs.SplashGraph
+import alejandro.developer.zonaroja.navigation.graphs.authNavGraph
+import alejandro.developer.zonaroja.navigation.graphs.mainNavGraph
+import alejandro.developer.zonaroja.navigation.graphs.splashNavGraph
 import alejandro.developer.zonaroja.ui.common.bottombar.BottomBarItem
 import alejandro.developer.zonaroja.ui.common.globalApp.AppScaffold
 import alejandro.developer.zonaroja.ui.common.globalApp.AppUiEffectHandler
 import alejandro.developer.zonaroja.ui.common.globalApp.AppViewModel
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
+import alejandro.developer.zonaroja.ui.common.globalApp.activityHiltViewModel
 import alejandro.developer.zonaroja.ui.common.globalApp.rememberAppController
 import alejandro.developer.zonaroja.ui.common.snackbar.AppSnackbarModel
 import alejandro.developer.zonaroja.ui.common.topbar.DrawerItem
-import alejandro.developer.zonaroja.ui.screens.login.LoginScreen
-import alejandro.developer.zonaroja.ui.screens.main.MainScreen
-import alejandro.developer.zonaroja.ui.screens.register.RegisterScreen
-import alejandro.developer.zonaroja.ui.screens.setting.SettingScreen
-import alejandro.developer.zonaroja.ui.screens.splash.SplashScreen
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -28,26 +30,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 
 @Composable
 fun NavigationWrapper() {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val appViewmodel: AppViewModel = hiltViewModel()
+    val appViewmodel: AppViewModel = activityHiltViewModel()
     val currentScreen = backStackEntry?.currentScreenType()
-
-    val selectedBottomItem = when (currentScreen) {
-        Main::class -> BottomBarItem.Home
-        Setting::class -> BottomBarItem.Settings
-        else -> null
-    }
-
     val snackbarHostState = remember { SnackbarHostState() }
     var currentSnackbar by remember { mutableStateOf<AppSnackbarModel?>(null) }
 
@@ -68,32 +62,39 @@ fun NavigationWrapper() {
     CompositionLocalProvider(
         LocalAppUiController provides appUiController
     ) {
-    AppUiEffectHandler(
-        appViewModel = appViewmodel,
-        navigateToLoginLogout = {
-            navController.navigate(Login()) {
-                popUpTo(Main()) { inclusive = true }
+        AppUiEffectHandler(
+            appViewModel = appViewmodel,
+            navigateToLoginLogoutSuccess = {
+                navController.navigate(AuthGraph) {
+                    popUpTo(MainGraph) { inclusive = true }
+                }
             }
-        })
-
+        )
 
         AppScaffold(
-            showTopBar = showTopBar(currentScreen),
+            currentScreen = currentScreen,
             snackbarHostState = snackbarHostState,
             currentSnackbar = currentSnackbar,
-            showBottomBar = showBottomBar(currentScreen),
-            selectedBottomItem = selectedBottomItem,
             onDrawerItemSelected = { item ->
                 when (item) {
                     DrawerItem.Main -> {
-                        navController.navigate(Main()) {
+                        navController.navigate(Main) {
+                            popUpTo(MainGraph) {
+                                saveState = true
+                            }
                             launchSingleTop = true
-                            popUpTo(Main()) { inclusive = true }
+                            restoreState = true
                         }
                     }
 
                     DrawerItem.Settings -> {
-                        navController.navigate(Setting)
+                        navController.navigate(Setting) {
+                            popUpTo(MainGraph) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
 
                     DrawerItem.Logout -> {
@@ -103,19 +104,31 @@ fun NavigationWrapper() {
             },
             onBottomItemSelected = { item ->
                 when (item) {
-                    BottomBarItem.Home -> navController.navigate(Main()) {
-                        popUpTo(Main()) { inclusive = true }
+                    BottomBarItem.Home -> {
+                        navController.navigate(Main) {
+                            popUpTo(MainGraph) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
 
-                    BottomBarItem.Settings -> navController.navigate(Setting) {
-                        popUpTo(Setting) { inclusive = true }
+                    BottomBarItem.Settings -> {
+                        navController.navigate(Setting) {
+                            popUpTo(MainGraph) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
                 }
             }
         ) {
             NavHost(
                 navController = navController,
-                startDestination = Splash,
+                startDestination = SplashGraph,
                 enterTransition = {
                     fadeIn(
                         animationSpec = tween(
@@ -131,65 +144,9 @@ fun NavigationWrapper() {
                     )
                 }
             ) {
-
-                composable<Splash> {
-                    SplashScreen(
-                        navigateToLogin = {
-                            navController.navigate(Login()) {
-                                popUpTo(Splash) { inclusive = true }
-                            }
-                        },
-                        navigateToMain = {
-                            navController.navigate(Main()) {
-                                popUpTo(Splash) { inclusive = true }
-                            }
-                        }
-                    )
-                }
-
-                composable<Main> { navBackStackEntry ->
-
-                    val navBackStackEntryLogin: Main = navBackStackEntry.toRoute()
-
-                    MainScreen(
-                        onNavigateToLoginLogout = {
-                            navController.navigate(Login(snackBarMessage = true)) {
-                                popUpTo(Main()) { inclusive = true }
-                            }
-                        },
-                        showSnackbarRegisterSuccess = navBackStackEntryLogin.showSnackbarRegisterSuccess
-                    )
-                }
-
-                composable<Login> { navBackStackEntry ->
-
-                    val navBackStackEntryLogin: Login = navBackStackEntry.toRoute()
-
-                    LoginScreen(
-                        navigateToMain = {
-                            navController.navigate(Main()) {
-                                popUpTo(Login()) { inclusive = true }
-                            }
-                        },
-                        navigateToRegister = { navController.navigate(Register) },
-                        successMessage = navBackStackEntryLogin.snackBarMessage,
-                    )
-                }
-
-                composable<Register> {
-                    RegisterScreen(
-                        onBackToLogin = {
-                            navController.popBackStack()
-                        },
-                        onNavigateToMain = {
-                            navController.navigate(Main(showSnackbarRegisterSuccess = true))
-                        }
-                    )
-                }
-
-                composable<Setting> {
-                    SettingScreen()
-                }
+                splashNavGraph(navController)
+                authNavGraph(navController)
+                mainNavGraph(navController)
             }
         }
     }

@@ -1,17 +1,12 @@
 package alejandro.developer.zonaroja.ui.common.globalApp
 
-import alejandro.developer.zonaroja.navigation.Login
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocal
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavHostController
 
 @Composable
 fun AppUiEffectHandler(
     appViewModel: AppViewModel,
-    navigateToLoginLogout: () -> Unit
+    navigateToLoginLogoutSuccess: () -> Unit
 ) {
 
     val appUiController = LocalAppUiController.current
@@ -32,8 +27,9 @@ fun AppUiEffectHandler(
                 is AppUiEffect.ShowSnackbarWarning -> {
                     appUiController.showSnackbarWarning(effect.message)
                 }
-                AppUiEffect.NavigateToLoginLogout -> {
-                    navigateToLoginLogout()
+                is AppUiEffect.NavigateToLoginLogoutSuccess -> {
+                    navigateToLoginLogoutSuccess()
+                    appUiController.showSnackbarSuccess(effect.message)
                 }
             }
         }

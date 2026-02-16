@@ -51,7 +51,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     navigateToMain: () -> Unit,
-    successMessage: Boolean,
     viewModel: LoginViewModel = hiltViewModel(),
     navigateToRegister: () -> Unit
 ) {
@@ -60,11 +59,6 @@ fun LoginScreen(
     val appUiEvents = LocalAppUiController.current
     val currentContext by rememberUpdatedState(LocalContext.current)
 
-    LaunchedEffect(successMessage) {
-        if (successMessage)
-            appUiEvents.showSnackbarSuccess(currentContext.getString(R.string.logout_snackbar_success))
-    }
-
     LaunchedEffect(Unit) {
         viewModel.uiEvents.collect { event ->
             when (event) {
@@ -72,17 +66,12 @@ fun LoginScreen(
                 is LoginUiEvent.ShowErrorLogin -> {
                     appUiEvents.showSnackbarErrorWithActionButton(
                         event.message,
-                        event.actionLabelText,
-                        event.onAction
-                    )
+                        currentContext.getString(R.string.close_snackbar_button)
+                    ) { }
                 }
 
-                is LoginUiEvent.ShowErrorRegister -> {
+                is LoginUiEvent.ShowErrorGoogleRegister -> {
                     appUiEvents.showSnackbarError(currentContext.getString(event.messageRes))
-                }
-
-                is LoginUiEvent.ShowSuccessRegister -> {
-                    appUiEvents.showSnackbarSuccess(event.message)
                 }
             }
         }

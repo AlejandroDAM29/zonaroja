@@ -22,9 +22,9 @@ class AppViewModel @Inject constructor(
             try {
                 logoutUseCase()
 
-                _uiEffect.emit(AppUiEffect.NavigateToLoginLogout)
-                _uiEffect.emit(
-                    AppUiEffect.ShowSnackbarSuccess("Logout correcto")
+                _uiEffect.emit(AppUiEffect.NavigateToLoginLogoutSuccess(
+                    message = "Logout correcto"
+                )
                 )
 
             } catch (e: Exception) {

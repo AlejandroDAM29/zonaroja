@@ -9,7 +9,7 @@ object Splash
 data class Main(val showSnackbarRegisterSuccess: Boolean = false)
 
 @Serializable
-data class Login(val snackBarMessage: Boolean = false)
+object Login
 
 @Serializable
 object Register
