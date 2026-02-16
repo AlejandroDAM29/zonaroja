@@ -11,7 +11,7 @@ fun AppBottomBar(
     onItemSelected: (BottomBarItem) -> Unit
 ) {
     NavigationBar(
-        containerColor = Color(0xFF8E0000) // rojo oscuro similar a la imagen
+        containerColor = Color(0xFF8E0000)
     ) {
         BottomBarItem.items.forEach { item ->
             NavigationBarItem(

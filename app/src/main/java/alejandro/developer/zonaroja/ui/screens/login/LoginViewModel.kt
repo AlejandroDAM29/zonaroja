@@ -73,9 +73,8 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _uiEvents.emit(
                 LoginUiEvent.ShowErrorLogin(
-                    exception.message.toString(),
-                    "Cerrar",
-                    {})
+                    exception.message.toString()
+                )
             )
         }
     }
@@ -107,7 +106,7 @@ class LoginViewModel @Inject constructor(
     private fun emitGoogleError() {
         viewModelScope.launch {
             _uiEvents.emit(
-                LoginUiEvent.ShowErrorRegister(
+                LoginUiEvent.ShowErrorGoogleRegister(
                     R.string.error_auth_generic
                 )
             )

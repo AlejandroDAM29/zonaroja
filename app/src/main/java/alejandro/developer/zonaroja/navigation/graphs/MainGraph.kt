@@ -1,6 +1,5 @@
 package alejandro.developer.zonaroja.navigation.graphs
 
-import alejandro.developer.zonaroja.navigation.Login
 import alejandro.developer.zonaroja.navigation.Main
 import alejandro.developer.zonaroja.navigation.Setting
 import alejandro.developer.zonaroja.ui.screens.main.MainScreen

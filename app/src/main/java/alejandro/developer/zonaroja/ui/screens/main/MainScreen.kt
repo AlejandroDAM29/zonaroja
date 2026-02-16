@@ -25,8 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun MainScreen(
     showSnackbarRegisterSuccess: Boolean,
-    viewModel: MainViewModel = hiltViewModel(),
-
+    viewModel: MainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val currentContext by rememberUpdatedState(LocalContext.current)

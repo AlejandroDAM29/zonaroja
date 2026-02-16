@@ -39,12 +39,6 @@ class RegisterViewModel @Inject constructor(
     fun onConfirmPasswordChange(value: String) =
         _uiState.update { it.copy(confirmPassword = value) }
 
-
-    fun backToLogin() =
-        viewModelScope.launch {
-            _uiEvents.emit(RegisterUiEvent.BackToLogin)
-        }
-
     fun onRegisterClick() {
         viewModelScope.launch {
             _uiState.update {

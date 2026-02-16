@@ -95,7 +95,7 @@ fun LoginWithGoogleButton(
             Icon(
                 painter = painterResource(R.drawable.ic_google),
                 contentDescription = null,
-                tint = Color.Unspecified, // 🔑 NO tintar
+                tint = Color.Unspecified,
                 modifier = Modifier.size(24.dp)
             )
 

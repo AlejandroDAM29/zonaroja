@@ -78,7 +78,7 @@ fun NavigationWrapper() {
             onDrawerItemSelected = { item ->
                 when (item) {
                     DrawerItem.Main -> {
-                        navController.navigate(Main()) {
+                        navController.navigate(Main) {
                             popUpTo(MainGraph) {
                                 saveState = true
                             }
@@ -105,7 +105,7 @@ fun NavigationWrapper() {
             onBottomItemSelected = { item ->
                 when (item) {
                     BottomBarItem.Home -> {
-                        navController.navigate(Main()) {
+                        navController.navigate(Main) {
                             popUpTo(MainGraph) {
                                 saveState = true
                             }

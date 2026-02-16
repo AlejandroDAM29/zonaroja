@@ -1,7 +1,5 @@
 package alejandro.developer.zonaroja.ui.common.globalApp
 
-import alejandro.developer.zonaroja.ui.common.snackbar.AppSnackbarModel
-
 interface AppUiController {
     //Snackbar events
     suspend fun showSnackbarError(message: String)

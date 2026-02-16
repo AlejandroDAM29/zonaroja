@@ -1,5 +1,6 @@
 package alejandro.developer.zonaroja.ui.common.globalApp
 
+import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.navigation.NavigationChromePolicy.selectedBottomBarItem
 import alejandro.developer.zonaroja.navigation.NavigationChromePolicy.showBottomBar
 import alejandro.developer.zonaroja.navigation.NavigationChromePolicy.showTopBar
@@ -27,9 +28,13 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
 import kotlin.reflect.KClass
 
@@ -62,7 +67,7 @@ fun AppScaffold(
             topBar = {
                 if (showTopBar(currentScreen)) {
                     AppTopBar(
-                        title = "Zona Roja",
+                        title = stringResource(R.string.app_name),
                         onMenuClick = {
                             scope.launch { drawerState.open() }
                         }

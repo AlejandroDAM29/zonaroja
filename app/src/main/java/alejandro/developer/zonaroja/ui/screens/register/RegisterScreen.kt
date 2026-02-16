@@ -50,7 +50,6 @@ fun RegisterScreen(
     LaunchedEffect(Unit) {
         viewModel.uiEvents.collect { event ->
             when (event) {
-                is RegisterUiEvent.BackToLogin -> onBackToLogin()
                 is RegisterUiEvent.NavigateToMain -> onNavigateToMain()
                 is RegisterUiEvent.ShowErrorRegister -> {
                     appUiEvents.showSnackbarErrorWithActionButton(
@@ -158,7 +157,7 @@ fun RegisterScreen(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         textDecoration = TextDecoration.Underline,
-                        modifier = Modifier.clickable { viewModel.backToLogin() }
+                        modifier = Modifier.clickable { onBackToLogin() }
                     )
                 }
 
