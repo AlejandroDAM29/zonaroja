@@ -6,7 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 @Composable
 fun AppUiEffectHandler(
     appViewModel: AppViewModel,
-    navigateToLoginLogout: () -> Unit
+    navigateToLoginLogoutSuccess: () -> Unit
 ) {
 
     val appUiController = LocalAppUiController.current
@@ -27,8 +27,9 @@ fun AppUiEffectHandler(
                 is AppUiEffect.ShowSnackbarWarning -> {
                     appUiController.showSnackbarWarning(effect.message)
                 }
-                AppUiEffect.NavigateToLoginLogout -> {
-                    navigateToLoginLogout()
+                is AppUiEffect.NavigateToLoginLogoutSuccess -> {
+                    navigateToLoginLogoutSuccess()
+                    appUiController.showSnackbarSuccess(effect.message)
                 }
             }
         }

@@ -1,8 +1,10 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
 import alejandro.developer.zonaroja.R
+import alejandro.developer.zonaroja.ui.common.globalApp.AppViewModel
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
+import alejandro.developer.zonaroja.ui.common.globalApp.activityHiltViewModel
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,14 +24,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun MainScreen(
-    onNavigateToLoginLogout: () -> Unit,
-    onNavigateToSettings: () -> Unit = {},
     showSnackbarRegisterSuccess: Boolean,
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
+
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val currentContext by rememberUpdatedState(LocalContext.current)
     val appUiEvents = LocalAppUiController.current
+    val appViewModel: AppViewModel = activityHiltViewModel()
 
     LaunchedEffect(showSnackbarRegisterSuccess) {
         if (showSnackbarRegisterSuccess)
@@ -48,12 +50,6 @@ fun MainScreen(
                         message = event.message
                     )
                 }
-                is MainUiEvent.ShowLogoutSuccessAndNavigateToLogin -> {
-                    onNavigateToSettings()
-                }
-                is MainUiEvent.ShowLogoutError -> {
-                    appUiEvents.showSnackbarError(currentContext.getString(R.string.logout_snackbar_error))
-                }
             }
         }
     }
@@ -63,7 +59,8 @@ fun MainScreen(
     ) {
     ContentMainScreen(
         uiState = uiState,
-        viewModel = viewModel
+        viewModel = viewModel,
+        appViewModel = appViewModel
     )
 
     }
@@ -74,7 +71,8 @@ fun MainScreen(
 @Composable
 fun ContentMainScreen(
     uiState: MainUiState,
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    appViewModel: AppViewModel
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -88,7 +86,7 @@ fun ContentMainScreen(
 
         Spacer(Modifier.height(16.dp))
 
-        Button(onClick = viewModel::onLogoutClicked) {
+        Button(onClick = appViewModel::onLogoutClicked) {
             Text("Ir a Login")
         }
 

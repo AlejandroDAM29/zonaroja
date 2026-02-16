@@ -23,17 +23,6 @@ fun NavGraphBuilder.mainNavGraph(
 
             MainScreen(
                 showSnackbarRegisterSuccess = args.showSnackbarRegisterSuccess,
-
-                // 🔹 Logout → salir del MainGraph
-                onNavigateToLoginLogout = {
-                    navController.navigate(AuthGraph) {
-                        popUpTo(MainGraph) { inclusive = true }
-                    }
-                },
-
-                onNavigateToSettings = {
-                    navController.navigate(Setting)
-                }
             )
         }
 

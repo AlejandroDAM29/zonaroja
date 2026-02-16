@@ -52,36 +52,4 @@ class MainViewModel @Inject constructor(
         )
     }
 
-    fun onLoginClicked() {
-        viewModelScope.launch {
-            loadTexts()
-            /*_uiEvents.emit(
-                MainUiEvent.ShowWarning(
-                    message = "Error al cargar los datos"
-                )
-            )*/
-        }
-
-
-        /*emitEvent(MainUiEvent.NavigateToLogin)*/
-    }
-
-    private fun emitEvent(event: MainUiEvent) {
-        viewModelScope.launch {
-            _uiEvents.emit(event)
-        }
-    }
-
-    fun onLogoutClicked() {
-        viewModelScope.launch {
-            try {
-                /*logoutUseCase()*/
-                _uiEvents.emit(MainUiEvent.ShowLogoutSuccessAndNavigateToLogin)
-
-            } catch (e: Exception) {
-                Log.e("MainViewModel", "Error during logout", e)
-            }
-        }
-    }
-
 }

@@ -1,6 +1,7 @@
 package alejandro.developer.zonaroja.navigation
 
 import SnackbarController
+import alejandro.developer.zonaroja.navigation.graphs.AuthGraph
 import alejandro.developer.zonaroja.navigation.graphs.MainGraph
 import alejandro.developer.zonaroja.navigation.graphs.SplashGraph
 import alejandro.developer.zonaroja.navigation.graphs.authNavGraph
@@ -11,9 +12,12 @@ import alejandro.developer.zonaroja.ui.common.globalApp.AppScaffold
 import alejandro.developer.zonaroja.ui.common.globalApp.AppUiEffectHandler
 import alejandro.developer.zonaroja.ui.common.globalApp.AppViewModel
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
+import alejandro.developer.zonaroja.ui.common.globalApp.activityHiltViewModel
 import alejandro.developer.zonaroja.ui.common.globalApp.rememberAppController
 import alejandro.developer.zonaroja.ui.common.snackbar.AppSnackbarModel
 import alejandro.developer.zonaroja.ui.common.topbar.DrawerItem
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -26,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -35,7 +40,7 @@ import androidx.navigation.compose.rememberNavController
 fun NavigationWrapper() {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val appViewmodel: AppViewModel = hiltViewModel()
+    val appViewmodel: AppViewModel = activityHiltViewModel()
     val currentScreen = backStackEntry?.currentScreenType()
     val snackbarHostState = remember { SnackbarHostState() }
     var currentSnackbar by remember { mutableStateOf<AppSnackbarModel?>(null) }
@@ -59,9 +64,9 @@ fun NavigationWrapper() {
     ) {
         AppUiEffectHandler(
             appViewModel = appViewmodel,
-            navigateToLoginLogout = {
-                navController.navigate(Login()) {
-                    popUpTo(Main()) { inclusive = true }
+            navigateToLoginLogoutSuccess = {
+                navController.navigate(AuthGraph) {
+                    popUpTo(MainGraph) { inclusive = true }
                 }
             }
         )
@@ -99,12 +104,24 @@ fun NavigationWrapper() {
             },
             onBottomItemSelected = { item ->
                 when (item) {
-                    BottomBarItem.Home -> navController.navigate(Main()) {
-                        popUpTo(Main()) { inclusive = true }
+                    BottomBarItem.Home -> {
+                        navController.navigate(Main()) {
+                            popUpTo(MainGraph) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
 
-                    BottomBarItem.Settings -> navController.navigate(Setting) {
-                        popUpTo(Setting) { inclusive = true }
+                    BottomBarItem.Settings -> {
+                        navController.navigate(Setting) {
+                            popUpTo(MainGraph) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
                 }
             }

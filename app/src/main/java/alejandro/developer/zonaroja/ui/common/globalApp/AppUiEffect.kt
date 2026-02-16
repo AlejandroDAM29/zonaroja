@@ -6,5 +6,5 @@ sealed interface AppUiEffect {
     data class ShowSnackbarWarning(val message: String) : AppUiEffect
 
     // Navigation
-    data object NavigateToLoginLogout : AppUiEffect
+    data class NavigateToLoginLogoutSuccess(val message: String) : AppUiEffect
 }
