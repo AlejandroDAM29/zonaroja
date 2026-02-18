@@ -36,10 +36,19 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
             val credential = GoogleAuthProvider.getCredential(idToken, null)
             firebaseAuth.signInWithCredential(credential)
                 .addOnFailureListener { e ->
-                    Log.e("Google error:",  e.message.toString())
+                    Log.e("Google error:", e.message.toString())
                 }
                 .await()
         }
+
+    override suspend fun sendPasswordResetEmail(
+        email: String
+    ): Result<Unit> = runCatching {
+        firebaseAuth
+            .sendPasswordResetEmail(email)
+            .await()
+    }
+
 
     override fun isUserLoggedIn(): Boolean {
         return firebaseAuth.currentUser != null

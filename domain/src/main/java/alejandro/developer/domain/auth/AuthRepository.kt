@@ -15,6 +15,9 @@ interface AuthRepository {
         idToken: String
     ): Result<Unit>
 
+    suspend fun sendPasswordResetEmail(
+        email: String
+    ): Result<Unit>
 
     fun isUserLoggedIn(): Boolean
 

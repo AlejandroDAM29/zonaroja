@@ -52,7 +52,8 @@ import kotlinx.coroutines.launch
 fun LoginScreen(
     navigateToMain: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
-    navigateToRegister: () -> Unit
+    navigateToRegister: () -> Unit,
+    navigateToForgotPassword: () -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -84,7 +85,8 @@ fun LoginScreen(
             uiState = uiState,
             viewModel = viewModel,
             currentContext = currentContext,
-            navigateToRegister = navigateToRegister
+            navigateToRegister = navigateToRegister,
+            navigateToForgotPassword = navigateToForgotPassword
         )
     }
 }
@@ -94,7 +96,8 @@ fun ContentLoginScreen(
     uiState: LoginUiState,
     viewModel: LoginViewModel,
     currentContext: Context,
-    navigateToRegister: () -> Unit
+    navigateToRegister: () -> Unit,
+    navigateToForgotPassword: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -163,34 +166,33 @@ fun ContentLoginScreen(
                     viewModel = viewModel,
                     currentContext = currentContext
                 )
-
-                Spacer(Modifier.height(12.dp))
-
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = Color.White.copy(alpha = 0.4f),
-                    thickness = 1.dp
-                )
-
-                Spacer(Modifier.height(8.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    LitleWhiteText(
-                        text = stringResource(R.string.forgot_password),
-                        onClick = {},
-                        modifier = Modifier.weight(1f)
-                    )
-                    LitleWhiteText(
-                        text = stringResource(R.string.create_account_login),
-                        onClick = navigateToRegister
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
             }
+            Spacer(Modifier.height(12.dp))
+
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                color = Color.White.copy(alpha = 0.4f),
+                thickness = 1.dp
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                LitleWhiteText(
+                    text = stringResource(R.string.forgot_password),
+                    onClick = {navigateToForgotPassword()},
+                    modifier = Modifier.weight(1f)
+                )
+                LitleWhiteText(
+                    text = stringResource(R.string.create_account_login),
+                    onClick = navigateToRegister
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
 

@@ -16,3 +16,6 @@ object Register
 
 @Serializable
 object Setting
+
+@Serializable
+object ForgotPassword

@@ -1,15 +1,16 @@
 package alejandro.developer.zonaroja.navigation.graphs
 
+import alejandro.developer.zonaroja.navigation.ForgotPassword
 import alejandro.developer.zonaroja.navigation.Login
 import alejandro.developer.zonaroja.navigation.Main
 import alejandro.developer.zonaroja.navigation.Register
+import alejandro.developer.zonaroja.ui.screens.forgotpassword.ForgotPasswordScreen
 import alejandro.developer.zonaroja.ui.screens.login.LoginScreen
 import alejandro.developer.zonaroja.ui.screens.register.RegisterScreen
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import androidx.navigation.toRoute
 
 fun NavGraphBuilder.authNavGraph(
     navController: NavController
@@ -24,7 +25,8 @@ fun NavGraphBuilder.authNavGraph(
                         popUpTo(AuthGraph) { inclusive = true }
                     }
                 },
-                navigateToRegister = { navController.navigate(Register) }
+                navigateToRegister = { navController.navigate(Register) },
+                navigateToForgotPassword = { navController.navigate(ForgotPassword) }
             )
         }
 
@@ -43,5 +45,15 @@ fun NavGraphBuilder.authNavGraph(
                 }
             )
         }
+
+        composable<ForgotPassword> {
+
+            ForgotPasswordScreen(
+                onBackToLogin = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 package alejandro.developer.zonaroja.ui.components
 
+import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,7 +43,7 @@ fun ErrorEmailAndPasswordText(
 ) {
     Text(
         text = stringResource(text),
-        color = Color.Red,
+        color = RedZoneColor,
         fontSize = 12.sp,
         textAlign = TextAlign.Start,
         modifier = modifier.fillMaxWidth().padding(horizontal = 8.dp)
