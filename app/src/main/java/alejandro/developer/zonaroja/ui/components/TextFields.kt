@@ -1,7 +1,7 @@
 package alejandro.developer.zonaroja.ui.components
 
+import alejandro.developer.zonaroja.ui.theme.GreaseTextFieldText
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
-import alejandro.developer.zonaroja.ui.theme.greaseTextFieldText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -148,7 +148,7 @@ fun RedOutlinedTextField(
             placeholder = {
                 Text(
                     text = textPlaceHolder,
-                    color = greaseTextFieldText.copy(alpha = 0.6f),
+                    color = GreaseTextFieldText.copy(alpha = 0.6f),
                     fontSize = 15.sp
                 )
             },
@@ -188,7 +188,7 @@ fun RedOutlinedTextField(
                 else
                     VisualTransformation.None,
             textStyle = TextStyle(
-                color = greaseTextFieldText,
+                color = GreaseTextFieldText,
                 fontSize = 16.sp
             ),
             colors = TextFieldDefaults.colors(

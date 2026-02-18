@@ -38,4 +38,12 @@
     <string name="passwords_not_match">Las contraseñas no coinciden</string>
     <string name="select_category">Selecciona una categoría</string>
 
+    <!--Forgot password-->
+    <string name="forgot_password_title">OLVIDASTE TU CONTRASEÑA</string>
+    <string name="email_forgot_password">Correo electrónico</string>
+    <string name="resend_password_success_message">¡Mensaje enviado! Si el email está registrado, recibirás un correo para restablecer tu contraseña. Revisa la carpeta de spam</string>
+    <string name="resend_email_error_message">Error al enviar email</string>
+    <string name="resend_email_description">Ingresa tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.</string>
+    <string name="remember_password">¿Recordaste tu contraseña?</string>
+    <string name="comeback_login_from_resend_password">Volver al inicio de sesión</string>
 </resources>

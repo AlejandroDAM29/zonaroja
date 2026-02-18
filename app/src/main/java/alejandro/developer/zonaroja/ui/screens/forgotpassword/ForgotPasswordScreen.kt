@@ -1,4 +1,5 @@
-package alejandro.developer.zonaroja.ui.screens.register
+package alejandro.developer.zonaroja.ui.screens.forgotpassword
+
 
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
@@ -6,11 +7,12 @@ import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.components.ErrorEmailAndPasswordText
 import alejandro.developer.zonaroja.ui.components.RedOutlinedTextField
 import alejandro.developer.zonaroja.ui.components.RegisterButton
+import alejandro.developer.zonaroja.ui.theme.GraseDescriptionsText
+import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +22,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,10 +41,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
-fun RegisterScreen(
+fun ForgotPasswordScreen(
     onBackToLogin: () -> Unit,
-    onNavigateToMain: () -> Unit,
-    viewModel: RegisterViewModel = hiltViewModel()
+   viewModel: ForgotPasswordViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val appUiEvents = LocalAppUiController.current
@@ -52,17 +52,30 @@ fun RegisterScreen(
     LaunchedEffect(Unit) {
         viewModel.uiEvents.collect { event ->
             when (event) {
-                is RegisterUiEvent.NavigateToMain -> onNavigateToMain()
-                is RegisterUiEvent.ShowErrorRegister -> {
-                    appUiEvents.showSnackbarErrorWithActionButton(
-                        message = currentContext.getString(event.messageRes),
-                        actionLabel = currentContext.getString(R.string.close_snackbar_button)
-                    )
+                is ForgotPasswordUiEvent.ShowSuccessResendPassword ->
+                    appUiEvents.showSnackbarSuccess(currentContext.getString(R.string.resend_password_success_message))
+
+                is ForgotPasswordUiEvent.ShowErrorResendPassword -> {
+                    appUiEvents.showSnackbarSuccess(currentContext.getString(R.string.resend_email_error_message))
                 }
             }
         }
     }
 
+    ContentForgotPasswordScreen(
+        onBackToLogin = onBackToLogin,
+        uiState = uiState,
+        viewModel = viewModel
+        )
+}
+
+
+@Composable
+fun ContentForgotPasswordScreen(
+    onBackToLogin: () -> Unit,
+    uiState: ForgotPasswordUiState,
+    viewModel: ForgotPasswordViewModel
+) {
     BaseScreen(uiState.isLoading) {
         Box(
             modifier = Modifier
@@ -80,13 +93,13 @@ fun RegisterScreen(
                 Spacer(Modifier.height(56.dp))
 
                 Text(
-                    text = stringResource(R.string.create_new_account),
+                    text = stringResource(R.string.forgot_password_title),
                     color = Color(0xFFD32F2F),
-                    fontSize = 28.sp,
+                    fontSize = 30.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    lineHeight = 79.sp,
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    lineHeight = 34.sp
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -102,11 +115,20 @@ fun RegisterScreen(
 
                 Spacer(Modifier.height(32.dp))
 
+                Text(
+                    text = stringResource(R.string.resend_email_description),
+                    color = GraseDescriptionsText,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(Modifier.height(24.dp))
+
                 RedOutlinedTextField(
                     value = uiState.email,
-                    textPlaceHolder = stringResource(R.string.email_register),
+                    textPlaceHolder = stringResource(R.string.email_forgot_password),
                     leadingIcon = Icons.Default.Email,
-                    onValueChange = viewModel::onEmailChange,
+                    onValueChange = viewModel::onEmailChange
                 )
 
                 if (uiState.showEmailErrorFormat) {
@@ -114,62 +136,35 @@ fun RegisterScreen(
                     ErrorEmailAndPasswordText(R.string.email_format_invalid)
                 }
 
-                Spacer(Modifier.height(16.dp))
-
-                RedOutlinedTextField(
-                    value = uiState.password,
-                    textPlaceHolder = stringResource(R.string.password_register),
-                    leadingIcon = Icons.Default.Lock,
-                    onValueChange = viewModel::onPasswordChange,
-                    isPassword = true
-                )
-
-                if (uiState.showPasswordsDoNotMatchMessageText) {
-                    Spacer(Modifier.height(4.dp))
-                    ErrorEmailAndPasswordText(R.string.passwords_not_match)
-                }
-
-                Spacer(Modifier.height(16.dp))
-
-                RedOutlinedTextField(
-                    value = uiState.confirmPassword,
-                    textPlaceHolder = stringResource(R.string.confirm_password_register),
-                    leadingIcon = Icons.Default.Lock,
-                    onValueChange = viewModel::onConfirmPasswordChange,
-                    isPassword = true
-                )
-
-                Spacer(Modifier.height(32.dp))
+                Spacer(Modifier.height(24.dp))
 
                 RegisterButton(
-                    enabled = uiState.canRegister,
-                    onClick = viewModel::onRegisterClick,
+                    enabled = uiState.canSubmit,
+                    onClick = { viewModel.sendPasswordResetEmail(uiState.email) },
                     textButton = R.string.register_new_user_button
                 )
 
                 Spacer(Modifier.weight(1f))
 
-                Row {
-                    Text(
-                        text = stringResource(R.string.have_account),
-                        color = Color.Gray,
-                        fontSize = 14.sp
-                    )
-                    Spacer(Modifier.width(6.dp))
-                    Text(
-                        text = stringResource(R.string.init_session_text_bottom),
-                        color = Color(0xFFD32F2F),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        textDecoration = TextDecoration.Underline,
-                        modifier = Modifier.clickable { onBackToLogin() }
-                    )
-                }
+
+                Text(
+                    text = stringResource(R.string.remember_password),
+                    color = GraseDescriptionsText,
+                    fontSize = 14.sp
+                )
+                Spacer(Modifier.width(6.dp))
+                Text(
+                    text = stringResource(R.string.comeback_login_from_resend_password),
+                    color = RedZoneColor,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier.clickable { onBackToLogin() }
+                )
+
 
                 Spacer(Modifier.height(24.dp))
             }
         }
     }
-
-
 }

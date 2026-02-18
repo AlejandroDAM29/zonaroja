@@ -23,7 +23,7 @@ class LoginViewModel @Inject constructor(
     private val featureFlagsProvider: FeatureFlagsProvider
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(LoginUiState(isLoading = false))
+    private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
     private val _uiEvents = MutableSharedFlow<LoginUiEvent>()
@@ -64,6 +64,9 @@ class LoginViewModel @Inject constructor(
                     onLoginSessionError(exception)
                 }
             )
+
+            _uiState.update { it.copy(email = "") }
+            _uiState.update { it.copy(password = "") }
 
             _uiState.update { it.copy(isLoading = false) }
         }
