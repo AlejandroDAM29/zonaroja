@@ -1,5 +1,6 @@
 package alejandro.developer.data.di
 
+import alejandro.developer.data.remote.apis.DangerZoneApi
 import alejandro.developer.data.remote.apis.GetCiudadesApi
 import dagger.Module
 import dagger.Provides
@@ -15,4 +16,10 @@ object DataApiHiltModule {
         retrofit: Retrofit
     ): GetCiudadesApi =
         retrofit.create(GetCiudadesApi::class.java)
+
+    @Provides
+    fun provideGetDangerZoneApi(
+        retrofit: Retrofit
+    ): DangerZoneApi =
+        retrofit.create(DangerZoneApi::class.java)
 }

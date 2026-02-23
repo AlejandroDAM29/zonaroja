@@ -16,8 +16,6 @@ import alejandro.developer.zonaroja.ui.common.globalApp.activityHiltViewModel
 import alejandro.developer.zonaroja.ui.common.globalApp.rememberAppController
 import alejandro.developer.zonaroja.ui.common.snackbar.AppSnackbarModel
 import alejandro.developer.zonaroja.ui.common.topbar.DrawerItem
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -30,8 +28,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
