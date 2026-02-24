@@ -5,6 +5,7 @@ import alejandro.developer.zonaroja.ui.common.globalApp.AppViewModel
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.common.globalApp.activityHiltViewModel
+import alejandro.developer.zonaroja.ui.components.DangerMapContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -76,7 +77,16 @@ fun ContentMainScreen(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
+        DangerMapContent(
+            zones = uiState.dangerZonesPoints,
+            onBoundsChanged = viewModel::onBoundsChanged
+        )
+    }
+}
+
+
+
+/*Text(
             text = uiState.currentText,
             modifier = Modifier.clickable {
                 viewModel.onTextClicked()
@@ -87,7 +97,4 @@ fun ContentMainScreen(
 
         Button(onClick = appViewModel::onLogoutClicked) {
             Text("Ir a Login")
-        }
-
-    }
-}
+        }*/

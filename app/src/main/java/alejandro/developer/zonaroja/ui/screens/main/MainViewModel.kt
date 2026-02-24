@@ -1,18 +1,22 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
 import alejandro.developer.domain.auth.LogoutUseCase
-import alejandro.developer.domain.main.DangerZone
 import alejandro.developer.domain.main.GetCiudadesUseCase
 import alejandro.developer.domain.main.GetDangerZonesUseCase
+import alejandro.developer.domain.main.MapBounds
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -28,49 +32,48 @@ class MainViewModel @Inject constructor(
     private val _uiEvents = MutableSharedFlow<MainUiEvent>()
     val uiEvents = _uiEvents.asSharedFlow()
 
+    private val boundsFlow = MutableSharedFlow<MapBounds>(
+        extraBufferCapacity = 1
+    )
+
     private var texts: List<String> = emptyList()
-    private var dangerZoneList: List<DangerZone> = emptyList()
-    private var index = 0
 
     init {
-        /*loadTexts()*/
-        loadDangerZones()
+        observeBounds()
+    }
+
+    @OptIn(FlowPreview::class)
+    private fun observeBounds() {
+        viewModelScope.launch {
+            boundsFlow
+                .debounce(500)
+                .distinctUntilChanged()
+                .collectLatest { bounds ->
+
+                    _uiState.value = _uiState.value.copy(isLoading = true)
+
+                    val dangerPoints = getDangerZonesUseCase(bounds)
+
+                    _uiState.value = _uiState.value.copy(
+                        dangerZonesPoints = dangerPoints,
+                        isLoading = false
+                    )
+                }
+        }
+    }
+
+    fun onBoundsChanged(bounds: MapBounds) {
+        boundsFlow.tryEmit(bounds)
     }
 
     private fun loadTexts() {
         viewModelScope.launch {
             texts = getCiudadesUseCase()
-            _uiState.value = MainUiState(
+            _uiState.value = _uiState.value.copy(
                 currentText = texts.firstOrNull().orEmpty(),
                 isLoading = false
             )
         }
-    }
-
-    fun loadDangerZones(){
-        viewModelScope.launch {
-            dangerZoneList = getDangerZonesUseCase()
-            _uiState.value = MainUiState(
-                currentText = dangerZoneList.firstOrNull()?.points[0]?.lat.toString() ?: "de",
-                isLoading = false
-            )
-        }
-    }
-
-    fun onTextClicked() {
-        /*if (texts.isEmpty()) return
-        index = (index + 1) % texts.size
-
-        _uiState.value = _uiState.value.copy(
-            currentText = texts[index]
-        )*/
-
-        if (dangerZoneList.isEmpty()) return
-        index = (index + 1) % dangerZoneList.size
-
-        _uiState.value = _uiState.value.copy(
-            currentText = dangerZoneList[index].zoneName
-        )
     }
 
 }
