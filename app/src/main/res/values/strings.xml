@@ -46,4 +46,9 @@
     <string name="resend_email_description">Ingresa tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.</string>
     <string name="remember_password">¿Recordaste tu contraseña?</string>
     <string name="comeback_login_from_resend_password">Volver al inicio de sesión</string>
+
+    <!--Main-->
+    <string name="high_danger_map_legend">Alta peligrosidad</string>
+    <string name="medium_danger_map_legend">Media peligrosidad</string>
+    <string name="low_danger_map_legend">Baja peligrosidad</string>
 </resources>

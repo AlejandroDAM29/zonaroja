@@ -19,3 +19,5 @@ val GraseDescriptionsText = Color(0xFF706F6F)
 val GreenClearMap = Color(0x5500FF00)
 val YellowClearMap = Color(0x55FFA500)
 val RedClearMap = Color(0x55FF0000)
+val White = Color.White
+val Black = Color.Black

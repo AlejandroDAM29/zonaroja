@@ -36,7 +36,7 @@ class MainViewModel @Inject constructor(
         extraBufferCapacity = 1
     )
 
-    private var texts: List<String> = emptyList()
+    /*private var texts: List<String> = emptyList()*/
 
     init {
         observeBounds()
@@ -66,7 +66,7 @@ class MainViewModel @Inject constructor(
         boundsFlow.tryEmit(bounds)
     }
 
-    private fun loadTexts() {
+    /*private fun loadTexts() {
         viewModelScope.launch {
             texts = getCiudadesUseCase()
             _uiState.value = _uiState.value.copy(
@@ -74,6 +74,6 @@ class MainViewModel @Inject constructor(
                 isLoading = false
             )
         }
-    }
+    }*/
 
 }

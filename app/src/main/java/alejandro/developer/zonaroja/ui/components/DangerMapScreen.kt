@@ -1,15 +1,23 @@
 package alejandro.developer.zonaroja.ui.components
 
+import alejandro.developer.core.CONSTANTS.LATITUDE_INITIAL_POSITION_MAP
+import alejandro.developer.core.CONSTANTS.LONGITUDE_INITIAL_POSITION_MAP
 import alejandro.developer.domain.main.DangerZone
 import alejandro.developer.domain.main.MapBounds
 import alejandro.developer.domain.main.RiskLevel
+import alejandro.developer.zonaroja.ui.theme.Black
 import alejandro.developer.zonaroja.ui.theme.GreenClearMap
 import alejandro.developer.zonaroja.ui.theme.RedClearMap
 import alejandro.developer.zonaroja.ui.theme.YellowClearMap
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,19 +35,17 @@ fun DangerMapContent(
     modifier: Modifier = Modifier
 ) {
 
-    val sevilla = LatLng(37.3891, -5.9845)
+    val inititalPositionMap = LatLng(LATITUDE_INITIAL_POSITION_MAP, LONGITUDE_INITIAL_POSITION_MAP)
     val cameraPositionState = rememberCameraPositionState()
 
     var hasLoadedInitialBounds by remember { mutableStateOf(false) }
 
-    // 1️⃣ Centrar mapa en Sevilla al iniciar
     LaunchedEffect(Unit) {
         cameraPositionState.move(
-            CameraUpdateFactory.newLatLngZoom(sevilla, 12f)
+            CameraUpdateFactory.newLatLngZoom(inititalPositionMap, 12f)
         )
     }
 
-    // 2️⃣ Primera carga automática
     LaunchedEffect(cameraPositionState.position) {
         if (!hasLoadedInitialBounds) {
 
@@ -61,7 +67,7 @@ fun DangerMapContent(
         }
     }
 
-    // 3️⃣ Recargar cuando el usuario deja de mover el mapa
+
     LaunchedEffect(cameraPositionState.isMoving) {
         if (!cameraPositionState.isMoving && hasLoadedInitialBounds) {
 
@@ -93,7 +99,7 @@ fun DangerMapContent(
                 Polygon(
                     points = zone.points.map { LatLng(it.lat, it.lng) },
                     fillColor = zone.riskLevel.toColor(),
-                    strokeColor = Color.Black,
+                    strokeColor = Black,
                     strokeWidth = 2f
                 )
             }
@@ -104,48 +110,6 @@ fun DangerMapContent(
                 .align(Alignment.BottomStart)
                 .padding(16.dp)
         )
-    }
-}
-
-@Composable
-fun LegendCard(modifier: Modifier = Modifier) {
-
-    Card(
-        modifier = modifier,
-        colors = CardColors(
-            containerColor = Color.White,
-            contentColor = Color.Black,
-            disabledContainerColor = Color.White,
-            disabledContentColor = Color.Black
-        ),
-        elevation = CardDefaults.cardElevation(8.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(12.dp)
-        ) {
-            LegendItem("Alta peligrosidad", RiskLevel.HIGH)
-            LegendItem("Media peligrosidad", RiskLevel.MEDIUM)
-            LegendItem("Baja peligrosidad", RiskLevel.LOW)
-        }
-    }
-}
-
-@Composable
-fun LegendItem(
-    text: String,
-    level: RiskLevel
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 4.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(16.dp)
-                .background(level.toColor())
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text)
     }
 }
 
