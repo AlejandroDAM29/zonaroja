@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
@@ -53,7 +54,6 @@ fun AppScaffold(
     val scope = rememberCoroutineScope()
 
     ModalNavigationDrawer(
-        modifier = Modifier.Companion.windowInsetsPadding(WindowInsets.Companion.statusBars),
         drawerState = drawerState,
         gesturesEnabled = currentScreen != Main::class,
         drawerContent = {
@@ -63,9 +63,11 @@ fun AppScaffold(
                     onDrawerItemSelected(it)
                 }
             )
-        }
+        },
+        modifier = Modifier.Companion.windowInsetsPadding(WindowInsets.Companion.systemBars)
     ) {
         Scaffold(
+            modifier = Modifier.Companion.windowInsetsPadding(WindowInsets.Companion.systemBars),
             topBar = {
                 if (showTopBar(currentScreen)) {
                     AppTopBar(

@@ -6,9 +6,13 @@ import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.common.globalApp.activityHiltViewModel
 import alejandro.developer.zonaroja.ui.components.DangerMapContent
+import alejandro.developer.zonaroja.ui.theme.RedClearMap
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -79,8 +83,10 @@ fun ContentMainScreen(
     ) {
         DangerMapContent(
             zones = uiState.dangerZonesPoints,
-            onBoundsChanged = viewModel::onBoundsChanged
+            onBoundsChanged = viewModel::onBoundsChanged,
+            modifier = Modifier.weight(1.5f)
         )
+        Box(Modifier.weight(0.5f).fillMaxWidth().background(RedClearMap))
     }
 }
 

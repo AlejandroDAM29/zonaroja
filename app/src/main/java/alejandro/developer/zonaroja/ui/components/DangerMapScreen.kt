@@ -6,18 +6,15 @@ import alejandro.developer.domain.main.RiskLevel
 import alejandro.developer.zonaroja.ui.theme.GreenClearMap
 import alejandro.developer.zonaroja.ui.theme.RedClearMap
 import alejandro.developer.zonaroja.ui.theme.YellowClearMap
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Polygon
@@ -26,20 +23,66 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @Composable
 fun DangerMapContent(
     zones: List<DangerZone>,
-    onBoundsChanged: (MapBounds) -> Unit
+    onBoundsChanged: (MapBounds) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     val sevilla = LatLng(37.3891, -5.9845)
-
     val cameraPositionState = rememberCameraPositionState()
 
+    var hasLoadedInitialBounds by remember { mutableStateOf(false) }
+
+    // 1️⃣ Centrar mapa en Sevilla al iniciar
     LaunchedEffect(Unit) {
         cameraPositionState.move(
             CameraUpdateFactory.newLatLngZoom(sevilla, 12f)
         )
     }
 
-    Box(Modifier.fillMaxSize()) {
+    // 2️⃣ Primera carga automática
+    LaunchedEffect(cameraPositionState.position) {
+        if (!hasLoadedInitialBounds) {
+
+            val bounds = cameraPositionState.projection
+                ?.visibleRegion
+                ?.latLngBounds
+
+            bounds?.let {
+                onBoundsChanged(
+                    MapBounds(
+                        minLat = it.southwest.latitude,
+                        maxLat = it.northeast.latitude,
+                        minLng = it.southwest.longitude,
+                        maxLng = it.northeast.longitude
+                    )
+                )
+                hasLoadedInitialBounds = true
+            }
+        }
+    }
+
+    // 3️⃣ Recargar cuando el usuario deja de mover el mapa
+    LaunchedEffect(cameraPositionState.isMoving) {
+        if (!cameraPositionState.isMoving && hasLoadedInitialBounds) {
+
+            val bounds = cameraPositionState.projection
+                ?.visibleRegion
+                ?.latLngBounds
+
+            bounds?.let {
+                onBoundsChanged(
+                    MapBounds(
+                        minLat = it.southwest.latitude,
+                        maxLat = it.northeast.latitude,
+                        minLng = it.southwest.longitude,
+                        maxLng = it.northeast.longitude
+                    )
+                )
+            }
+        }
+    }
+
+    Box(modifier) {
 
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
@@ -56,35 +99,56 @@ fun DangerMapContent(
             }
         }
 
-        /*if (loading) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(16.dp)
-            )
-        }*/
+        LegendCard(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(16.dp)
+        )
     }
+}
 
-    LaunchedEffect(cameraPositionState.isMoving) {
-        if (!cameraPositionState.isMoving) {
+@Composable
+fun LegendCard(modifier: Modifier = Modifier) {
 
-            val bounds = cameraPositionState.projection
-                ?.visibleRegion
-                ?.latLngBounds
-
-            bounds?.let {
-                onBoundsChanged(
-                    MapBounds(
-                        it.southwest.latitude,
-                        it.northeast.latitude,
-                        it.southwest.longitude,
-                        it.northeast.longitude
-                    )
-                )
-            }
+    Card(
+        modifier = modifier,
+        colors = CardColors(
+            containerColor = Color.White,
+            contentColor = Color.Black,
+            disabledContainerColor = Color.White,
+            disabledContentColor = Color.Black
+        ),
+        elevation = CardDefaults.cardElevation(8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp)
+        ) {
+            LegendItem("Alta peligrosidad", RiskLevel.HIGH)
+            LegendItem("Media peligrosidad", RiskLevel.MEDIUM)
+            LegendItem("Baja peligrosidad", RiskLevel.LOW)
         }
     }
 }
+
+@Composable
+fun LegendItem(
+    text: String,
+    level: RiskLevel
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = 4.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(16.dp)
+                .background(level.toColor())
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text)
+    }
+}
+
 
 fun RiskLevel.toColor(): Color {
     return when(this) {
