@@ -3,9 +3,11 @@ package alejandro.developer.zonaroja.ui.screens.main
 import alejandro.developer.domain.auth.LogoutUseCase
 import alejandro.developer.domain.main.GetCiudadesUseCase
 import alejandro.developer.domain.main.GetDangerZonesUseCase
+import alejandro.developer.domain.main.LocationSearchRepository
 import alejandro.developer.domain.main.MapBounds
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.FlowPreview
@@ -17,13 +19,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getCiudadesUseCase: GetCiudadesUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val getDangerZonesUseCase: GetDangerZonesUseCase
+    private val getDangerZonesUseCase: GetDangerZonesUseCase,
+    private val locationSearchRepository: LocationSearchRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState(isLoading = false))
@@ -40,6 +44,51 @@ class MainViewModel @Inject constructor(
 
     init {
         observeBounds()
+    }
+
+    fun onSearchQueryChanged(query: String) {
+        _uiState.update {
+            it.copy(searchQuery = query)
+        }
+    }
+
+    fun clearSearchedLocation() {
+        _uiState.update {
+            it.copy(searchedLocation = null, searchQuery = "")
+        }
+    }
+
+    fun searchCity() {
+        val query = _uiState.value.searchQuery
+
+        if (query.isBlank()) return
+
+        viewModelScope.launch {
+
+            _uiState.update { it.copy(isLoading = true) }
+
+            val result = locationSearchRepository.searchCity(query)
+
+            result?.let { (lat, lng) ->
+                _uiState.update {
+                    it.copy(
+                        searchedLocation = LatLng(lat, lng),
+                        isLoading = false
+                    )
+                }
+            } ?: run {
+                _uiState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    fun toggleSearch() {
+        _uiState.update {
+            it.copy(
+                isSearchExpanded = !it.isSearchExpanded,
+                searchQuery = if (it.isSearchExpanded) "" else it.searchQuery
+            )
+        }
     }
 
     @OptIn(FlowPreview::class)

@@ -76,11 +76,18 @@ fun ContentMainScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         DangerMapContent(
+            isSearcherNameSpacerExpanded = uiState.isSearchExpanded,
             zones = uiState.dangerZonesPoints,
+            searchQuery = uiState.searchQuery,
+            searchedLocation = uiState.searchedLocation,
             onBoundsChanged = viewModel::onBoundsChanged,
-            modifier = Modifier.weight(1.5f)
+            onSearchQueryChanged = viewModel::onSearchQueryChanged,
+            onSearchTriggered = viewModel::searchCity,
+            onSearchConsumed = viewModel::clearSearchedLocation,
+            onExpandHideClick = viewModel::toggleSearch,
+            /*modifier = Modifier.weight(1.5f)*/
         )
-        Box(Modifier.weight(0.5f).fillMaxWidth().background(RedClearMap))
+        /*Box(Modifier.weight(0.5f).fillMaxWidth().background(RedClearMap))*/
     }
 }
 
