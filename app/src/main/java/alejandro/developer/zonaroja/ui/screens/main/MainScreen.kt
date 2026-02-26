@@ -5,12 +5,12 @@ import alejandro.developer.zonaroja.ui.common.globalApp.AppViewModel
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.common.globalApp.activityHiltViewModel
-import androidx.compose.foundation.clickable
+import alejandro.developer.zonaroja.ui.components.DangerMapContent
+import alejandro.developer.zonaroja.ui.theme.RedClearMap
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,7 +18,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
@@ -76,7 +75,25 @@ fun ContentMainScreen(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
+        DangerMapContent(
+            isSearcherNameSpacerExpanded = uiState.isSearchExpanded,
+            zones = uiState.dangerZonesPoints,
+            searchQuery = uiState.searchQuery,
+            searchedLocation = uiState.searchedLocation,
+            onBoundsChanged = viewModel::onBoundsChanged,
+            onSearchQueryChanged = viewModel::onSearchQueryChanged,
+            onSearchTriggered = viewModel::searchCity,
+            onSearchConsumed = viewModel::clearSearchedLocation,
+            onExpandHideClick = viewModel::toggleSearch,
+            /*modifier = Modifier.weight(1.5f)*/
+        )
+        /*Box(Modifier.weight(0.5f).fillMaxWidth().background(RedClearMap))*/
+    }
+}
+
+
+
+/*Text(
             text = uiState.currentText,
             modifier = Modifier.clickable {
                 viewModel.onTextClicked()
@@ -87,7 +104,4 @@ fun ContentMainScreen(
 
         Button(onClick = appViewModel::onLogoutClicked) {
             Text("Ir a Login")
-        }
-
-    }
-}
+        }*/

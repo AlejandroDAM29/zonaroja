@@ -8,6 +8,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,6 +34,7 @@ object DataNetworkModule {
             .addInterceptor(authRetryInterceptor)
             .build()
 
+
     @Provides
     @Singleton
     fun provideRetrofit(
@@ -40,7 +43,9 @@ object DataNetworkModule {
         Retrofit.Builder()
             .baseUrl("https://alejandroexpdeveloper.com/zona_roja_app_api/")
             .client(okHttpClient)
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder()
+                .add(KotlinJsonAdapterFactory())
+                .build()))
             .build()
 
     @Provides

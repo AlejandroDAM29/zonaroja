@@ -70,6 +70,10 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.hilt.navigation.compose)
+    //Maps
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
+    implementation(libs.moshi.kotlin.v1150)
 
     //Testing
     testImplementation(libs.junit)
