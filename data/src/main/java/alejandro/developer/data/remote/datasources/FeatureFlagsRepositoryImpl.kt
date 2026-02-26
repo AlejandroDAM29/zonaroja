@@ -1,18 +1,18 @@
 package alejandro.developer.data.remote.datasources
 
 import alejandro.developer.data.remote.general.RemoteConfigKeys
-import alejandro.developer.domain.common.FeatureFlags
-import alejandro.developer.domain.common.FeatureFlagsRepository
+import alejandro.developer.domain.models.FeatureFlagsModel
+import alejandro.developer.domain.repositories.FeatureFlagsRepository
 import javax.inject.Inject
 
 class FeatureFlagsRepositoryImpl @Inject constructor(
     private val remoteConfigFirebaseFlagsDataSource: RemoteConfigFirebaseFlagsDataSource
 ) : FeatureFlagsRepository {
 
-    override suspend fun getFeatureFlags(): FeatureFlags {
+    override suspend fun getFeatureFlags(): FeatureFlagsModel {
         remoteConfigFirebaseFlagsDataSource.fetchAndActivate()
 
-        return FeatureFlags(
+        return FeatureFlagsModel(
             googleLoginEnabled = remoteConfigFirebaseFlagsDataSource.getBoolean(
                 RemoteConfigKeys.GOOGLE_LOGIN_ENABLED
             )

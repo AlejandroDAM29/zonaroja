@@ -1,6 +1,6 @@
-package alejandro.developer.data.repositories
+package alejandro.developer.data.repositoriesimpl
 
-import alejandro.developer.domain.auth.AuthRepository
+import alejandro.developer.domain.repositories.AuthRepository
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider

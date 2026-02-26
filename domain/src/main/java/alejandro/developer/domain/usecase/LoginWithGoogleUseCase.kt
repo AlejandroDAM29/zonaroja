@@ -1,5 +1,6 @@
-package alejandro.developer.domain.auth
+package alejandro.developer.domain.usecase
 
+import alejandro.developer.domain.repositories.AuthRepository
 import javax.inject.Inject
 
 class LoginWithGoogleUseCase @Inject constructor(

@@ -1,6 +1,6 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
-import alejandro.developer.domain.main.DangerZone
+import alejandro.developer.domain.models.DangerZone
 import com.google.android.gms.maps.model.LatLng
 
 data class MainUiState(

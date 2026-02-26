@@ -1,4 +1,4 @@
-package alejandro.developer.domain.auth
+package alejandro.developer.domain.repositories
 
 interface AuthRepository {
     suspend fun loginWithEmail(

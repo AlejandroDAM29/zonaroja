@@ -1,6 +1,6 @@
 package alejandro.developer.zonaroja.ui.components
 
-import alejandro.developer.domain.main.RiskLevel
+import alejandro.developer.domain.models.RiskLevel
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.theme.Black
 import alejandro.developer.zonaroja.ui.theme.White

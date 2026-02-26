@@ -1,6 +1,6 @@
 package alejandro.developer.zonaroja.ui.common.globalApp
 
-import alejandro.developer.domain.auth.LogoutUseCase
+import alejandro.developer.domain.usecase.LogoutUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel

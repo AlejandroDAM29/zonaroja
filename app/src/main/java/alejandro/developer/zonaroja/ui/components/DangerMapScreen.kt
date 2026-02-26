@@ -2,9 +2,9 @@ package alejandro.developer.zonaroja.ui.components
 
 import alejandro.developer.core.CONSTANTS.LATITUDE_INITIAL_POSITION_MAP
 import alejandro.developer.core.CONSTANTS.LONGITUDE_INITIAL_POSITION_MAP
-import alejandro.developer.domain.main.DangerZone
-import alejandro.developer.domain.main.MapBounds
-import alejandro.developer.domain.main.RiskLevel
+import alejandro.developer.domain.models.DangerZone
+import alejandro.developer.domain.models.MapBounds
+import alejandro.developer.domain.models.RiskLevel
 import alejandro.developer.zonaroja.ui.theme.Black
 import alejandro.developer.zonaroja.ui.theme.GreenClearMap
 import alejandro.developer.zonaroja.ui.theme.RedClearMap
@@ -15,11 +15,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -36,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.CameraUpdateFactory

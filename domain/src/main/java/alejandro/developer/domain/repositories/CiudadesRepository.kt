@@ -1,4 +1,4 @@
-package alejandro.developer.domain.main
+package alejandro.developer.domain.repositories
 
 interface CiudadesRepository {
    suspend fun getCiudades(): List<String>
