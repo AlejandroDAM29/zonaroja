@@ -2,6 +2,7 @@ package alejandro.developer.zonaroja.ui.common.globalApp
 
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.navigation.Main
+import alejandro.developer.zonaroja.navigation.NavigationChromePolicy.isDrawerGestureEnabled
 import alejandro.developer.zonaroja.navigation.NavigationChromePolicy.selectedBottomBarItem
 import alejandro.developer.zonaroja.navigation.NavigationChromePolicy.showBottomBar
 import alejandro.developer.zonaroja.navigation.NavigationChromePolicy.showTopBar
@@ -55,7 +56,7 @@ fun AppScaffold(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = currentScreen != Main::class,
+        gesturesEnabled = isDrawerGestureEnabled(currentScreen),
         drawerContent = {
             AppDrawer(
                 onItemSelected = {

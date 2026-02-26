@@ -26,4 +26,9 @@ object NavigationChromePolicy {
             else -> null
         }
 
+    fun isDrawerGestureEnabled(screen: KClass<*>?) =
+        screen !in setOf(
+            Main::class
+        )
+
 }
