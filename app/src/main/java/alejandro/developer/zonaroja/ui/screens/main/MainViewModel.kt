@@ -1,5 +1,6 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
+import alejandro.developer.domain.models.DangerZone
 import alejandro.developer.domain.usecase.LogoutUseCase
 import alejandro.developer.domain.usecase.GetCiudadesUseCase
 import alejandro.developer.domain.usecase.GetDangerZonesUseCase
@@ -44,6 +45,24 @@ class MainViewModel @Inject constructor(
 
     init {
         observeBounds()
+    }
+
+    fun openPanel(zone: DangerZone) {
+        _uiState.update {
+            it.copy(
+                isPanelOpen = true,
+                selectedZone = zone
+            )
+        }
+    }
+
+    fun closePanel(){
+        _uiState.update {
+            it.copy(
+                isPanelOpen = false,
+                selectedZone = null
+            )
+        }
     }
 
     fun onSearchQueryChanged(query: String) {
@@ -114,15 +133,5 @@ class MainViewModel @Inject constructor(
     fun onBoundsChanged(bounds: MapBounds) {
         boundsFlow.tryEmit(bounds)
     }
-
-    /*private fun loadTexts() {
-        viewModelScope.launch {
-            texts = getCiudadesUseCase()
-            _uiState.value = _uiState.value.copy(
-                currentText = texts.firstOrNull().orEmpty(),
-                isLoading = false
-            )
-        }
-    }*/
 
 }

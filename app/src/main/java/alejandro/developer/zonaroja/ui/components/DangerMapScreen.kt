@@ -53,7 +53,8 @@ fun DangerMapContent(
     onSearchQueryChanged: (String) -> Unit,
     onSearchTriggered: () -> Unit,
     onSearchConsumed: () -> Unit,
-    onExpandHideClick: () -> Unit
+    onExpandHideClick: () -> Unit,
+    onOpenPanel: (DangerZone) -> Unit
 ) {
 
     val inititalPositionMap = LatLng(LATITUDE_INITIAL_POSITION_MAP, LONGITUDE_INITIAL_POSITION_MAP)
@@ -141,10 +142,12 @@ fun DangerMapContent(
 
             zones.forEach { zone ->
                 Polygon(
+                    clickable = true,
                     points = zone.points.map { LatLng(it.lat, it.lng) },
                     fillColor = zone.riskLevel.toColor(),
                     strokeColor = Black,
-                    strokeWidth = 2f
+                    strokeWidth = 2f,
+                    onClick = { onOpenPanel(zone) }
                 )
             }
         }

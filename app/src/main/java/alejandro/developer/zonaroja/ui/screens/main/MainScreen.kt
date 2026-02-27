@@ -6,11 +6,8 @@ import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.common.globalApp.activityHiltViewModel
 import alejandro.developer.zonaroja.ui.components.DangerMapContent
-import alejandro.developer.zonaroja.ui.theme.RedClearMap
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import alejandro.developer.zonaroja.ui.components.InfoPanelMap
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -85,23 +82,15 @@ fun ContentMainScreen(
             onSearchTriggered = viewModel::searchCity,
             onSearchConsumed = viewModel::clearSearchedLocation,
             onExpandHideClick = viewModel::toggleSearch,
-            /*modifier = Modifier.weight(1.5f)*/
+            onOpenPanel = viewModel::openPanel,
+            modifier = Modifier.weight(if (uiState.isPanelOpen) 0.6f else 1f)
         )
-        /*Box(Modifier.weight(0.5f).fillMaxWidth().background(RedClearMap))*/
+        if (uiState.isPanelOpen) {
+            InfoPanelMap(
+                modifier = Modifier.weight(0.4f),
+                onClose = viewModel::closePanel,
+                selectedZone = uiState.selectedZone
+            )
+        }
     }
 }
-
-
-
-/*Text(
-            text = uiState.currentText,
-            modifier = Modifier.clickable {
-                viewModel.onTextClicked()
-            }
-        )
-
-        Spacer(Modifier.height(16.dp))
-
-        Button(onClick = appViewModel::onLogoutClicked) {
-            Text("Ir a Login")
-        }*/
