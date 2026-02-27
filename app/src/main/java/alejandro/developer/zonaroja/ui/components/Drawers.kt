@@ -2,6 +2,9 @@ package alejandro.developer.zonaroja.ui.components
 
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.topbar.DrawerItem
+import alejandro.developer.zonaroja.ui.theme.Black
+import alejandro.developer.zonaroja.ui.theme.GreaseHorizontalDivider
+import alejandro.developer.zonaroja.ui.theme.GreaseTextFieldText
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,12 +16,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
@@ -35,8 +36,9 @@ fun AppDrawer(
                 .padding(16.dp)
         ) {
             Text(
-                text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.headlineSmall
+                text = stringResource(R.string.zona_roja_title),
+                style = MaterialTheme.typography.headlineSmall,
+                color = RedZoneColor
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -48,7 +50,7 @@ fun AppDrawer(
 
         HorizontalDivider(color = RedZoneColor)
 
-        DrawerItem.items.forEach { item ->
+        DrawerItem.items.forEachIndexed { index, item ->
             NavigationDrawerItem(
                 label = { Text(item.label) },
                 icon = {
@@ -57,9 +59,18 @@ fun AppDrawer(
                         contentDescription = item.label
                     )
                 },
+                colors = NavigationDrawerItemDefaults.colors(
+                    selectedIconColor = RedZoneColor,
+                    unselectedIconColor = RedZoneColor
+                ),
                 selected = item == selectedItem,
                 onClick = { onItemSelected(item) }
             )
+            if (index < DrawerItem.items.lastIndex)
+                HorizontalDivider(
+                    color = GreaseHorizontalDivider,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
         }
     }
 }

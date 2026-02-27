@@ -1,4 +1,4 @@
-package alejandro.developer.domain.main
+package alejandro.developer.domain.models
 
 data class DangerZone(
     val id: Int,

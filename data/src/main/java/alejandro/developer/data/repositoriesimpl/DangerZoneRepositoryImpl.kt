@@ -1,11 +1,11 @@
-package alejandro.developer.data.repositories
+package alejandro.developer.data.repositoriesimpl
 
 import alejandro.developer.data.mappers.toDomain
 import alejandro.developer.data.remote.apis.DangerZoneApi
-import alejandro.developer.domain.main.DangerZoneRepository
+import alejandro.developer.domain.repositories.DangerZoneRepository
 import jakarta.inject.Inject
-import alejandro.developer.domain.main.DangerZone
-import alejandro.developer.domain.main.MapBounds
+import alejandro.developer.domain.models.DangerZone
+import alejandro.developer.domain.models.MapBounds
 import kotlin.collections.map
 
 class DangerZoneRepositoryImpl @Inject constructor(

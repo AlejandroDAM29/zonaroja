@@ -1,6 +1,6 @@
 package alejandro.developer.zonaroja.ui.screens.forgotpassword
 
-import alejandro.developer.domain.auth.SendPasswordResetEmailUseCase
+import alejandro.developer.domain.usecase.SendPasswordResetEmailUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel

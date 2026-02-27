@@ -1,6 +1,6 @@
 package alejandro.developer.zonaroja.di
 
-import alejandro.developer.domain.main.LocationSearchRepository
+import alejandro.developer.domain.repositories.LocationSearchRepository
 import alejandro.developer.zonaroja.geocoder.LocationSearchRepositoryImpl
 import android.content.Context
 import dagger.Module

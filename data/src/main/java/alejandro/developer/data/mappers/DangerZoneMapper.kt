@@ -1,9 +1,9 @@
 package alejandro.developer.data.mappers
 
 import alejandro.developer.data.remote.dto.DangerZoneDto
-import alejandro.developer.domain.main.DangerZone
-import alejandro.developer.domain.main.GeoPoint
-import alejandro.developer.domain.main.RiskLevel
+import alejandro.developer.domain.models.DangerZone
+import alejandro.developer.domain.models.GeoPoint
+import alejandro.developer.domain.models.RiskLevel
 
 fun DangerZoneDto.toDomain(): DangerZone {
     return DangerZone(

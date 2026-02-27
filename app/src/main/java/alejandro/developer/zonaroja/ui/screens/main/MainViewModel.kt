@@ -1,10 +1,10 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
-import alejandro.developer.domain.auth.LogoutUseCase
-import alejandro.developer.domain.main.GetCiudadesUseCase
-import alejandro.developer.domain.main.GetDangerZonesUseCase
-import alejandro.developer.domain.main.LocationSearchRepository
-import alejandro.developer.domain.main.MapBounds
+import alejandro.developer.domain.usecase.LogoutUseCase
+import alejandro.developer.domain.usecase.GetCiudadesUseCase
+import alejandro.developer.domain.usecase.GetDangerZonesUseCase
+import alejandro.developer.domain.repositories.LocationSearchRepository
+import alejandro.developer.domain.models.MapBounds
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng

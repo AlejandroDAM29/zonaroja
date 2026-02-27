@@ -1,13 +1,13 @@
 package alejandro.developer.data.di
 
 import alejandro.developer.data.remote.datasources.FeatureFlagsRepositoryImpl
-import alejandro.developer.data.repositories.CiudadesRepositoryImpl
-import alejandro.developer.data.repositories.DangerZoneRepositoryImpl
-import alejandro.developer.data.repositories.FirebaseAuthRepositoryImpl
-import alejandro.developer.domain.auth.AuthRepository
-import alejandro.developer.domain.common.FeatureFlagsRepository
-import alejandro.developer.domain.main.CiudadesRepository
-import alejandro.developer.domain.main.DangerZoneRepository
+import alejandro.developer.data.repositoriesimpl.CiudadesRepositoryImpl
+import alejandro.developer.data.repositoriesimpl.DangerZoneRepositoryImpl
+import alejandro.developer.data.repositoriesimpl.FirebaseAuthRepositoryImpl
+import alejandro.developer.domain.repositories.AuthRepository
+import alejandro.developer.domain.repositories.FeatureFlagsRepository
+import alejandro.developer.domain.repositories.CiudadesRepository
+import alejandro.developer.domain.repositories.DangerZoneRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

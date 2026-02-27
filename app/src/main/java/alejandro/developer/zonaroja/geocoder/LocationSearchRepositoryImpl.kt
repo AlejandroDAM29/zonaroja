@@ -1,6 +1,6 @@
 package alejandro.developer.zonaroja.geocoder
 
-import alejandro.developer.domain.main.LocationSearchRepository
+import alejandro.developer.domain.repositories.LocationSearchRepository
 import android.content.Context
 import android.location.Geocoder
 import kotlinx.coroutines.Dispatchers

@@ -1,7 +1,7 @@
 package alejandro.developer.data.providers
 
-import alejandro.developer.domain.common.FeatureFlags
-import alejandro.developer.domain.common.FeatureFlagsRepository
+import alejandro.developer.domain.models.FeatureFlagsModel
+import alejandro.developer.domain.repositories.FeatureFlagsRepository
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 
@@ -9,9 +9,9 @@ import jakarta.inject.Singleton
 class FeatureFlagsProvider @Inject constructor(
     private val repository: FeatureFlagsRepository
 ) {
-    private var cachedFlags: FeatureFlags? = null
+    private var cachedFlags: FeatureFlagsModel? = null
 
-    suspend fun get(): FeatureFlags {
+    suspend fun get(): FeatureFlagsModel {
         if (cachedFlags == null) {
             cachedFlags = repository.getFeatureFlags()
         }

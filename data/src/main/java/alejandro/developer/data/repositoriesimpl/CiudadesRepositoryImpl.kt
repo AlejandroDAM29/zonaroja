@@ -1,7 +1,7 @@
-package alejandro.developer.data.repositories
+package alejandro.developer.data.repositoriesimpl
 
 import alejandro.developer.data.remote.datasources.CiudadesRemoteDataSource
-import alejandro.developer.domain.main.CiudadesRepository
+import alejandro.developer.domain.repositories.CiudadesRepository
 import javax.inject.Inject
 
 class CiudadesRepositoryImpl @Inject constructor(

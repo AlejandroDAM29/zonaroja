@@ -24,25 +24,49 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.compose.currentStateAsState
+import kotlin.reflect.KClass
 
 @Composable
 fun NavigationWrapper() {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val appViewmodel: AppViewModel = activityHiltViewModel()
-    val currentScreen = backStackEntry?.currentScreenType()
+    var stableScreen by remember { mutableStateOf<KClass<*>?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     var currentSnackbar by remember { mutableStateOf<AppSnackbarModel?>(null) }
 
     val snackbarController = remember {
         SnackbarController(snackbarHostState)
+    }
+
+    val lifecycleState by backStackEntry
+        ?.lifecycle
+        ?.currentStateFlow
+        ?.collectAsState(initial = Lifecycle.State.INITIALIZED)
+        ?: remember { mutableStateOf(Lifecycle.State.INITIALIZED) }
+
+    val currentScreen =
+        if (lifecycleState == Lifecycle.State.RESUMED) {
+            backStackEntry?.currentScreenType()
+        } else {
+            stableScreen
+        }
+
+    LaunchedEffect(currentScreen) {
+        if (lifecycleState == Lifecycle.State.RESUMED) {
+            stableScreen = currentScreen
+        }
     }
 
     LaunchedEffect(snackbarController) {
@@ -68,7 +92,7 @@ fun NavigationWrapper() {
         )
 
         AppScaffold(
-            currentScreen = currentScreen,
+            currentScreen = stableScreen,
             snackbarHostState = snackbarHostState,
             currentSnackbar = currentSnackbar,
             onDrawerItemSelected = { item ->

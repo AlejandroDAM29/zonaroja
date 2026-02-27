@@ -1,7 +1,7 @@
 package alejandro.developer.zonaroja.ui.screens.splash
 
 import alejandro.developer.data.providers.FeatureFlagsProvider
-import alejandro.developer.domain.auth.CheckUserSessionUseCase
+import alejandro.developer.domain.usecase.CheckUserSessionUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel

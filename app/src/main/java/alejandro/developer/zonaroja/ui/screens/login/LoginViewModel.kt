@@ -1,8 +1,8 @@
 package alejandro.developer.zonaroja.ui.screens.login
 
 import alejandro.developer.data.providers.FeatureFlagsProvider
-import alejandro.developer.domain.auth.LoginWithEmailUseCase
-import alejandro.developer.domain.auth.LoginWithGoogleUseCase
+import alejandro.developer.domain.usecase.LoginWithEmailUseCase
+import alejandro.developer.domain.usecase.LoginWithGoogleUseCase
 import alejandro.developer.zonaroja.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

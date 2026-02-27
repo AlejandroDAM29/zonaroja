@@ -1,6 +1,6 @@
 package alejandro.developer.zonaroja.ui.screens.register
 
-import alejandro.developer.domain.auth.RegisterWithEmailUseCase
+import alejandro.developer.domain.usecase.RegisterWithEmailUseCase
 import alejandro.developer.zonaroja.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
