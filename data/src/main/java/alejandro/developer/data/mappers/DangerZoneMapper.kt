@@ -14,7 +14,10 @@ fun DangerZoneDto.toDomain(): DangerZone {
             lat = it.lat,
             lng = it.lng,
             order = it.order) },
-        riskLevel = riskLevel.toRiskLevel()
+        riskLevel = riskLevel.toRiskLevel(),
+        povertyRiskRate = povertyRiskRate,
+        unemploymentRate = unemploymentRate,
+        priceSquareMeter = priceSquareMeter
     )
 }
 

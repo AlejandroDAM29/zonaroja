@@ -9,8 +9,11 @@ import alejandro.developer.zonaroja.ui.theme.Black
 import alejandro.developer.zonaroja.ui.theme.GreenClearMap
 import alejandro.developer.zonaroja.ui.theme.RedClearMap
 import alejandro.developer.zonaroja.ui.theme.YellowClearMap
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -59,14 +62,11 @@ fun DangerMapContent(
 
     val inititalPositionMap = LatLng(LATITUDE_INITIAL_POSITION_MAP, LONGITUDE_INITIAL_POSITION_MAP)
     val cameraPositionState = rememberCameraPositionState()
+    val currentZoom = cameraPositionState.position.zoom
+    val minZoomToShowZones = 12f
+    val shouldShowZones = currentZoom >= minZoomToShowZones
 
     var hasLoadedInitialBounds by remember { mutableStateOf(false) }
-
-    val animatedWidth by animateDpAsState(
-        targetValue = if (isSearcherNameSpacerExpanded) 320.dp else 48.dp,
-        animationSpec = tween(300),
-        label = ""
-    )
 
     LaunchedEffect(Unit) {
         cameraPositionState.move(
@@ -139,16 +139,17 @@ fun DangerMapContent(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState
         ) {
-
-            zones.forEach { zone ->
-                Polygon(
-                    clickable = true,
-                    points = zone.points.map { LatLng(it.lat, it.lng) },
-                    fillColor = zone.riskLevel.toColor(),
-                    strokeColor = Black,
-                    strokeWidth = 2f,
-                    onClick = { onOpenPanel(zone) }
-                )
+            if (shouldShowZones) {
+                zones.forEach { zone ->
+                    Polygon(
+                        clickable = true,
+                        points = zone.points.map { LatLng(it.lat, it.lng) },
+                        fillColor = zone.riskLevel.toColor(),
+                        strokeColor = Black,
+                        strokeWidth = 2f,
+                        onClick = { onOpenPanel(zone) }
+                    )
+                }
             }
         }
 
@@ -158,7 +159,11 @@ fun DangerMapContent(
                 .padding(16.dp)
         ) {
 
-            val targetWidth = if (isSearcherNameSpacerExpanded) { maxWidth } else { 48.dp }
+            val targetWidth = if (isSearcherNameSpacerExpanded) {
+                maxWidth
+            } else {
+                48.dp
+            }
 
             val animatedWidth by animateDpAsState(
                 targetValue = targetWidth,
@@ -209,6 +214,25 @@ fun DangerMapContent(
             }
         }
 
+        if (!shouldShowZones) {
+            AnimatedVisibility(
+                visible = !shouldShowZones,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier = Modifier.align(Alignment.Center)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(Color.Black.copy(alpha = 0.7f))
+                        .padding(horizontal = 20.dp, vertical = 12.dp)
+                ) {
+                    Text(
+                        text = "Acércate más para ver los barrios",
+                        color = Color.White
+                    )
+                }
+            }
+        }
 
         LegendCard(
             modifier = Modifier
@@ -220,7 +244,7 @@ fun DangerMapContent(
 
 
 fun RiskLevel.toColor(): Color {
-    return when(this) {
+    return when (this) {
         RiskLevel.LOW -> GreenClearMap
         RiskLevel.MEDIUM -> YellowClearMap
         RiskLevel.HIGH -> RedClearMap
