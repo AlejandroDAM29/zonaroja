@@ -6,11 +6,12 @@ import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.common.globalApp.activityHiltViewModel
 import alejandro.developer.zonaroja.ui.components.DangerMapContent
-import alejandro.developer.zonaroja.ui.theme.RedClearMap
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import alejandro.developer.zonaroja.ui.components.InfoPanelMap
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,6 +19,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
@@ -33,7 +35,8 @@ fun MainScreen(
 
     LaunchedEffect(showSnackbarRegisterSuccess) {
         if (showSnackbarRegisterSuccess)
-            appUiEvents.showSnackbarSuccess(currentContext.getString(R.string.register_success_snackbar)
+            appUiEvents.showSnackbarSuccess(
+                currentContext.getString(R.string.register_success_snackbar)
             )
     }
 
@@ -43,6 +46,7 @@ fun MainScreen(
                 is MainUiEvent.ShowError -> {
                     appUiEvents.showSnackbarWarning(event.message)
                 }
+
                 is MainUiEvent.ShowWarning -> {
                     appUiEvents.showSnackbarWarning(
                         message = event.message
@@ -55,23 +59,29 @@ fun MainScreen(
     BaseScreen(
         isLoading = uiState.isLoading
     ) {
-    ContentMainScreen(
-        uiState = uiState,
-        viewModel = viewModel,
-        appViewModel = appViewModel
-    )
+        ContentMainScreen(
+            uiState = uiState,
+            viewModel = viewModel,
+            appViewModel = appViewModel
+        )
 
     }
 
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContentMainScreen(
     uiState: MainUiState,
     viewModel: MainViewModel,
     appViewModel: AppViewModel
 ) {
+
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = false
+    )
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -85,23 +95,23 @@ fun ContentMainScreen(
             onSearchTriggered = viewModel::searchCity,
             onSearchConsumed = viewModel::clearSearchedLocation,
             onExpandHideClick = viewModel::toggleSearch,
-            /*modifier = Modifier.weight(1.5f)*/
+            onOpenPanel = viewModel::openPanel,
+            modifier = Modifier.weight(if (uiState.isPanelOpen) 0.6f else 1f)
         )
-        /*Box(Modifier.weight(0.5f).fillMaxWidth().background(RedClearMap))*/
-    }
-}
+        if (uiState.isPanelOpen && uiState.selectedZone != null) {
 
+            ModalBottomSheet(
+                onDismissRequest = { viewModel.closePanel() },
+                sheetState = sheetState,
+                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+            ) {
 
-
-/*Text(
-            text = uiState.currentText,
-            modifier = Modifier.clickable {
-                viewModel.onTextClicked()
+                InfoPanelMap(
+                    zone = uiState.selectedZone,
+                    onClose = viewModel::closePanel
+                )
             }
-        )
+        }
+    }
 
-        Spacer(Modifier.height(16.dp))
-
-        Button(onClick = appViewModel::onLogoutClicked) {
-            Text("Ir a Login")
-        }*/
+}

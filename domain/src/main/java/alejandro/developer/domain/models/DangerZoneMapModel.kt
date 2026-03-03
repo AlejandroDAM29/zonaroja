@@ -5,7 +5,10 @@ data class DangerZone(
     val zoneName: String,
     val city: String,
     val points: List<GeoPoint>,
-    val riskLevel: RiskLevel
+    val riskLevel: RiskLevel,
+    val povertyRiskRate: Double,
+    val unemploymentRate: Double,
+    val priceSquareMeter: Int
 )
 
 data class GeoPoint(

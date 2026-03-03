@@ -1,17 +1,21 @@
 package alejandro.developer.zonaroja.ui.components
 
+import alejandro.developer.domain.models.DangerZone
 import alejandro.developer.domain.models.RiskLevel
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.theme.Black
 import alejandro.developer.zonaroja.ui.theme.White
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -20,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -61,5 +66,39 @@ fun LegendItem(
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(text)
+    }
+}
+
+
+@Composable
+fun StatsCard(zone: DangerZone) {
+
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(zone.priceSquareMeter.toString(), fontWeight = FontWeight.Bold)
+                Text("€/m²")
+            }
+
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("${zone.povertyRiskRate}%", fontWeight = FontWeight.Bold)
+                Text("tasa pobreza")
+            }
+
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("${zone.unemploymentRate}%", fontWeight = FontWeight.Bold)
+                Text("tasa paro")
+            }
+        }
     }
 }

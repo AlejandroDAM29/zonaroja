@@ -9,5 +9,7 @@ data class MainUiState(
     val dangerZonesPoints: List<DangerZone> = emptyList(),
     val searchedLocation: LatLng? = null,
     val searchQuery: String = "",
-    val isSearchExpanded: Boolean = false
+    val isSearchExpanded: Boolean = false,
+    val isPanelOpen: Boolean = false,
+    val selectedZone: DangerZone? = null
 )

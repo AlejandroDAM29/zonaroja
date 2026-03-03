@@ -16,7 +16,16 @@ data class DangerZoneDto(
     val riskLevel: String,
 
     @Json(name = "coordenadas")
-    val points: List<GeoPointDto>
+    val points: List<GeoPointDto>,
+
+    @Json(name = "riesgo_pobreza")
+    val povertyRiskRate: Double,
+
+    @Json(name = "tasa_paro")
+    val unemploymentRate: Double,
+
+    @Json(name = "precio_metro_cuadrado")
+    val priceSquareMeter: Int
 )
 
 data class GeoPointDto(
