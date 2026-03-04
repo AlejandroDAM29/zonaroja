@@ -7,6 +7,7 @@ import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.common.globalApp.activityHiltViewModel
 import alejandro.developer.zonaroja.ui.components.DangerMapContent
 import alejandro.developer.zonaroja.ui.components.InfoPanelMap
+import alejandro.developer.zonaroja.ui.components.StatisticsBottomSheet
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -79,7 +80,7 @@ fun ContentMainScreen(
 ) {
 
     val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = false
+        skipPartiallyExpanded = true
     )
 
     Column(
@@ -101,17 +102,46 @@ fun ContentMainScreen(
         if (uiState.isPanelOpen && uiState.selectedZone != null) {
 
             ModalBottomSheet(
-                onDismissRequest = { viewModel.closePanel() },
+                onDismissRequest = { viewModel.closeBottomSheets() },
                 sheetState = sheetState,
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
             ) {
 
                 InfoPanelMap(
                     zone = uiState.selectedZone,
-                    onClose = viewModel::closePanel
+                    onClose = viewModel::closeBottomSheets,
+                    onOpenStats = viewModel::openStats
                 )
             }
         }
-    }
 
+        if ((uiState.isPanelOpen || uiState.isStatsOpen) &&
+            uiState.selectedZone != null
+        ) {
+
+            ModalBottomSheet(
+                onDismissRequest = { viewModel.closeBottomSheets() },
+                sheetState = sheetState,
+                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+            ) {
+
+                when {
+                    uiState.isPanelOpen -> {
+                        InfoPanelMap(
+                            zone = uiState.selectedZone,
+                            onClose = viewModel::closeBottomSheets,
+                            onOpenStats = viewModel::openStats
+                        )
+                    }
+
+                    uiState.isStatsOpen -> {
+                        StatisticsBottomSheet(
+                            viewModel
+                        )
+                    }
+                }
+            }
+        }
+
+    }
 }

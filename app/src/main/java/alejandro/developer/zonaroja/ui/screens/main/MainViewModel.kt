@@ -25,8 +25,6 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getCiudadesUseCase: GetCiudadesUseCase,
-    private val logoutUseCase: LogoutUseCase,
     private val getDangerZonesUseCase: GetDangerZonesUseCase,
     private val locationSearchRepository: LocationSearchRepository
 ) : ViewModel() {
@@ -41,26 +39,34 @@ class MainViewModel @Inject constructor(
         extraBufferCapacity = 1
     )
 
-    /*private var texts: List<String> = emptyList()*/
-
     init {
         observeBounds()
+    }
+
+    fun openStats() {
+        _uiState.update {
+            it.copy(
+                isPanelOpen = false,
+                isStatsOpen = true
+            )
+        }
     }
 
     fun openPanel(zone: DangerZone) {
         _uiState.update {
             it.copy(
                 isPanelOpen = true,
+                isStatsOpen = false,
                 selectedZone = zone
             )
         }
     }
 
-    fun closePanel(){
+    fun closeBottomSheets() {
         _uiState.update {
             it.copy(
                 isPanelOpen = false,
-                selectedZone = null
+                isStatsOpen = false
             )
         }
     }

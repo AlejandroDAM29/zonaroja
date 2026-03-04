@@ -1,10 +1,14 @@
 package alejandro.developer.zonaroja.ui.components
 
 import alejandro.developer.domain.models.DangerZone
-import alejandro.developer.domain.models.RiskLevel
-import alejandro.developer.zonaroja.ui.theme.RedClearMap
+import alejandro.developer.domain.models.DemographyItemModel
+import alejandro.developer.domain.models.EconomyStatsModel
+import alejandro.developer.domain.models.HousingStatsModel
+import alejandro.developer.zonaroja.ui.screens.main.MainViewModel
+import alejandro.developer.zonaroja.ui.screens.main.StatsTab
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
-import androidx.compose.foundation.background
+import alejandro.developer.zonaroja.ui.theme.White
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,31 +18,36 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
 fun InfoPanelMap(
     zone: DangerZone,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    onOpenStats: () -> Unit
 ) {
 
     Column(
@@ -86,7 +95,7 @@ fun InfoPanelMap(
         Spacer(Modifier.height(16.dp))
 
         Button(
-            onClick = { /* report */ },
+            onClick = onOpenStats,
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = RedZoneColor
@@ -120,6 +129,88 @@ fun InfoPanelMap(
 
         Spacer(Modifier.height(24.dp))
     }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun StatisticsBottomSheet(
+    viewmodel: MainViewModel
+) {
+
+    val stastEconomy = EconomyStatsModel(
+        rentaBarrio = 100,
+        rentaCiudad = 1000,
+        pobrezaBarrio = 50.2,
+        pobrezaCiudad =  30.3,
+        precioBarrio = 700,
+        precioCiudad = 2400
+    )
+
+    val housingStatsModel = HousingStatsModel(
+        yearBuiltBarrio = 1960,
+        yearBuiltCiudad = 2000,
+        precioBarrio = 720,
+        precioCiudad = 2000
+    )
+
+    val demographyItemModel = DemographyItemModel(
+        name = "Población",
+        percentage = 50.2f
+    )
+
+    var selectedTab by remember { mutableStateOf<StatsTab>(StatsTab.Economy) }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
+
+            Text(
+                text = "Los pajaritos",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+                StatsTabRow(
+                    selectedTab = selectedTab,
+                    onTabSelected = { selectedTab = it }
+                )
+
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize()
+            ) {
+                when (selectedTab) {
+                    is StatsTab.Economy -> EconomyChart(stastEconomy)
+                    is StatsTab.Housing -> HousingChart(housingStatsModel)
+                    is StatsTab.Demography -> DemographySlide(demographyItemModel)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = viewmodel::closeBottomSheets,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonColors(
+                    containerColor = RedZoneColor,
+                    contentColor = White,
+                    disabledContainerColor = RedZoneColor,
+                    disabledContentColor = White
+                )
+            ) {
+                Text("Cerrar")
+            }
+        }
 }
 
 /*@Preview(

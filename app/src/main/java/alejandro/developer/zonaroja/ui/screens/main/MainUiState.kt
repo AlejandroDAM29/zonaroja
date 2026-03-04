@@ -11,5 +11,6 @@ data class MainUiState(
     val searchQuery: String = "",
     val isSearchExpanded: Boolean = false,
     val isPanelOpen: Boolean = false,
-    val selectedZone: DangerZone? = null
+    val selectedZone: DangerZone? = null,
+    val isStatsOpen: Boolean = false
 )
