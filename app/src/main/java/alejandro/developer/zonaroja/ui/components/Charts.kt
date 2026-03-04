@@ -4,6 +4,7 @@ import alejandro.developer.domain.models.EconomyStatsModel
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,50 +24,57 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun EconomyBarChart(stats: EconomyStatsModel) {
 
-    val maxValue = listOf(
-        stats.rentaBarrio,
-        stats.rentaCiudad,
-        stats.precioBarrio,
-        stats.precioCiudad,
-        stats.pobrezaBarrio.toInt(),
-        stats.pobrezaCiudad.toInt()
-    ).max()
+    val categories = listOf(
+        Triple("Renta media", stats.rentaBarrio.toFloat(), stats.rentaCiudad.toFloat()),
+        Triple("Tasa pobreza", stats.pobrezaBarrio.toFloat(), stats.pobrezaCiudad.toFloat()),
+        Triple("Precio m²", stats.precioBarrio.toFloat(), stats.precioCiudad.toFloat())
+    )
+
+    val maxValue = categories.flatMap { listOf(it.second, it.third) }.max()
 
     Canvas(
         modifier = Modifier
             .fillMaxWidth()
-            .height(250.dp)
+            .height(220.dp)
     ) {
 
-        val barWidth = size.width / 8
-        val spacing = barWidth / 2
+        val groupWidth = size.width / categories.size
+        val barWidth = groupWidth / 4
 
-        fun drawBar(
-            value: Float,
-            index: Int,
-            color: Color
-        ) {
-            val heightRatio = value / maxValue
-            val barHeight = size.height * heightRatio
+        categories.forEachIndexed { index, category ->
 
-            drawRect(
-                color = color,
-                topLeft = Offset(
-                    x = spacing + index * (barWidth + spacing),
-                    y = size.height - barHeight
-                ),
-                size = Size(barWidth, barHeight)
-            )
+            val startX = groupWidth * index + groupWidth / 4
+
+            fun drawBar(value: Float, offset: Float, color: Color) {
+
+                val heightRatio = value / maxValue
+                val barHeight = size.height * 0.7f * heightRatio
+
+                drawRect(
+                    color = color,
+                    topLeft = Offset(
+                        x = startX + offset,
+                        y = size.height - barHeight
+                    ),
+                    size = Size(barWidth, barHeight)
+                )
+            }
+
+            drawBar(category.second, 0f, Color(0xFFE53935))      // rojo barrio
+            drawBar(category.third, barWidth * 1.5f, Color(0xFFDADADA)) // gris ciudad
         }
+    }
 
-        drawBar(stats.rentaBarrio.toFloat(), 0, Color.Red)
-        drawBar(stats.rentaCiudad.toFloat(), 1, Color.LightGray)
+    Spacer(modifier = Modifier.height(8.dp))
 
-        drawBar(stats.pobrezaBarrio.toFloat(), 2, Color.Red)
-        drawBar(stats.pobrezaCiudad.toFloat(), 3, Color.LightGray)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
 
-        drawBar(stats.precioBarrio.toFloat(), 4, Color.Red)
-        drawBar(stats.precioCiudad.toFloat(), 5, Color.LightGray)
+        Text("Renta media")
+        Text("Tasa pobreza")
+        Text("Precio m²")
     }
 
     Spacer(modifier = Modifier.height(16.dp))
@@ -76,26 +84,31 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
 
 @Composable
 fun Legend() {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
 
         Box(
             modifier = Modifier
-                .size(12.dp)
-                .background(Color.Red, CircleShape)
+                .size(10.dp)
+                .background(Color(0xFFE53935), CircleShape)
         )
 
         Spacer(modifier = Modifier.width(8.dp))
-        Text("Barrio")
+        Text("Los pajaritos")
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(24.dp))
 
         Box(
             modifier = Modifier
-                .size(12.dp)
-                .background(Color.LightGray, CircleShape)
+                .size(10.dp)
+                .background(Color(0xFFDADADA), CircleShape)
         )
 
         Spacer(modifier = Modifier.width(8.dp))
-        Text("Ciudad")
+        Text("Media Sevilla")
     }
 }
