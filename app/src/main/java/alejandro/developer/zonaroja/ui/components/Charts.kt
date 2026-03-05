@@ -32,20 +32,13 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
         Triple("Renta media", stats.rentaBarrio.toFloat(), stats.rentaCiudad.toFloat()),
         Triple("Precio m²", stats.precioBarrio.toFloat(), stats.precioCiudad.toFloat())
     )
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(220.dp),
         verticalAlignment = Alignment.Top
     ) {
-
-        /*Text(
-            text = "10000",
-            fontSize = 10.sp,
-            modifier = Modifier.width(40.dp),
-            textAlign = TextAlign.End
-        )*/
-
 
         Canvas(
             modifier = Modifier
@@ -57,15 +50,18 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
             val maxValue = 10000f
 
 
+            val axisX = groupWidth / 5
+
             val textPaint = android.graphics.Paint().apply {
                 color = android.graphics.Color.BLACK
-                textSize = 28f
-                textAlign = android.graphics.Paint.Align.RIGHT
+                textSize = 24f
             }
 
+            val textWidth = textPaint.measureText("${maxValue.toInt()}€")
+
             drawContext.canvas.nativeCanvas.drawText(
-                "10.000€",
-                groupWidth / 5 + 50f,
+                "${maxValue.toInt()}€",
+                axisX - textWidth / 2,
                 size.height * 0.3f - 10f,
                 textPaint
             )
