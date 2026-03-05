@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,6 +56,19 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
             val barWidth = groupWidth / 4
             val maxValue = 10000f
 
+
+            val textPaint = android.graphics.Paint().apply {
+                color = android.graphics.Color.BLACK
+                textSize = 28f
+                textAlign = android.graphics.Paint.Align.RIGHT
+            }
+
+            drawContext.canvas.nativeCanvas.drawText(
+                "10.000€",
+                groupWidth / 5 + 50f,
+                size.height * 0.3f - 10f,
+                textPaint
+            )
 
 
             drawLine(
