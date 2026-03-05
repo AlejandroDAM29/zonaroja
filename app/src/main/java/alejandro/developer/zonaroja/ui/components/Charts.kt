@@ -19,62 +19,101 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun EconomyBarChart(stats: EconomyStatsModel) {
 
     val categories = listOf(
         Triple("Renta media", stats.rentaBarrio.toFloat(), stats.rentaCiudad.toFloat()),
-        Triple("Tasa pobreza", stats.pobrezaBarrio.toFloat(), stats.pobrezaCiudad.toFloat()),
         Triple("Precio m²", stats.precioBarrio.toFloat(), stats.precioCiudad.toFloat())
     )
-
-    val maxValue = categories.flatMap { listOf(it.second, it.third) }.max()
-
-    Canvas(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(220.dp)
+            .height(220.dp),
+        verticalAlignment = Alignment.Top
     ) {
 
-        val groupWidth = size.width / categories.size
-        val barWidth = groupWidth / 4
+        /*Text(
+            text = "10000",
+            fontSize = 10.sp,
+            modifier = Modifier.width(40.dp),
+            textAlign = TextAlign.End
+        )*/
 
-        categories.forEachIndexed { index, category ->
 
-            val startX = groupWidth * index + groupWidth / 4
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(220.dp)
+        ) {
+            val groupWidth = size.width / categories.size
+            val barWidth = groupWidth / 4
+            val maxValue = 10000f
 
-            fun drawBar(value: Float, offset: Float, color: Color) {
 
-                val heightRatio = value / maxValue
-                val barHeight = size.height * 0.7f * heightRatio
 
-                drawRect(
-                    color = color,
-                    topLeft = Offset(
-                        x = startX + offset,
-                        y = size.height - barHeight
-                    ),
-                    size = Size(barWidth, barHeight)
-                )
+            drawLine(
+                color = Color.Black,
+                start = Offset(groupWidth / 5, size.height * 0.3f),
+                end = Offset(groupWidth / 5, size.height),
+                strokeWidth = 2f
+            )
+
+
+            categories.forEachIndexed { index, category ->
+
+                val startX = groupWidth * index + groupWidth / 5
+
+                fun drawBar(value: Float, offset: Float, color: Color) {
+
+                    val barHeight = size.height * 0.7f * (value / maxValue)
+
+                    drawRect(
+                        color = color,
+                        topLeft = Offset(
+                            x = startX + offset,
+                            y = size.height - barHeight
+                        ),
+                        size = Size(barWidth, barHeight)
+                    )
+                }
+
+                drawBar(category.second, 0f, Color(0xFFE53935))      // rojo barrio
+                drawBar(category.third, barWidth * 1.5f, Color(0xFFDADADA)) // gris ciudad
             }
-
-            drawBar(category.second, 0f, Color(0xFFE53935))      // rojo barrio
-            drawBar(category.third, barWidth * 1.5f, Color(0xFFDADADA)) // gris ciudad
         }
     }
 
     Spacer(modifier = Modifier.height(8.dp))
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceAround
+        modifier = Modifier.fillMaxWidth()
     ) {
 
-        Text("Renta media")
-        Text("Tasa pobreza")
-        Text("Precio m²")
+       categories.forEach { category ->
+
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = category.first,
+                    textAlign = TextAlign.Center,
+                    fontSize = when {
+                        categories.size <= 3 -> 14.sp
+                        categories.size <= 5 -> 12.sp
+                        categories.size <= 7 -> 10.sp
+                        else -> 8.sp
+                    }
+                )
+            }
+
+        }
     }
 
     Spacer(modifier = Modifier.height(16.dp))
@@ -111,4 +150,25 @@ fun Legend() {
         Spacer(modifier = Modifier.width(8.dp))
         Text("Media Sevilla")
     }
+}
+
+@Preview(
+    name = "InfoPanel - Alta peligrosidad",
+    showBackground = true,
+    backgroundColor = 0xFFFFFFFF
+)
+@Composable
+private fun EconomyBarChart2() {
+
+    val stastEconomy = EconomyStatsModel(
+        rentaBarrio = 100,
+        rentaCiudad = 1000,
+        pobrezaBarrio = 50.2,
+        pobrezaCiudad =  30.3,
+        precioBarrio = 700,
+        precioCiudad = 2400
+    )
+
+
+    EconomyBarChart(stastEconomy)
 }

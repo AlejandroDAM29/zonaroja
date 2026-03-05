@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Warning
@@ -135,7 +137,8 @@ fun InfoPanelMap(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatisticsBottomSheet(
-    viewmodel: MainViewModel
+    viewmodel: MainViewModel,
+    zone: DangerZone
 ) {
 
     val stastEconomy = EconomyStatsModel(
@@ -167,19 +170,47 @@ fun StatisticsBottomSheet(
                 .padding(20.dp)
         ) {
 
-            Text(
-                text = "Los pajaritos",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+
+                IconButton(
+                    onClick = { viewmodel.openPanel(zone) },
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Volver"
+                    )
+                }
+
+                Text(
+                    text = "Los pajaritos",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.align(Alignment.Center),
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold
+                )
+
+                IconButton(
+                    onClick = viewmodel::closeBottomSheets,
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Cerrar"
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-                StatsTabRow(
-                    selectedTab = selectedTab,
-                    onTabSelected = { selectedTab = it }
-                )
+            StatsSegmentedControl(
+                selectedTab = selectedTab,
+                onTabSelected = { selectedTab = it }
+            )
 
 
             Spacer(modifier = Modifier.height(20.dp))
