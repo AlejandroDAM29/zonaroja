@@ -47,7 +47,9 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
         ) {
             val groupWidth = size.width / categories.size
             val barWidth = groupWidth / 4
-            val maxValue = 10000f
+            val maxValue = categories
+                .flatMap { listOf(it.second, it.third) }
+                .max()
 
 
             val axisX = groupWidth / 5
@@ -91,11 +93,33 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
                         ),
                         size = Size(barWidth, barHeight)
                     )
+
+
+                    val textPaint = android.graphics.Paint().apply {
+                        textSize = 24f
+                    }
+                    val textWidth = textPaint.measureText("${maxValue.toInt()}€")
+
+                    drawContext.canvas.nativeCanvas.drawText(
+                        "${value}€",
+                        startX + offset + textWidth / 4,
+                        size.height - barHeight - 10f,
+                        textPaint
+                    )
                 }
 
                 drawBar(category.second, 0f, Color(0xFFE53935))      // rojo barrio
                 drawBar(category.third, barWidth * 1.5f, Color(0xFFDADADA)) // gris ciudad
+
             }
+
+            drawLine(
+                color = Color.Black,
+                start = Offset(axisX, size.height),
+                end = Offset(size.width, size.height),
+                strokeWidth = 2f
+            )
+
         }
     }
 
