@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,7 +52,6 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
                 .flatMap { listOf(it.second, it.third) }
                 .max()
 
-
             val axisX = groupWidth / 5
 
             val textPaint = android.graphics.Paint().apply {
@@ -60,6 +60,21 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
             }
 
             val textWidth = textPaint.measureText("${maxValue.toInt()}€")
+
+            val dashEffect = PathEffect.dashPathEffect(
+                floatArrayOf(10f, 10f), // longitud línea, longitud hueco
+                0f
+            )
+
+            val chartHeight = size.height * 0.7f
+
+            drawLine(
+                color = Color.Gray,
+                start = Offset(axisX, size.height - chartHeight / 2),
+                end = Offset(size.width, size.height - chartHeight / 2),
+                strokeWidth = 2f,
+                pathEffect = dashEffect
+            )
 
             drawContext.canvas.nativeCanvas.drawText(
                 "${maxValue.toInt()}€",
