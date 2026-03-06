@@ -1,11 +1,13 @@
 package alejandro.developer.zonaroja.ui.components
 
+import alejandro.developer.domain.models.DemographyItemModel
 import alejandro.developer.domain.models.EconomyStatsModel
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +24,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -144,7 +145,7 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
         modifier = Modifier.fillMaxWidth()
     ) {
 
-       categories.forEach { category ->
+        categories.forEach { category ->
 
             Box(
                 modifier = Modifier.weight(1f),
@@ -201,23 +202,31 @@ fun Legend() {
     }
 }
 
-@Preview(
-    name = "InfoPanel - Alta peligrosidad",
-    showBackground = true,
-    backgroundColor = 0xFFFFFFFF
-)
+
 @Composable
-private fun EconomyBarChart2() {
+fun DemographyPieChart(data: List<DemographyItemModel>, colors: List<Color>) {
 
-    val stastEconomy = EconomyStatsModel(
-        rentaBarrio = 100,
-        rentaCiudad = 1000,
-        pobrezaBarrio = 50.2,
-        pobrezaCiudad =  30.3,
-        precioBarrio = 700,
-        precioCiudad = 2400
-    )
+    Canvas(
+        modifier = Modifier
+            .size(220.dp)
+    ) {
 
+        var startAngle = -90f
 
-    EconomyBarChart(stastEconomy)
+        data.forEachIndexed { index, item ->
+
+            val sweepAngle = (item.percentage / 100f) * 360f
+
+            drawArc(
+                color = colors[index],
+                startAngle = startAngle,
+                sweepAngle = sweepAngle,
+                useCenter = true,
+                size = Size(size.width, size.height)
+            )
+
+            startAngle += sweepAngle
+        }
+    }
+
 }

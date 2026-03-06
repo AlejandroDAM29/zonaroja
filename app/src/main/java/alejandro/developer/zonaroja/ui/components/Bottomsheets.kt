@@ -157,9 +157,11 @@ fun StatisticsBottomSheet(
         precioCiudad = 2000
     )
 
-    val demographyItemModel = DemographyItemModel(
-        name = "Población",
-        percentage = 50.2f
+    val listDemography = listOf(
+        DemographyItemModel("España", 60f),
+        DemographyItemModel("Marruecos", 15f),
+        DemographyItemModel("Rumanía", 10f),
+        DemographyItemModel("Otros", 15f)
     )
 
     var selectedTab by remember { mutableStateOf<StatsTab>(StatsTab.Economy) }
@@ -223,7 +225,7 @@ fun StatisticsBottomSheet(
                 when (selectedTab) {
                     is StatsTab.Economy -> EconomyChart(stastEconomy)
                     is StatsTab.Housing -> HousingChart(housingStatsModel)
-                    is StatsTab.Demography -> DemographySlide(demographyItemModel)
+                    is StatsTab.Demography -> DemographySlide(listDemography)
                 }
             }
 

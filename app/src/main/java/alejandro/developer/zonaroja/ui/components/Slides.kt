@@ -3,7 +3,6 @@ package alejandro.developer.zonaroja.ui.components
 import alejandro.developer.domain.models.DemographyItemModel
 import alejandro.developer.domain.models.EconomyStatsModel
 import alejandro.developer.domain.models.HousingStatsModel
-import alejandro.developer.zonaroja.ui.theme.GreaseTextFieldText
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -16,13 +15,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun EconomyChart(stats: EconomyStatsModel) {
@@ -53,16 +54,6 @@ fun EconomyChart(stats: EconomyStatsModel) {
 
         Spacer(Modifier.size(20.dp))
 
-        Text(
-            text = if (rentaDiff < 0)
-                "La renta media es ${-rentaDiff}% menor que la media de la ciudad."
-            else
-                "La renta media es $rentaDiff% mayor que la media de la ciudad.",
-            style = MaterialTheme.typography.bodyLarge
-        )
-
-        Spacer(Modifier.size(20.dp))
-
         Card(
             colors = CardColors(
                 containerColor = Color.White,
@@ -72,10 +63,21 @@ fun EconomyChart(stats: EconomyStatsModel) {
             ),
             elevation = CardDefaults.cardElevation(4.dp)
         ) {
+            Spacer(Modifier.size(20.dp))
+            Text(
+                text = if (rentaDiff < 0)
+                    "La renta media es ${-rentaDiff}% menor que la media de la ciudad."
+                else
+                    "La renta media es $rentaDiff% mayor que la media de la ciudad.",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+
+            Spacer(Modifier.size(20.dp))
             EconomyBarChart(stats)
+            Spacer(Modifier.size(12.dp))
         }
 
-        Spacer(Modifier.size(12.dp))
     }
 }
 
@@ -115,49 +117,79 @@ fun HousingChart(stats: HousingStatsModel) {
 
 
 @Composable
-fun DemographySlide(item: DemographyItemModel) {
+fun DemographySlide(data: List<DemographyItemModel>) {
 
-    val animatedWidth by animateFloatAsState(
-        targetValue = item.percentage,
-        animationSpec = tween(900),
-        label = ""
-    )
+    val colors = generateChartColors(data.size)
 
     Column {
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+        Text(
+            text = "Demografía",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(Modifier.height(20.dp))
+
+        Card(
+            colors = CardColors(
+                containerColor = Color.White,
+                contentColor = Color.Black,
+                disabledContainerColor = Color.White,
+                disabledContentColor = Color.Black,
+            ),
+            elevation = CardDefaults.cardElevation(4.dp),
+
         ) {
-            Text(item.name)
-            Text("${item.percentage}%")
-        }
+            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "La mayoría de residentes son de España (55%)",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    DemographyPieChart(data, colors)
+                }
+                Spacer(Modifier.height(20.dp))
 
-        Spacer(modifier = Modifier.height(4.dp))
+                data.forEachIndexed { index, item ->
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(14.dp)
-                .background(GreaseTextFieldText.copy(alpha = 0.3f), RoundedCornerShape(50))
-        ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    ) {
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(animatedWidth / 100f)
-                    .height(14.dp)
-                    .background(
-                        Brush.horizontalGradient(
-                            listOf(
-                                Color(0xFFFF5A5F),
-                                Color(0xFFD32F2F)
-                            )
-                        ),
-                        RoundedCornerShape(50)
-                    )
-            )
+                        Box(
+                            modifier = Modifier
+                                .size(10.dp)
+                                .background(color = colors[index % colors.size], CircleShape)
+                        )
+
+                        Spacer(Modifier.width(8.dp))
+
+                        Text(
+                            text = "${item.name} ${item.percentage}%",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+
+                    }
+                    if (index != data.lastIndex) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 6.dp),
+                            thickness = 0.5.dp
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
         }
     }
+
 }
 
 @Composable
@@ -233,5 +265,12 @@ fun AnimatedGradientBar(
             size = Size(size.width, barHeight),
             cornerRadius = CornerRadius(20f, 20f)
         )
+    }
+}
+
+fun generateChartColors(count: Int): List<Color> {
+    return List(count) { index ->
+        val hue = (index * 360f / count)
+        Color.hsv(hue, 0.7f, 0.9f)
     }
 }
