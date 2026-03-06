@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -250,24 +251,31 @@ fun Legend() {
 @Composable
 fun DemographyPieChart(data: List<DemographyItemModel>, colors: List<Color>) {
 
+    var progress by remember { androidx.compose.runtime.mutableFloatStateOf(0f) }
+
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = tween(
+            durationMillis = 1200,
+            easing = FastOutSlowInEasing
+        ),
+        label = ""
+    )
+
+    LaunchedEffect(Unit) {
+        progress = 1f
+    }
+
     Canvas(
-        modifier = Modifier
-            .size(220.dp)
+        modifier = Modifier.size(220.dp)
     ) {
 
         var startAngle = -90f
         val gap = 2f
 
-
         data.forEachIndexed { index, item ->
 
-            val sweepAngle = (item.percentage / 100f) * 360f - gap
-
-            /*drawCircle(
-                color = Color.Black.copy(alpha = 0.05f),
-                radius = size.minDimension / 2,
-                center = Offset(size.width / 2, size.height / 2 + 6f)
-            )*/
+            val sweepAngle = ((item.percentage / 100f) * 360f - gap) * animatedProgress
 
             drawArc(
                 brush = Brush.radialGradient(
@@ -280,14 +288,14 @@ fun DemographyPieChart(data: List<DemographyItemModel>, colors: List<Color>) {
                 sweepAngle = sweepAngle,
                 useCenter = true,
                 size = Size(size.width, size.height),
-                topLeft = Offset(0f, 0f)
+                topLeft = Offset.Zero
             )
 
-            startAngle += sweepAngle + gap
+            startAngle += (item.percentage / 100f) * 360f
         }
     }
-
 }
+
 
 @Composable
 fun SocietyRadialChart(stats: SocietyStatsModel) {
