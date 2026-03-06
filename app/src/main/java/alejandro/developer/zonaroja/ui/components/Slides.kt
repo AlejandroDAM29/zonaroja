@@ -82,17 +82,48 @@ fun EconomyChart(stats: EconomyStatsModel) {
 }
 
 @Composable
-fun HousingChart(stats: SocietyStatsModel) {
+fun SocietySlide(stats: SocietyStatsModel) {
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(220.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.Bottom
-    ) {
+    val paroDiff =
+        ((stats.paroBarrio - stats.paroCiudad) / stats.paroCiudad * 100).toInt()
 
+    Column {
 
+        Text(
+            text = "Sociedad",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(Modifier.height(20.dp))
+
+        Card(
+            colors = CardColors(
+                containerColor = Color.White,
+                contentColor = Color.Black,
+                disabledContainerColor = Color.White,
+                disabledContentColor = Color.Black
+            ),
+            elevation = CardDefaults.cardElevation(4.dp)
+        ) {
+
+            Spacer(Modifier.height(20.dp))
+
+            Text(
+                text = if (paroDiff > 0)
+                    "El paro es $paroDiff% mayor que la media de la ciudad."
+                else
+                    "El paro es ${-paroDiff}% menor que la media de la ciudad.",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+
+            Spacer(Modifier.height(20.dp))
+
+            SocietyRadialChart(stats)
+
+            Spacer(Modifier.height(20.dp))
+        }
     }
 }
 

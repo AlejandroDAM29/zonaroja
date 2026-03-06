@@ -223,7 +223,7 @@ fun StatisticsBottomSheet(
             ) {
                 when (selectedTab) {
                     is StatsTab.Economy -> EconomyChart(stastEconomy)
-                    is StatsTab.Society -> HousingChart(societyStatsModel)
+                    is StatsTab.Society -> SocietySlide(societyStatsModel)
                     is StatsTab.Demography -> DemographySlide(listDemography)
                 }
             }

@@ -2,6 +2,7 @@ package alejandro.developer.zonaroja.ui.components
 
 import alejandro.developer.domain.models.DemographyItemModel
 import alejandro.developer.domain.models.EconomyStatsModel
+import alejandro.developer.domain.models.SocietyStatsModel
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -22,9 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -252,6 +257,45 @@ fun DemographyPieChart(data: List<DemographyItemModel>, colors: List<Color>) {
 
 }
 
+@Composable
+fun SocietyRadialChart(stats: SocietyStatsModel) {
+
+    val items = listOf(
+        Triple("Paro", stats.paroBarrio, stats.paroCiudad),
+        Triple("Pobreza", stats.pobrezaBarrio, stats.pobrezaCiudad)
+    )
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+
+        items.forEach { item ->
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                RadialComparison(
+                    barrio = item.second,
+                    ciudad = item.third
+                )
+
+                Spacer(Modifier.height(8.dp))
+
+                Text(
+                    text = item.first,
+                    fontSize = 14.sp
+                )
+            }
+        }
+    }
+
+    Spacer(Modifier.height(16.dp))
+    LegendSociety()
+}
+
+
 fun Color.darker(factor: Float = 0.75f): Color {
     val hsv = FloatArray(3)
     android.graphics.Color.colorToHSV(this.toArgb(), hsv)
@@ -259,4 +303,117 @@ fun Color.darker(factor: Float = 0.75f): Color {
     hsv[2] *= factor // reduce brillo
 
     return Color(android.graphics.Color.HSVToColor(hsv))
+}
+
+@Composable
+fun LegendSociety() {
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Box(
+            modifier = Modifier
+                .size(10.dp)
+                .background(Color(0xFFE53935), CircleShape)
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+        Text("Barrio")
+
+        Spacer(modifier = Modifier.width(24.dp))
+
+        Box(
+            modifier = Modifier
+                .size(10.dp)
+                .background(Color(0xFF9E9E9E), CircleShape)
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+        Text("Ciudad")
+    }
+}
+
+
+@Composable
+fun RadialComparison(
+    barrio: Float,
+    ciudad: Float
+) {
+
+    Box(
+        modifier = Modifier.size(120.dp),
+        contentAlignment = Alignment.Center
+    ) {
+
+        Canvas(
+            modifier = Modifier.matchParentSize()
+        ) {
+
+            val stroke = 14f
+            val maxValue = 100f
+
+            val barrioSweep = barrio / maxValue * 360f
+            val ciudadSweep = ciudad / maxValue * 360f
+
+            drawArc(
+                color = Color.LightGray.copy(alpha = 0.2f),
+                startAngle = -90f,
+                sweepAngle = 360f,
+                useCenter = false,
+                style = Stroke(stroke)
+            )
+
+            drawArc(
+                brush = Brush.sweepGradient(
+                    listOf(Color(0xFFBDBDBD), Color(0xFF757575))
+                ),
+                startAngle = -90f,
+                sweepAngle = ciudadSweep,
+                useCenter = false,
+                style = Stroke(stroke)
+            )
+
+            drawArc(
+                brush = Brush.sweepGradient(
+                    listOf(Color(0xFFFF5A5F), Color(0xFFD32F2F))
+                ),
+                startAngle = -90f,
+                sweepAngle = barrioSweep,
+                useCenter = false,
+                style = Stroke(
+                    stroke,
+                    cap = StrokeCap.Round
+                ),
+                size = Size(size.width - 30f, size.height - 30f),
+                topLeft = Offset(15f, 15f)
+            )
+        }
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Text(
+                text = "${barrio.toInt()}%",
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
+
+            Text(
+                text = "Barrio",
+                fontSize = 10.sp
+            )
+
+            Spacer(Modifier.height(4.dp))
+
+            Text(
+                text = "Ciudad ${ciudad.toInt()}%",
+                fontSize = 10.sp,
+                color = Color.Gray
+            )
+        }
+    }
 }
