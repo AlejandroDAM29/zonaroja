@@ -49,6 +49,28 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
         Triple("Precio m²", stats.precioBarrio.toFloat(), stats.precioCiudad.toFloat())
     )
 
+    val animatedValues = categories.map { category ->
+
+        val barrioAnim = remember { Animatable(0f) }
+        val ciudadAnim = remember { Animatable(0f) }
+
+        LaunchedEffect(Unit) {
+            barrioAnim.animateTo(
+                category.second,
+                animationSpec = tween(1000, easing = FastOutSlowInEasing)
+            )
+
+            ciudadAnim.animateTo(
+                category.third,
+                animationSpec = tween(1200, easing = FastOutSlowInEasing)
+            )
+        }
+
+        barrioAnim to ciudadAnim
+    }
+
+
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -107,7 +129,10 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
             )
 
 
-            categories.forEachIndexed { index, category ->
+            categories.forEachIndexed { index, _ ->
+
+                val barrioAnimatedValue = animatedValues[index].first.value
+                val ciudadAnimatedValue = animatedValues[index].second.value
 
                 val startX = groupWidth * index + groupWidth / 5
 
@@ -143,8 +168,8 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
                     )
                 }
 
-                drawBar(category.second, 0f, Color(0xFFE53935))      // rojo barrio
-                drawBar(category.third, barWidth * 1.5f, Color(0xFFDADADA)) // gris ciudad
+                drawBar(barrioAnimatedValue, 0f, Color(0xFFE53935))      // rojo barrio
+                drawBar(ciudadAnimatedValue, barWidth * 1.5f, Color(0xFFDADADA)) // gris ciudad
 
             }
 
