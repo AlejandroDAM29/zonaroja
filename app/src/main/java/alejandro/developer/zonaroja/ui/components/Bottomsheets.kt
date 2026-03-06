@@ -150,10 +150,10 @@ fun StatisticsBottomSheet(
     )
 
     val societyStatsModel = SocietyStatsModel(
-        paroBarrio = 10f,
-        paroCiudad = 15f,
+        paroBarrio = 21f,
+        paroCiudad = 8f,
         pobrezaBarrio = 50.2f,
-        pobrezaCiudad = 30.3f
+        pobrezaCiudad = 2.3f
     )
 
     val listDemography = listOf(

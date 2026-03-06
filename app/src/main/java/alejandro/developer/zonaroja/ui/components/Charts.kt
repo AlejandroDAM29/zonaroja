@@ -3,7 +3,6 @@ package alejandro.developer.zonaroja.ui.components
 import alejandro.developer.domain.models.DemographyItemModel
 import alejandro.developer.domain.models.EconomyStatsModel
 import alejandro.developer.domain.models.SocietyStatsModel
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -33,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
 
 @Composable
 fun EconomyBarChart(stats: EconomyStatsModel) {
@@ -261,8 +261,8 @@ fun DemographyPieChart(data: List<DemographyItemModel>, colors: List<Color>) {
 fun SocietyRadialChart(stats: SocietyStatsModel) {
 
     val items = listOf(
-        Triple("Paro", stats.paroBarrio, stats.paroCiudad),
-        Triple("Pobreza", stats.pobrezaBarrio, stats.pobrezaCiudad)
+        Triple("Población en paro", stats.paroBarrio, stats.paroCiudad),
+        Triple("Población en \nriesgo de pobreza", stats.pobrezaBarrio, stats.pobrezaCiudad)
     )
 
     Row(
@@ -285,7 +285,8 @@ fun SocietyRadialChart(stats: SocietyStatsModel) {
 
                 Text(
                     text = item.first,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -314,25 +315,30 @@ fun LegendSociety() {
         verticalAlignment = Alignment.CenterVertically
     ) {
 
+        LegendItem(Color(0xFF2E7D32), "Bajo")
+        Spacer(Modifier.width(16.dp))
+
+        LegendItem(Color(0xFFF9A825), "Medio")
+        Spacer(Modifier.width(16.dp))
+
+        LegendItem(Color(0xFFE53935), "Alto")
+    }
+}
+
+@Composable
+fun LegendItem(color: Color, label: String) {
+
+    Row(verticalAlignment = Alignment.CenterVertically) {
+
         Box(
             modifier = Modifier
                 .size(10.dp)
-                .background(Color(0xFFE53935), CircleShape)
+                .background(color, CircleShape)
         )
 
-        Spacer(modifier = Modifier.width(8.dp))
-        Text("Barrio")
+        Spacer(Modifier.width(6.dp))
 
-        Spacer(modifier = Modifier.width(24.dp))
-
-        Box(
-            modifier = Modifier
-                .size(10.dp)
-                .background(Color(0xFF9E9E9E), CircleShape)
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-        Text("Ciudad")
+        Text(label)
     }
 }
 
@@ -343,6 +349,23 @@ fun RadialComparison(
     ciudad: Float
 ) {
 
+    val barrioColor = getRiskColor(barrio)
+    val ciudadColor = getRiskColor(ciudad)
+
+    val barrioBrush = Brush.sweepGradient(
+        listOf(
+            barrioColor.copy(alpha = 0.7f),
+            barrioColor
+        )
+    )
+
+    val ciudadBrush = Brush.sweepGradient(
+        listOf(
+            ciudadColor.copy(alpha = 0.7f),
+            ciudadColor
+        )
+    )
+
     Box(
         modifier = Modifier.size(120.dp),
         contentAlignment = Alignment.Center
@@ -352,39 +375,51 @@ fun RadialComparison(
             modifier = Modifier.matchParentSize()
         ) {
 
-            val stroke = 14f
             val maxValue = 100f
+            val strokeWidth = 18f
 
             val barrioSweep = barrio / maxValue * 360f
             val ciudadSweep = ciudad / maxValue * 360f
+
+            drawArc(
+                color = Color(0xFFEAEAEA),
+                startAngle = -90f,
+                sweepAngle = 360f,
+                useCenter = false,
+                style = Stroke(
+                    width = strokeWidth
+                )
+            )
 
             drawArc(
                 color = Color.LightGray.copy(alpha = 0.2f),
                 startAngle = -90f,
                 sweepAngle = 360f,
                 useCenter = false,
-                style = Stroke(stroke)
+                style = Stroke(
+                    width = strokeWidth,
+                    cap = StrokeCap.Round
+                )
             )
 
             drawArc(
-                brush = Brush.sweepGradient(
-                    listOf(Color(0xFFBDBDBD), Color(0xFF757575))
-                ),
+                brush = ciudadBrush,
                 startAngle = -90f,
                 sweepAngle = ciudadSweep,
                 useCenter = false,
-                style = Stroke(stroke)
+                style = Stroke(
+                    width = strokeWidth,
+                    cap = StrokeCap.Round
+                )
             )
 
             drawArc(
-                brush = Brush.sweepGradient(
-                    listOf(Color(0xFFFF5A5F), Color(0xFFD32F2F))
-                ),
+                brush = barrioBrush,
                 startAngle = -90f,
                 sweepAngle = barrioSweep,
                 useCenter = false,
                 style = Stroke(
-                    stroke,
+                    strokeWidth,
                     cap = StrokeCap.Round
                 ),
                 size = Size(size.width - 30f, size.height - 30f),
@@ -398,22 +433,31 @@ fun RadialComparison(
 
             Text(
                 text = "${barrio.toInt()}%",
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
             )
 
             Text(
                 text = "Barrio",
-                fontSize = 10.sp
+                fontSize = 11.sp,
+                color = Color.Gray
             )
 
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(6.dp))
 
             Text(
                 text = "Ciudad ${ciudad.toInt()}%",
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 color = Color.Gray
             )
         }
+    }
+}
+
+fun getRiskColor(value: Float): Color {
+    return when {
+        value < 20 -> Color(0xFF2E7D32)   // verde
+        value < 30 -> Color(0xFFF9A825)   // naranja
+        else -> Color(0xFFE53935)         // rojo
     }
 }
