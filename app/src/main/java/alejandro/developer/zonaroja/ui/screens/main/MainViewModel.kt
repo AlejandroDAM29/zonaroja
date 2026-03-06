@@ -6,6 +6,7 @@ import alejandro.developer.domain.usecase.GetCiudadesUseCase
 import alejandro.developer.domain.usecase.GetDangerZonesUseCase
 import alejandro.developer.domain.repositories.LocationSearchRepository
 import alejandro.developer.domain.models.MapBounds
+import alejandro.developer.domain.usecase.GetGraphicsStatsUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
@@ -26,7 +27,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getDangerZonesUseCase: GetDangerZonesUseCase,
-    private val locationSearchRepository: LocationSearchRepository
+    private val locationSearchRepository: LocationSearchRepository,
+    private val getGraphicsStatsUseCase: GetGraphicsStatsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState(isLoading = false))
