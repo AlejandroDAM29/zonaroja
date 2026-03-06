@@ -2,7 +2,7 @@ package alejandro.developer.zonaroja.ui.components
 
 import alejandro.developer.domain.models.DemographyItemModel
 import alejandro.developer.domain.models.EconomyStatsModel
-import alejandro.developer.domain.models.HousingStatsModel
+import alejandro.developer.domain.models.SocietyStatsModel
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -82,14 +82,7 @@ fun EconomyChart(stats: EconomyStatsModel) {
 }
 
 @Composable
-fun HousingChart(stats: HousingStatsModel) {
-
-    val maxValue = listOf(
-        stats.yearBuiltBarrio.toFloat(),
-        stats.yearBuiltCiudad.toFloat(),
-        stats.precioBarrio.toFloat(),
-        stats.precioCiudad.toFloat()
-    ).max()
+fun HousingChart(stats: SocietyStatsModel) {
 
     Row(
         modifier = Modifier
@@ -99,19 +92,7 @@ fun HousingChart(stats: HousingStatsModel) {
         verticalAlignment = Alignment.Bottom
     ) {
 
-        ChartGroup(
-            label = "Año medio",
-            barrioValue = stats.yearBuiltBarrio.toFloat(),
-            ciudadValue = stats.yearBuiltCiudad.toFloat(),
-            maxValue = maxValue
-        )
 
-        ChartGroup(
-            label = "Precio m²",
-            barrioValue = stats.precioBarrio.toFloat(),
-            ciudadValue = stats.precioCiudad.toFloat(),
-            maxValue = maxValue
-        )
     }
 }
 
@@ -190,82 +171,6 @@ fun DemographySlide(data: List<DemographyItemModel>) {
         }
     }
 
-}
-
-@Composable
-fun ChartGroup(
-    label: String,
-    barrioValue: Float,
-    ciudadValue: Float,
-    maxValue: Float
-) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
-        Row(verticalAlignment = Alignment.Bottom) {
-
-            AnimatedGradientBar(
-                value = barrioValue,
-                maxValue = maxValue,
-                colorStart = Color(0xFFFF5A5F),
-                colorEnd = Color(0xFFD32F2F),
-                modifier = Modifier
-                    .width(28.dp)
-                    .height(180.dp)
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            AnimatedGradientBar(
-                value = ciudadValue,
-                maxValue = maxValue,
-                colorStart = Color(0xFFE0E0E0),
-                colorEnd = Color(0xFFBDBDBD),
-                modifier = Modifier
-                    .width(28.dp)
-                    .height(180.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(label)
-    }
-}
-
-@Composable
-fun AnimatedGradientBar(
-    value: Float,
-    maxValue: Float,
-    colorStart: Color,
-    colorEnd: Color,
-    modifier: Modifier = Modifier
-) {
-
-    val animatedValue by animateFloatAsState(
-        targetValue = value,
-        animationSpec = tween(
-            durationMillis = 900,
-            easing = FastOutSlowInEasing
-        ),
-        label = ""
-    )
-
-    Canvas(modifier = modifier) {
-
-        val barHeight = size.height * (animatedValue / maxValue)
-
-        val gradient = Brush.verticalGradient(
-            colors = listOf(colorStart, colorEnd),
-            startY = size.height - barHeight,
-            endY = size.height
-        )
-
-        drawRoundRect(
-            brush = gradient,
-            topLeft = Offset(0f, size.height - barHeight),
-            size = Size(size.width, barHeight),
-            cornerRadius = CornerRadius(20f, 20f)
-        )
-    }
 }
 
 fun generateChartColors(count: Int): List<Color> {

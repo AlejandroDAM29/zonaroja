@@ -2,7 +2,6 @@ package alejandro.developer.zonaroja.ui.components
 
 import alejandro.developer.zonaroja.ui.screens.main.StatsTab
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.SecondaryTabRow
@@ -10,8 +9,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
@@ -23,7 +20,7 @@ fun StatsTabRow(
 
     val tabs = listOf(
         StatsTab.Economy,
-        StatsTab.Housing,
+        StatsTab.Society,
         StatsTab.Demography
     )
 

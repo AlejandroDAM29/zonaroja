@@ -21,8 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -102,7 +104,12 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
                     val barHeight = size.height * 0.7f * (value / maxValue)
 
                     drawRect(
-                        color = color,
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                color,
+                                color.darker()
+                            )
+                        ),
                         topLeft = Offset(
                             x = startX + offset,
                             y = size.height - barHeight
@@ -212,21 +219,44 @@ fun DemographyPieChart(data: List<DemographyItemModel>, colors: List<Color>) {
     ) {
 
         var startAngle = -90f
+        val gap = 2f
+
 
         data.forEachIndexed { index, item ->
 
-            val sweepAngle = (item.percentage / 100f) * 360f
+            val sweepAngle = (item.percentage / 100f) * 360f - gap
+
+            /*drawCircle(
+                color = Color.Black.copy(alpha = 0.05f),
+                radius = size.minDimension / 2,
+                center = Offset(size.width / 2, size.height / 2 + 6f)
+            )*/
 
             drawArc(
-                color = colors[index],
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        colors[index],
+                        colors[index].darker()
+                    )
+                ),
                 startAngle = startAngle,
                 sweepAngle = sweepAngle,
                 useCenter = true,
-                size = Size(size.width, size.height)
+                size = Size(size.width, size.height),
+                topLeft = Offset(0f, 0f)
             )
 
-            startAngle += sweepAngle
+            startAngle += sweepAngle + gap
         }
     }
 
+}
+
+fun Color.darker(factor: Float = 0.75f): Color {
+    val hsv = FloatArray(3)
+    android.graphics.Color.colorToHSV(this.toArgb(), hsv)
+
+    hsv[2] *= factor // reduce brillo
+
+    return Color(android.graphics.Color.HSVToColor(hsv))
 }

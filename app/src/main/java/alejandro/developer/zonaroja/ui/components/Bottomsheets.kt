@@ -3,7 +3,7 @@ package alejandro.developer.zonaroja.ui.components
 import alejandro.developer.domain.models.DangerZone
 import alejandro.developer.domain.models.DemographyItemModel
 import alejandro.developer.domain.models.EconomyStatsModel
-import alejandro.developer.domain.models.HousingStatsModel
+import alejandro.developer.domain.models.SocietyStatsModel
 import alejandro.developer.zonaroja.ui.screens.main.MainViewModel
 import alejandro.developer.zonaroja.ui.screens.main.StatsTab
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Warning
@@ -150,11 +149,11 @@ fun StatisticsBottomSheet(
         precioCiudad = 2400
     )
 
-    val housingStatsModel = HousingStatsModel(
-        yearBuiltBarrio = 1960,
-        yearBuiltCiudad = 2000,
-        precioBarrio = 720,
-        precioCiudad = 2000
+    val societyStatsModel = SocietyStatsModel(
+        paroBarrio = 10f,
+        paroCiudad = 15f,
+        pobrezaBarrio = 50.2f,
+        pobrezaCiudad = 30.3f
     )
 
     val listDemography = listOf(
@@ -224,7 +223,7 @@ fun StatisticsBottomSheet(
             ) {
                 when (selectedTab) {
                     is StatsTab.Economy -> EconomyChart(stastEconomy)
-                    is StatsTab.Housing -> HousingChart(housingStatsModel)
+                    is StatsTab.Society -> HousingChart(societyStatsModel)
                     is StatsTab.Demography -> DemographySlide(listDemography)
                 }
             }
