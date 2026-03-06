@@ -3,6 +3,10 @@ package alejandro.developer.zonaroja.ui.components
 import alejandro.developer.domain.models.DemographyItemModel
 import alejandro.developer.domain.models.EconomyStatsModel
 import alejandro.developer.domain.models.SocietyStatsModel
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +21,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -349,6 +356,9 @@ fun RadialComparison(
     ciudad: Float
 ) {
 
+    val barrioAnim = remember { Animatable(0f) }
+    val ciudadAnim = remember { Animatable(0f) }
+
     val barrioColor = getRiskColor(barrio)
     val ciudadColor = getRiskColor(ciudad)
 
@@ -366,6 +376,25 @@ fun RadialComparison(
         )
     )
 
+    LaunchedEffect(Unit) {
+
+        ciudadAnim.animateTo(
+            targetValue = ciudad,
+            animationSpec = tween(
+                durationMillis = 1000,
+                easing = FastOutSlowInEasing
+            )
+        )
+
+        barrioAnim.animateTo(
+            targetValue = barrio,
+            animationSpec = tween(
+                durationMillis = 1200,
+                easing = FastOutSlowInEasing
+            )
+        )
+    }
+
     Box(
         modifier = Modifier.size(120.dp),
         contentAlignment = Alignment.Center
@@ -378,8 +407,8 @@ fun RadialComparison(
             val maxValue = 100f
             val strokeWidth = 18f
 
-            val barrioSweep = barrio / maxValue * 360f
-            val ciudadSweep = ciudad / maxValue * 360f
+            val barrioSweep = barrioAnim.value / maxValue * 360f
+            val ciudadSweep = ciudadAnim.value / maxValue * 360f
 
             drawArc(
                 color = Color(0xFFEAEAEA),
@@ -432,7 +461,7 @@ fun RadialComparison(
         ) {
 
             Text(
-                text = "${barrio.toInt()}%",
+                text = "${barrioAnim.value.toInt()}%",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -446,7 +475,7 @@ fun RadialComparison(
             Spacer(Modifier.height(6.dp))
 
             Text(
-                text = "Ciudad ${ciudad.toInt()}%",
+                text = "Ciudad ${ciudadAnim.value.toInt()}%",
                 fontSize = 11.sp,
                 color = Color.Gray
             )
