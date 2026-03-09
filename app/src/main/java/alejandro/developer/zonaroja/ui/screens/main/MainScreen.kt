@@ -137,7 +137,7 @@ fun ContentMainScreen(
                     uiState.isStatsOpen -> {
                         StatisticsBottomSheet(
                             viewModel,
-                            zone = uiState.selectedZone
+                            uiState = uiState
                         )
                     }
                 }

@@ -8,7 +8,7 @@ class GetGraphicsStatsUseCase @Inject constructor(
     private val repository: GraphicsRepository
 ) {
 
-    suspend operator fun invoke(zoneId: String): StatsGraphicsModel {
+    suspend operator fun invoke(zoneId: Int): StatsGraphicsModel {
         return repository.getGraphicsStats(zoneId)
     }
 

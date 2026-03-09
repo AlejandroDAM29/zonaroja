@@ -7,6 +7,7 @@ import alejandro.developer.domain.usecase.GetDangerZonesUseCase
 import alejandro.developer.domain.repositories.LocationSearchRepository
 import alejandro.developer.domain.models.MapBounds
 import alejandro.developer.domain.usecase.GetGraphicsStatsUseCase
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
@@ -41,17 +42,23 @@ class MainViewModel @Inject constructor(
         extraBufferCapacity = 1
     )
 
+
+
     init {
         observeBounds()
     }
 
+
+
     fun openStats() {
+
         _uiState.update {
             it.copy(
                 isPanelOpen = false,
                 isStatsOpen = true
             )
         }
+        getMapStatsWithZoneId()
     }
 
     fun openPanel(zone: DangerZone) {
@@ -91,7 +98,6 @@ class MainViewModel @Inject constructor(
         if (query.isBlank()) return
 
         viewModelScope.launch {
-
             _uiState.update { it.copy(isLoading = true) }
 
             val result = locationSearchRepository.searchCity(query)
@@ -115,6 +121,36 @@ class MainViewModel @Inject constructor(
                 isSearchExpanded = !it.isSearchExpanded,
                 searchQuery = if (it.isSearchExpanded) "" else it.searchQuery
             )
+        }
+    }
+
+    private fun getMapStatsWithZoneId(){
+        viewModelScope.launch {
+
+            try {
+
+                val zone = _uiState.value.selectedZone ?: return@launch
+                _uiState.update { it.copy(isStatsLoading = true) }
+
+                val stats = getGraphicsStatsUseCase(zone.id)
+
+                Log.i("test-100", "Entra en stats con demografia española en: ${stats.demography[0].percentage}");
+
+                _uiState.update {
+                    it.copy(
+                        economyStats = stats.economy,
+                        societyStats = stats.society,
+                        demographyStats = stats.demography
+                    )
+                }
+
+            } catch (e: Exception) {
+
+                Log.e("Map Stats Call Error", e.message ?: "Unknown error")
+
+            } finally {
+                _uiState.update { it.copy(isStatsLoading = false) }
+            }
         }
     }
 

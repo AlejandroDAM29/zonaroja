@@ -10,7 +10,7 @@ class GraphicsRepositoryImpl @Inject constructor(
     private val api: DangerZoneApi
 ) : GraphicsRepository {
 
-    override suspend fun getGraphicsStats(zoneId: String): StatsGraphicsModel {
+    override suspend fun getGraphicsStats(zoneId: Int): StatsGraphicsModel {
         return api.getGraphicsStats(zoneId).toDomain()
     }
 

@@ -4,15 +4,18 @@ import alejandro.developer.domain.models.DangerZone
 import alejandro.developer.domain.models.DemographyItemModel
 import alejandro.developer.domain.models.EconomyStatsModel
 import alejandro.developer.domain.models.SocietyStatsModel
+import alejandro.developer.zonaroja.ui.screens.main.MainUiState
 import alejandro.developer.zonaroja.ui.screens.main.MainViewModel
 import alejandro.developer.zonaroja.ui.screens.main.StatsTab
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import alejandro.developer.zonaroja.ui.theme.White
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +29,7 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -137,33 +142,27 @@ fun InfoPanelMap(
 @Composable
 fun StatisticsBottomSheet(
     viewmodel: MainViewModel,
-    zone: DangerZone
+    uiState: MainUiState
 ) {
 
-    val stastEconomy = EconomyStatsModel(
-        rentaBarrio = 100,
-        rentaCiudad = 1000,
-        pobrezaBarrio = 50.2,
-        pobrezaCiudad =  30.3,
-        precioBarrio = 700,
-        precioCiudad = 2400
-    )
+    if (uiState.isStatsLoading) {
 
-    val societyStatsModel = SocietyStatsModel(
-        paroBarrio = 21f,
-        paroCiudad = 8f,
-        pobrezaBarrio = 50.2f,
-        pobrezaCiudad = 2.3f
-    )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(320.dp)
+                .background(White),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                color = Color(0xFFD32F2F),
+                strokeWidth = 4.dp
+            )
+        }
 
-    val listDemography = listOf(
-        DemographyItemModel("España", 60f),
-        DemographyItemModel("Marruecos", 15f),
-        DemographyItemModel("Rumanía", 10f),
-        DemographyItemModel("Otros", 15f)
-    )
+    } else {
 
-    var selectedTab by remember { mutableStateOf<StatsTab>(StatsTab.Economy) }
+        var selectedTab by remember { mutableStateOf<StatsTab>(StatsTab.Economy) }
 
         Column(
             modifier = Modifier
@@ -178,7 +177,11 @@ fun StatisticsBottomSheet(
             ) {
 
                 IconButton(
-                    onClick = { viewmodel.openPanel(zone) },
+                    onClick = {
+                        uiState.selectedZone?.let {
+                            viewmodel.openPanel(it)
+                        }
+                    },
                     modifier = Modifier.align(Alignment.CenterStart)
                 ) {
                     Icon(
@@ -222,9 +225,9 @@ fun StatisticsBottomSheet(
                     .animateContentSize()
             ) {
                 when (selectedTab) {
-                    is StatsTab.Economy -> EconomyChart(stastEconomy)
-                    is StatsTab.Society -> SocietySlide(societyStatsModel)
-                    is StatsTab.Demography -> DemographySlide(listDemography)
+                    is StatsTab.Economy -> EconomyChart(uiState.economyStats!!)
+                    is StatsTab.Society -> SocietySlide(uiState.societyStats!!)
+                    is StatsTab.Demography -> DemographySlide(uiState.demographyStats)
                 }
             }
 
@@ -243,6 +246,7 @@ fun StatisticsBottomSheet(
                 Text("Cerrar")
             }
         }
+    }
 }
 
 /*@Preview(
