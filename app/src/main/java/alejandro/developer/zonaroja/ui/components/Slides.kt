@@ -3,12 +3,7 @@ package alejandro.developer.zonaroja.ui.components
 import alejandro.developer.domain.models.DemographyItemModel
 import alejandro.developer.domain.models.EconomyStatsModel
 import alejandro.developer.domain.models.SocietyStatsModel
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,23 +22,16 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun EconomyChart(stats: EconomyStatsModel) {
-
-    val rentaDiff =
-        ((stats.rentaBarrio - stats.rentaCiudad).toFloat() / stats.rentaCiudad * 100).toInt()
+fun EconomyChart(stats: EconomyStatsModel?) {
 
     Column {
 
@@ -55,6 +43,18 @@ fun EconomyChart(stats: EconomyStatsModel) {
 
         Spacer(Modifier.size(20.dp))
 
+        if (stats == null) {
+
+            EmptyStatsState(
+                message = "No hay datos económicos disponibles para esta zona."
+            )
+
+            return@Column
+        }
+
+        val rentaDiff =
+            ((stats.rentaBarrio - stats.rentaCiudad).toFloat() / stats.rentaCiudad * 100).toInt()
+
         Card(
             colors = CardColors(
                 containerColor = Color.White,
@@ -64,7 +64,9 @@ fun EconomyChart(stats: EconomyStatsModel) {
             ),
             elevation = CardDefaults.cardElevation(4.dp)
         ) {
+
             Spacer(Modifier.size(20.dp))
+
             Text(
                 text = if (rentaDiff < 0)
                     "La renta media es ${-rentaDiff}% menor que la media de la ciudad."
@@ -75,18 +77,17 @@ fun EconomyChart(stats: EconomyStatsModel) {
             )
 
             Spacer(Modifier.size(20.dp))
+
             EconomyBarChart(stats)
+
             Spacer(Modifier.size(12.dp))
         }
-
     }
 }
 
-@Composable
-fun SocietySlide(stats: SocietyStatsModel) {
 
-    val paroDiff =
-        ((stats.paroBarrio - stats.paroCiudad) / stats.paroCiudad * 100).toInt()
+@Composable
+fun SocietySlide(stats: SocietyStatsModel?) {
 
     Column {
 
@@ -97,6 +98,18 @@ fun SocietySlide(stats: SocietyStatsModel) {
         )
 
         Spacer(Modifier.height(20.dp))
+
+        if (stats == null) {
+
+            EmptyStatsState(
+                message = "No hay datos sociales disponibles para esta zona."
+            )
+
+            return@Column
+        }
+
+        val paroDiff =
+            ((stats.paroBarrio - stats.paroCiudad) / stats.paroCiudad * 100).toInt()
 
         Card(
             colors = CardColors(
@@ -133,8 +146,6 @@ fun SocietySlide(stats: SocietyStatsModel) {
 @Composable
 fun DemographySlide(data: List<DemographyItemModel>) {
 
-    val colors = generateChartColors(data.size)
-
     Column {
 
         Text(
@@ -145,6 +156,17 @@ fun DemographySlide(data: List<DemographyItemModel>) {
 
         Spacer(Modifier.height(20.dp))
 
+        if (data.isEmpty()) {
+
+            EmptyStatsState(
+                message = "No hay datos demográficos disponibles para esta zona."
+            )
+
+            return@Column
+        }
+
+        val colors = generateChartColors(data.size)
+
         Card(
             colors = CardColors(
                 containerColor = Color.White,
@@ -153,20 +175,24 @@ fun DemographySlide(data: List<DemographyItemModel>) {
                 disabledContentColor = Color.Black,
             ),
             elevation = CardDefaults.cardElevation(4.dp),
-
         ) {
+
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+
                 Spacer(modifier = Modifier.height(16.dp))
+
                 Text(
-                    text = "La mayoría de residentes son de España (55%)",
+                    text = "Distribución de nacionalidades en la zona",
                     style = MaterialTheme.typography.bodyLarge
                 )
+
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
                     DemographyPieChart(data, colors)
                 }
+
                 Spacer(Modifier.height(20.dp))
 
                 data.forEachIndexed { index, item ->
@@ -189,8 +215,8 @@ fun DemographySlide(data: List<DemographyItemModel>) {
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium
                         )
-
                     }
+
                     if (index != data.lastIndex) {
                         HorizontalDivider(
                             modifier = Modifier.padding(vertical = 6.dp),
@@ -198,12 +224,32 @@ fun DemographySlide(data: List<DemographyItemModel>) {
                         )
                     }
                 }
+
                 Spacer(modifier = Modifier.height(16.dp))
             }
-
         }
     }
+}
 
+
+@Composable
+fun EmptyStatsState(
+    message: String,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 48.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.Gray,
+            textAlign = TextAlign.Center
+        )
+    }
 }
 
 fun generateChartColors(count: Int): List<Color> {

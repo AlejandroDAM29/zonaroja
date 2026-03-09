@@ -225,8 +225,8 @@ fun StatisticsBottomSheet(
                     .animateContentSize()
             ) {
                 when (selectedTab) {
-                    is StatsTab.Economy -> EconomyChart(uiState.economyStats!!)
-                    is StatsTab.Society -> SocietySlide(uiState.societyStats!!)
+                    is StatsTab.Economy -> EconomyChart(uiState.economyStats)
+                    is StatsTab.Society -> SocietySlide(uiState.societyStats)
                     is StatsTab.Demography -> DemographySlide(uiState.demographyStats)
                 }
             }
@@ -248,31 +248,3 @@ fun StatisticsBottomSheet(
         }
     }
 }
-
-/*@Preview(
-    name = "InfoPanel - Alta peligrosidad",
-    showBackground = true,
-    backgroundColor = 0xFFFFFFFF
-)
-@Composable
-private fun InfoPanelMapPreviewHighRisk() {
-
-    val fakeZone = DangerZone(
-        id = 1,
-        riskLevel = RiskLevel.HIGH,
-        points = emptyList(),
-        city = "Sevilla",
-        zoneName = "Los pajaritos",
-        middleIncome = 9014,
-        povertyRiskRate = 57.2,
-        unemploymentRate = 13.1,
-        priceSquareMeter = 1000
-    )
-
-    MaterialTheme {
-        InfoPanelMap(
-            zone = fakeZone,
-            onClose = {}
-        )
-    }
-}*/
