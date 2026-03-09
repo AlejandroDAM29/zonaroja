@@ -60,11 +60,9 @@
     <string name="society_title">Sociedad</string>
     <string name="demography_title">Demografía</string>
     <string name="empty_map_stat_demography">No hay datos demográficos disponibles para esta zona.</string>
-    <string name="dist_nationality">Distribución de nacionalidades en la zona</string>
+    <string name="dist_nationality">Distribución de nacionalidades en la zona:</string>
     <string name="unemployment_higher_city">El paro es %1$d%% mayor que la media de la ciudad.</string>
     <string name="unemployment_lower_city">El paro es %1$d%% menor que la media de la ciudad.</string>
-    <string name="rent_higher_hood">La renta media es %1$d%% menor que la media de la ciudad.</string>
-    <string name="rent_lower_hood">La renta media es %1$d%% mayor que la media de la ciudad.</string>
     <string name="average_income_chart">Renta media</string>
     <string name="Price_m">Precio m²</string>
     <string name="close_button_statisticsbottomsheet">Cerrar</string>
@@ -74,6 +72,12 @@
     <string name="low">Bajo</string>
     <string name="medium">Medio</string>
     <string name="high">Alto</string>
+    <string name="average_rent_first_part">"La renta media es "</string>
+    <string name="average_rent_lower_second_part">" menor que la media de la ciudad."</string>
+    <string name="average_rent_higher_second_part">" menor que la media de la ciudad."</string>
+    <string name="unemployment_line_first_part">El paro es</string>
+    <string name="unemployment_high_second_part">mayor que la media de la ciudad</string>
+    <string name="unemployment_low_second_part">menor que la media de la ciudad</string>
 
     <!--InfoPanelMap-->
     <string name="see_stadistics_button">Ver estadísticas</string>

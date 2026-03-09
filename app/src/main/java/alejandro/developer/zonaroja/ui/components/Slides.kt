@@ -4,6 +4,7 @@ import alejandro.developer.domain.models.DemographyItemModel
 import alejandro.developer.domain.models.SocietyStatsModel
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.screens.main.MainUiState
+import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,10 +28,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.abs
 
 @Composable
 fun EconomyChart(uiState: MainUiState) {
@@ -57,6 +62,8 @@ fun EconomyChart(uiState: MainUiState) {
         val rentaDiff =
             ((uiState.economyStats.rentaBarrio - uiState.economyStats.rentaCiudad).toFloat() / uiState.economyStats.rentaCiudad * 100).toInt()
 
+        val rentaDiffDisplay = abs(rentaDiff)
+
         Card(
             colors = CardColors(
                 containerColor = Color.White,
@@ -64,16 +71,25 @@ fun EconomyChart(uiState: MainUiState) {
                 disabledContainerColor = Color.White,
                 disabledContentColor = Color.Black
             ),
-            elevation = CardDefaults.cardElevation(4.dp)
+            elevation = CardDefaults.cardElevation(0.dp)
         ) {
 
             Spacer(Modifier.size(20.dp))
 
             Text(
-                text = if (rentaDiff < 0)
-                    stringResource(R.string.rent_higher_hood, -rentaDiff)
-                else
-                    stringResource(R.string.rent_lower_hood, rentaDiff),
+                text =  buildAnnotatedString {
+
+                append(stringResource(R.string.average_rent_first_part)+" ")
+
+                withStyle(style = SpanStyle(color = RedZoneColor)) {
+                    append("${rentaDiffDisplay}%")
+                }
+                    if (rentaDiff < 0)
+                        append(" "+stringResource(R.string.average_rent_lower_second_part))
+                    else
+                        append(stringResource(R.string.average_rent_higher_second_part))
+
+            },
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
@@ -113,6 +129,8 @@ fun SocietySlide(stats: SocietyStatsModel?) {
         val paroDiff =
             ((stats.paroBarrio - stats.paroCiudad) / stats.paroCiudad * 100).toInt()
 
+        val paroDiffDisplay = abs(paroDiff)
+
         Card(
             colors = CardColors(
                 containerColor = Color.White,
@@ -120,17 +138,26 @@ fun SocietySlide(stats: SocietyStatsModel?) {
                 disabledContainerColor = Color.White,
                 disabledContentColor = Color.Black
             ),
-            elevation = CardDefaults.cardElevation(6.dp),
+            elevation = CardDefaults.cardElevation(0.dp),
             shape = RoundedCornerShape(20.dp)
         ) {
 
             Spacer(Modifier.height(20.dp))
 
             Text(
-                text = if (paroDiff > 0)
-                    stringResource(R.string.unemployment_higher_city, paroDiff)
-                else
-                    stringResource(R.string.unemployment_lower_city, -paroDiff),
+                text = buildAnnotatedString {
+
+                    append(stringResource(R.string.unemployment_line_first_part)+" ")
+
+                    withStyle(style = SpanStyle(color = RedZoneColor)) {
+                        append("${paroDiffDisplay}%")
+                    }
+                    if (paroDiff > 0)
+                        append( " "+ stringResource(R.string.unemployment_high_second_part))
+                    else
+                        append(" "+ stringResource(R.string.unemployment_low_second_part))
+
+                },
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
@@ -187,6 +214,8 @@ fun DemographySlide(data: List<DemographyItemModel>) {
                     text = stringResource(R.string.dist_nationality),
                     style = MaterialTheme.typography.bodyLarge
                 )
+
+                Spacer(modifier = Modifier.height(20.dp))
 
                 Box(
                     modifier = Modifier.fillMaxWidth(),
