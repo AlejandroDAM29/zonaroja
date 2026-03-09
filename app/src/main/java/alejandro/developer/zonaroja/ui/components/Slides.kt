@@ -1,8 +1,9 @@
 package alejandro.developer.zonaroja.ui.components
 
 import alejandro.developer.domain.models.DemographyItemModel
-import alejandro.developer.domain.models.EconomyStatsModel
 import alejandro.developer.domain.models.SocietyStatsModel
+import alejandro.developer.zonaroja.R
+import alejandro.developer.zonaroja.ui.screens.main.MainUiState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,35 +26,36 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun EconomyChart(stats: EconomyStatsModel?) {
+fun EconomyChart(uiState: MainUiState) {
 
     Column {
 
         Text(
-            text = "Economía",
+            text = stringResource(R.string.economy_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
 
         Spacer(Modifier.size(20.dp))
 
-        if (stats == null) {
+        if (uiState.economyStats == null) {
 
             EmptyStatsState(
-                message = "No hay datos económicos disponibles para esta zona."
+                message = stringResource(R.string.empty_map_stat_economy)
             )
 
             return@Column
         }
 
         val rentaDiff =
-            ((stats.rentaBarrio - stats.rentaCiudad).toFloat() / stats.rentaCiudad * 100).toInt()
+            ((uiState.economyStats.rentaBarrio - uiState.economyStats.rentaCiudad).toFloat() / uiState.economyStats.rentaCiudad * 100).toInt()
 
         Card(
             colors = CardColors(
@@ -69,16 +71,16 @@ fun EconomyChart(stats: EconomyStatsModel?) {
 
             Text(
                 text = if (rentaDiff < 0)
-                    "La renta media es ${-rentaDiff}% menor que la media de la ciudad."
+                    stringResource(R.string.rent_higher_hood, -rentaDiff)
                 else
-                    "La renta media es $rentaDiff% mayor que la media de la ciudad.",
+                    stringResource(R.string.rent_lower_hood, rentaDiff),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
             Spacer(Modifier.size(20.dp))
 
-            EconomyBarChart(stats)
+            EconomyBarChart(uiState)
 
             Spacer(Modifier.size(12.dp))
         }
@@ -92,7 +94,7 @@ fun SocietySlide(stats: SocietyStatsModel?) {
     Column {
 
         Text(
-            text = "Sociedad",
+            text = stringResource(R.string.society_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
@@ -102,7 +104,7 @@ fun SocietySlide(stats: SocietyStatsModel?) {
         if (stats == null) {
 
             EmptyStatsState(
-                message = "No hay datos sociales disponibles para esta zona."
+                message = stringResource(R.string.empty_map_stat_society)
             )
 
             return@Column
@@ -126,9 +128,9 @@ fun SocietySlide(stats: SocietyStatsModel?) {
 
             Text(
                 text = if (paroDiff > 0)
-                    "El paro es $paroDiff% mayor que la media de la ciudad."
+                    stringResource(R.string.unemployment_higher_city, paroDiff)
                 else
-                    "El paro es ${-paroDiff}% menor que la media de la ciudad.",
+                    stringResource(R.string.unemployment_lower_city, -paroDiff),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
@@ -149,7 +151,7 @@ fun DemographySlide(data: List<DemographyItemModel>) {
     Column {
 
         Text(
-            text = "Demografía",
+            text = stringResource(R.string.demography_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
@@ -159,7 +161,7 @@ fun DemographySlide(data: List<DemographyItemModel>) {
         if (data.isEmpty()) {
 
             EmptyStatsState(
-                message = "No hay datos demográficos disponibles para esta zona."
+                message = stringResource(R.string.empty_map_stat_demography)
             )
 
             return@Column
@@ -182,7 +184,7 @@ fun DemographySlide(data: List<DemographyItemModel>) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Distribución de nacionalidades en la zona",
+                    text = stringResource(R.string.dist_nationality),
                     style = MaterialTheme.typography.bodyLarge
                 )
 

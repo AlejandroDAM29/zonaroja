@@ -1,11 +1,9 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
 import alejandro.developer.domain.models.DangerZone
-import alejandro.developer.domain.usecase.LogoutUseCase
-import alejandro.developer.domain.usecase.GetCiudadesUseCase
-import alejandro.developer.domain.usecase.GetDangerZonesUseCase
-import alejandro.developer.domain.repositories.LocationSearchRepository
 import alejandro.developer.domain.models.MapBounds
+import alejandro.developer.domain.repositories.LocationSearchRepository
+import alejandro.developer.domain.usecase.GetDangerZonesUseCase
 import alejandro.developer.domain.usecase.GetGraphicsStatsUseCase
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -43,11 +41,9 @@ class MainViewModel @Inject constructor(
     )
 
 
-
     init {
         observeBounds()
     }
-
 
 
     fun openStats() {
@@ -124,7 +120,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun getMapStatsWithZoneId(){
+    private fun getMapStatsWithZoneId() {
         viewModelScope.launch {
 
             try {
@@ -133,8 +129,6 @@ class MainViewModel @Inject constructor(
                 _uiState.update { it.copy(isStatsLoading = true) }
 
                 val stats = getGraphicsStatsUseCase(zone.id)
-
-                Log.i("test-100", "Entra en stats con demografia española en: ${stats.demography[0].percentage}");
 
                 _uiState.update {
                     it.copy(
@@ -145,7 +139,7 @@ class MainViewModel @Inject constructor(
                 }
 
             } catch (e: Exception) {
-
+                _uiEvents.emit(MainUiEvent.ShowError(e.message ?: "Unknown error"))
                 Log.e("Map Stats Call Error", e.message ?: "Unknown error")
 
             } finally {

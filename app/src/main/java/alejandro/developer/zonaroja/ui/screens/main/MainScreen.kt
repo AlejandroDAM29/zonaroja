@@ -32,7 +32,6 @@ fun MainScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val currentContext by rememberUpdatedState(LocalContext.current)
     val appUiEvents = LocalAppUiController.current
-    val appViewModel: AppViewModel = activityHiltViewModel()
 
     LaunchedEffect(showSnackbarRegisterSuccess) {
         if (showSnackbarRegisterSuccess)
@@ -62,8 +61,7 @@ fun MainScreen(
     ) {
         ContentMainScreen(
             uiState = uiState,
-            viewModel = viewModel,
-            appViewModel = appViewModel
+            viewModel = viewModel
         )
 
     }
@@ -75,8 +73,7 @@ fun MainScreen(
 @Composable
 fun ContentMainScreen(
     uiState: MainUiState,
-    viewModel: MainViewModel,
-    appViewModel: AppViewModel
+    viewModel: MainViewModel
 ) {
 
     val sheetState = rememberModalBottomSheetState(

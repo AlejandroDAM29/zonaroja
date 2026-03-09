@@ -1,8 +1,9 @@
 package alejandro.developer.zonaroja.ui.components
 
 import alejandro.developer.domain.models.DemographyItemModel
-import alejandro.developer.domain.models.EconomyStatsModel
 import alejandro.developer.domain.models.SocietyStatsModel
+import alejandro.developer.zonaroja.R
+import alejandro.developer.zonaroja.ui.screens.main.MainUiState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -36,6 +37,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -43,11 +45,21 @@ import androidx.compose.ui.unit.sp
 
 
 @Composable
-fun EconomyBarChart(stats: EconomyStatsModel) {
+fun EconomyBarChart(uiState: MainUiState) {
+
+    val stats = uiState.economyStats!!
 
     val categories = listOf(
-        Triple("Renta media", stats.rentaBarrio.toFloat(), stats.rentaCiudad.toFloat()),
-        Triple("Precio m²", stats.precioBarrio.toFloat(), stats.precioCiudad.toFloat())
+        Triple(
+            stringResource(R.string.average_income_chart),
+            stats.rentaBarrio.toFloat(),
+            stats.rentaCiudad.toFloat()
+        ),
+        Triple(
+            stringResource(R.string.Price_m),
+            stats.precioBarrio.toFloat(),
+            stats.precioCiudad.toFloat()
+        )
     )
 
     val animatedValues = categories.map { category ->
@@ -100,7 +112,7 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
             val textWidth = textPaint.measureText("${maxValue.toInt()}€")
 
             val dashEffect = PathEffect.dashPathEffect(
-                floatArrayOf(10f, 10f), // longitud línea, longitud hueco
+                floatArrayOf(10f, 10f),
                 0f
             )
 
@@ -169,8 +181,8 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
                     )
                 }
 
-                drawBar(barrioAnimatedValue, 0f, Color(0xFFE53935))      // rojo barrio
-                drawBar(ciudadAnimatedValue, barWidth * 1.5f, Color(0xFFDADADA)) // gris ciudad
+                drawBar(barrioAnimatedValue, 0f, Color(0xFFE53935))
+                drawBar(ciudadAnimatedValue, barWidth * 1.5f, Color(0xFFDADADA))
 
             }
 
@@ -213,11 +225,13 @@ fun EconomyBarChart(stats: EconomyStatsModel) {
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    Legend()
+    Legend(uiState)
 }
 
 @Composable
-fun Legend() {
+fun Legend(
+    uiState: MainUiState
+) {
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -232,7 +246,7 @@ fun Legend() {
         )
 
         Spacer(modifier = Modifier.width(8.dp))
-        Text("Los pajaritos")
+        Text(uiState.selectedZone!!.zoneName)
 
         Spacer(modifier = Modifier.width(24.dp))
 
@@ -243,7 +257,7 @@ fun Legend() {
         )
 
         Spacer(modifier = Modifier.width(8.dp))
-        Text("Media Sevilla")
+        Text(uiState.selectedZone.city)
     }
 }
 
@@ -259,7 +273,7 @@ fun DemographyPieChart(data: List<DemographyItemModel>, colors: List<Color>) {
             durationMillis = 1200,
             easing = FastOutSlowInEasing
         ),
-        label = ""
+        label = stringResource(R.string.label_animation_demography)
     )
 
     LaunchedEffect(Unit) {
@@ -301,8 +315,8 @@ fun DemographyPieChart(data: List<DemographyItemModel>, colors: List<Color>) {
 fun SocietyRadialChart(stats: SocietyStatsModel) {
 
     val items = listOf(
-        Triple("Población en paro", stats.paroBarrio, stats.paroCiudad),
-        Triple("Población en \nriesgo de pobreza", stats.pobrezaBarrio, stats.pobrezaCiudad)
+        Triple(stringResource(R.string.unemployed_population), stats.paroBarrio, stats.paroCiudad),
+        Triple(stringResource(R.string.risk_poverty), stats.pobrezaBarrio, stats.pobrezaCiudad)
     )
 
     Row(
@@ -341,7 +355,7 @@ fun Color.darker(factor: Float = 0.75f): Color {
     val hsv = FloatArray(3)
     android.graphics.Color.colorToHSV(this.toArgb(), hsv)
 
-    hsv[2] *= factor // reduce brillo
+    hsv[2] *= factor
 
     return Color(android.graphics.Color.HSVToColor(hsv))
 }
@@ -355,13 +369,13 @@ fun LegendSociety() {
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        LegendItem(Color(0xFF2E7D32), "Bajo")
+        LegendItem(Color(0xFF2E7D32), stringResource(R.string.low))
         Spacer(Modifier.width(16.dp))
 
-        LegendItem(Color(0xFFF9A825), "Medio")
+        LegendItem(Color(0xFFF9A825), stringResource(R.string.medium))
         Spacer(Modifier.width(16.dp))
 
-        LegendItem(Color(0xFFE53935), "Alto")
+        LegendItem(Color(0xFFE53935), stringResource(R.string.high))
     }
 }
 
@@ -500,7 +514,7 @@ fun RadialComparison(
             )
 
             Text(
-                text = "Barrio",
+                text = stringResource(R.string.hood_legend),
                 fontSize = 11.sp,
                 color = Color.Gray
             )
@@ -508,7 +522,7 @@ fun RadialComparison(
             Spacer(Modifier.height(6.dp))
 
             Text(
-                text = "Ciudad ${ciudadAnim.value.toInt()}%",
+                text = stringResource(R.string.city_legend) + " ${ciudadAnim.value.toInt()}%",
                 fontSize = 11.sp,
                 color = Color.Gray
             )
@@ -518,8 +532,8 @@ fun RadialComparison(
 
 fun getRiskColor(value: Float): Color {
     return when {
-        value < 20 -> Color(0xFF2E7D32)   // verde
-        value < 30 -> Color(0xFFF9A825)   // naranja
-        else -> Color(0xFFE53935)         // rojo
+        value < 20 -> Color(0xFF2E7D32)
+        value < 30 -> Color(0xFFF9A825)
+        else -> Color(0xFFE53935)
     }
 }

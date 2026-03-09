@@ -1,9 +1,7 @@
 package alejandro.developer.zonaroja.ui.components
 
 import alejandro.developer.domain.models.DangerZone
-import alejandro.developer.domain.models.DemographyItemModel
-import alejandro.developer.domain.models.EconomyStatsModel
-import alejandro.developer.domain.models.SocietyStatsModel
+import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.screens.main.MainUiState
 import alejandro.developer.zonaroja.ui.screens.main.MainViewModel
 import alejandro.developer.zonaroja.ui.screens.main.StatsTab
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -44,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -108,7 +106,7 @@ fun InfoPanelMap(
             )
         ) {
             Text(
-                text = "Ver estadísticas",
+                text = stringResource(R.string.see_stadistics_button),
                 fontSize = 18.sp
             )
         }
@@ -116,7 +114,8 @@ fun InfoPanelMap(
         Spacer(Modifier.height(12.dp))
 
         OutlinedButton(
-            onClick = { /* estadísticas */ },
+            onClick = { //TODO implementar guardado de favoritos
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Icon(
@@ -128,7 +127,7 @@ fun InfoPanelMap(
             Spacer(Modifier.width(8.dp))
 
             Text(
-                text = "Guardar en favoritos",
+                text = stringResource(R.string.save_favourites_button),
                 fontSize = 16.sp
             )
         }
@@ -177,21 +176,17 @@ fun StatisticsBottomSheet(
             ) {
 
                 IconButton(
-                    onClick = {
-                        uiState.selectedZone?.let {
-                            viewmodel.openPanel(it)
-                        }
-                    },
+                    onClick = { viewmodel.openPanel(uiState.selectedZone!!) },
                     modifier = Modifier.align(Alignment.CenterStart)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Volver"
+                        contentDescription = stringResource(R.string.comeback_description_statisticsbottomsheet)
                     )
                 }
 
                 Text(
-                    text = "Los pajaritos",
+                    text = uiState.selectedZone!!.zoneName,
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.align(Alignment.Center),
                     textAlign = TextAlign.Center,
@@ -204,7 +199,7 @@ fun StatisticsBottomSheet(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Cerrar"
+                        contentDescription = stringResource(R.string.close_button_statisticsbottomsheet)
                     )
                 }
             }
@@ -225,7 +220,7 @@ fun StatisticsBottomSheet(
                     .animateContentSize()
             ) {
                 when (selectedTab) {
-                    is StatsTab.Economy -> EconomyChart(uiState.economyStats)
+                    is StatsTab.Economy -> EconomyChart(uiState)
                     is StatsTab.Society -> SocietySlide(uiState.societyStats)
                     is StatsTab.Demography -> DemographySlide(uiState.demographyStats)
                 }
@@ -243,7 +238,7 @@ fun StatisticsBottomSheet(
                     disabledContentColor = White
                 )
             ) {
-                Text("Cerrar")
+                Text(stringResource(R.string.close_button_statisticsbottomsheet))
             }
         }
     }
