@@ -5,8 +5,8 @@ import alejandro.developer.domain.models.SocietyStatsModel
 
 fun SocietyStatsDto.toDomain() =
     SocietyStatsModel(
-        paroBarrio = paroBarrio,
-        paroCiudad = paroCiudad,
-        pobrezaBarrio = pobrezaBarrio,
-        pobrezaCiudad = pobrezaCiudad
+        hoodUnemployment = hoodUnemployment,
+        cityUnemployment = cityUnemployment,
+        hoodPoberty = hoodPoberty,
+        cityPoberty = cityPoberty
     )

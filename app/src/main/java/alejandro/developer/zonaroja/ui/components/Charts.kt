@@ -52,34 +52,34 @@ fun EconomyBarChart(uiState: MainUiState) {
     val categories = listOf(
         Triple(
             stringResource(R.string.average_income_chart),
-            stats.rentaBarrio.toFloat(),
-            stats.rentaCiudad.toFloat()
+            stats.hoodRent.toFloat(),
+            stats.cityRent.toFloat()
         ),
         Triple(
             stringResource(R.string.Price_m),
-            stats.precioBarrio.toFloat(),
-            stats.precioCiudad.toFloat()
+            stats.hoodPrice.toFloat(),
+            stats.cityPrice.toFloat()
         )
     )
 
     val animatedValues = categories.map { category ->
 
-        val barrioAnim = remember { Animatable(0f) }
-        val ciudadAnim = remember { Animatable(0f) }
+        val hoodAnim = remember { Animatable(0f) }
+        val cityAnim = remember { Animatable(0f) }
 
         LaunchedEffect(Unit) {
-            barrioAnim.animateTo(
+            hoodAnim.animateTo(
                 category.second,
                 animationSpec = tween(1000, easing = FastOutSlowInEasing)
             )
 
-            ciudadAnim.animateTo(
+            cityAnim.animateTo(
                 category.third,
                 animationSpec = tween(1200, easing = FastOutSlowInEasing)
             )
         }
 
-        barrioAnim to ciudadAnim
+        hoodAnim to cityAnim
     }
 
 
@@ -144,8 +144,8 @@ fun EconomyBarChart(uiState: MainUiState) {
 
             categories.forEachIndexed { index, _ ->
 
-                val barrioAnimatedValue = animatedValues[index].first.value
-                val ciudadAnimatedValue = animatedValues[index].second.value
+                val hoodAnimatedValue = animatedValues[index].first.value
+                val cityAnimatedValue = animatedValues[index].second.value
 
                 val startX = groupWidth * index + groupWidth / 5
 
@@ -181,8 +181,8 @@ fun EconomyBarChart(uiState: MainUiState) {
                     )
                 }
 
-                drawBar(barrioAnimatedValue, 0f, Color(0xFFE53935))
-                drawBar(ciudadAnimatedValue, barWidth * 1.5f, Color(0xFFDADADA))
+                drawBar(hoodAnimatedValue, 0f, Color(0xFFE53935))
+                drawBar(cityAnimatedValue, barWidth * 1.5f, Color(0xFFDADADA))
 
             }
 
@@ -315,8 +315,8 @@ fun DemographyPieChart(data: List<DemographyItemModel>, colors: List<Color>) {
 fun SocietyRadialChart(stats: SocietyStatsModel) {
 
     val items = listOf(
-        Triple(stringResource(R.string.unemployed_population), stats.paroBarrio, stats.paroCiudad),
-        Triple(stringResource(R.string.risk_poverty), stats.pobrezaBarrio, stats.pobrezaCiudad)
+        Triple(stringResource(R.string.unemployed_population), stats.hoodUnemployment, stats.cityUnemployment),
+        Triple(stringResource(R.string.risk_poverty), stats.hoodPoberty, stats.cityPoberty)
     )
 
     Row(
@@ -403,29 +403,29 @@ fun RadialComparison(
     ciudad: Float
 ) {
 
-    val barrioAnim = remember { Animatable(0f) }
-    val ciudadAnim = remember { Animatable(0f) }
+    val hoodAnim = remember { Animatable(0f) }
+    val cityAnim = remember { Animatable(0f) }
 
-    val barrioColor = getRiskColor(barrio)
-    val ciudadColor = getRiskColor(ciudad)
+    val hoodColor = getRiskColor(barrio)
+    val cityColor = getRiskColor(ciudad)
 
-    val barrioBrush = Brush.sweepGradient(
+    val hoodBrush = Brush.sweepGradient(
         listOf(
-            barrioColor.copy(alpha = 0.7f),
-            barrioColor
+            hoodColor.copy(alpha = 0.7f),
+            hoodColor
         )
     )
 
-    val ciudadBrush = Brush.sweepGradient(
+    val cityBrush = Brush.sweepGradient(
         listOf(
-            ciudadColor.copy(alpha = 0.7f),
-            ciudadColor
+            cityColor.copy(alpha = 0.7f),
+            cityColor
         )
     )
 
     LaunchedEffect(Unit) {
 
-        ciudadAnim.animateTo(
+        cityAnim.animateTo(
             targetValue = ciudad,
             animationSpec = tween(
                 durationMillis = 1000,
@@ -433,7 +433,7 @@ fun RadialComparison(
             )
         )
 
-        barrioAnim.animateTo(
+        hoodAnim.animateTo(
             targetValue = barrio,
             animationSpec = tween(
                 durationMillis = 1200,
@@ -454,8 +454,8 @@ fun RadialComparison(
             val maxValue = 100f
             val strokeWidth = 18f
 
-            val barrioSweep = barrioAnim.value / maxValue * 360f
-            val ciudadSweep = ciudadAnim.value / maxValue * 360f
+            val hoodSweep = hoodAnim.value / maxValue * 360f
+            val citydSweep = cityAnim.value / maxValue * 360f
 
             drawArc(
                 color = Color(0xFFEAEAEA),
@@ -479,9 +479,9 @@ fun RadialComparison(
             )
 
             drawArc(
-                brush = ciudadBrush,
+                brush = cityBrush,
                 startAngle = -90f,
-                sweepAngle = ciudadSweep,
+                sweepAngle = citydSweep,
                 useCenter = false,
                 style = Stroke(
                     width = strokeWidth,
@@ -490,9 +490,9 @@ fun RadialComparison(
             )
 
             drawArc(
-                brush = barrioBrush,
+                brush = hoodBrush,
                 startAngle = -90f,
-                sweepAngle = barrioSweep,
+                sweepAngle = hoodSweep,
                 useCenter = false,
                 style = Stroke(
                     strokeWidth,
@@ -508,7 +508,7 @@ fun RadialComparison(
         ) {
 
             Text(
-                text = "${barrioAnim.value.toInt()}%",
+                text = "${hoodAnim.value.toInt()}%",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -522,7 +522,7 @@ fun RadialComparison(
             Spacer(Modifier.height(6.dp))
 
             Text(
-                text = stringResource(R.string.city_legend) + " ${ciudadAnim.value.toInt()}%",
+                text = stringResource(R.string.city_legend) + " ${cityAnim.value.toInt()}%",
                 fontSize = 11.sp,
                 color = Color.Gray
             )

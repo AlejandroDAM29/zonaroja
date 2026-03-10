@@ -5,14 +5,14 @@ import com.squareup.moshi.Json
 data class SocietyStatsDto(
 
     @Json(name = "paroBarrio")
-    val paroBarrio: Float,
+    val hoodUnemployment: Float,
 
     @Json(name = "paroCiudad")
-    val paroCiudad: Float,
+    val cityUnemployment: Float,
 
     @Json(name = "pobrezaBarrio")
-    val pobrezaBarrio: Float,
+    val hoodPoberty: Float,
 
     @Json(name = "pobrezaCiudad")
-    val pobrezaCiudad: Float
+    val cityPoberty: Float
 )

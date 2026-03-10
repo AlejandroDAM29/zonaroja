@@ -5,8 +5,8 @@ import alejandro.developer.domain.models.EconomyStatsModel
 
 fun EconomyStatsDto.toDomain() =
     EconomyStatsModel(
-        rentaBarrio = rentaBarrio,
-        rentaCiudad = rentaCiudad,
-        precioBarrio = precioBarrio,
-        precioCiudad = precioCiudad
+        hoodRent = hoodRent,
+        cityRent = cityRent,
+        hoodPrice = hoodPrice,
+        cityPrice = cityPrice
     )

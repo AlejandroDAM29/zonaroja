@@ -59,10 +59,10 @@ fun EconomyChart(uiState: MainUiState) {
             return@Column
         }
 
-        val rentaDiff =
-            ((uiState.economyStats.rentaBarrio - uiState.economyStats.rentaCiudad).toFloat() / uiState.economyStats.rentaCiudad * 100).toInt()
+        val rentDiff =
+            ((uiState.economyStats.hoodRent - uiState.economyStats.cityRent).toFloat() / uiState.economyStats.cityRent * 100).toInt()
 
-        val rentaDiffDisplay = abs(rentaDiff)
+        val rentDiffDisplay = abs(rentDiff)
 
         Card(
             colors = CardColors(
@@ -82,9 +82,9 @@ fun EconomyChart(uiState: MainUiState) {
                 append(stringResource(R.string.average_rent_first_part)+" ")
 
                 withStyle(style = SpanStyle(color = RedZoneColor)) {
-                    append("${rentaDiffDisplay}%")
+                    append("${rentDiffDisplay}%")
                 }
-                    if (rentaDiff < 0)
+                    if (rentDiff < 0)
                         append(" "+stringResource(R.string.average_rent_lower_second_part))
                     else
                         append(stringResource(R.string.average_rent_higher_second_part))
@@ -126,10 +126,10 @@ fun SocietySlide(stats: SocietyStatsModel?) {
             return@Column
         }
 
-        val paroDiff =
-            ((stats.paroBarrio - stats.paroCiudad) / stats.paroCiudad * 100).toInt()
+        val unemploymentDiff =
+            ((stats.hoodUnemployment - stats.cityUnemployment) / stats.cityUnemployment * 100).toInt()
 
-        val paroDiffDisplay = abs(paroDiff)
+        val unemploymentDiffDisplay = abs(unemploymentDiff)
 
         Card(
             colors = CardColors(
@@ -150,9 +150,9 @@ fun SocietySlide(stats: SocietyStatsModel?) {
                     append(stringResource(R.string.unemployment_line_first_part)+" ")
 
                     withStyle(style = SpanStyle(color = RedZoneColor)) {
-                        append("${paroDiffDisplay}%")
+                        append("${unemploymentDiffDisplay}%")
                     }
-                    if (paroDiff > 0)
+                    if (unemploymentDiff > 0)
                         append( " "+ stringResource(R.string.unemployment_high_second_part))
                     else
                         append(" "+ stringResource(R.string.unemployment_low_second_part))

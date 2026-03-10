@@ -5,14 +5,14 @@ import com.squareup.moshi.Json
 data class EconomyStatsDto(
 
     @Json(name = "rentaBarrio")
-    val rentaBarrio: Int,
+    val hoodRent: Int,
 
     @Json(name = "rentaCiudad")
-    val rentaCiudad: Int,
+    val cityRent: Int,
 
     @Json(name = "precioBarrio")
-    val precioBarrio: Int,
+    val hoodPrice: Int,
 
     @Json(name = "precioCiudad")
-    val precioCiudad: Int
+    val cityPrice: Int
 )

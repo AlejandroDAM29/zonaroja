@@ -84,8 +84,8 @@
     <string name="save_favourites_button">Guardar en favoritos</string>
 
     <!--RadialComparison-->
-    <string name="hood_legend">Alto</string>
-    <string name="city_legend">Alto</string>
+    <string name="hood_legend">Barrio</string>
+    <string name="city_legend">Ciudad</string>
     <string name="label_animation_demography">Animación de label</string>
 
 
