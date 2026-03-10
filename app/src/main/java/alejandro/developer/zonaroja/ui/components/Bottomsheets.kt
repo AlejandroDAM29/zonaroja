@@ -220,7 +220,7 @@ fun StatisticsBottomSheet(
                     .animateContentSize()
             ) {
                 when (selectedTab) {
-                    is StatsTab.Economy -> EconomyChart(uiState)
+                    is StatsTab.Economy -> EconomySlide(uiState)
                     is StatsTab.Society -> SocietySlide(uiState.societyStats)
                     is StatsTab.Demography -> DemographySlide(uiState.demographyStats)
                 }

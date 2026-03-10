@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.sp
 import kotlin.math.abs
 
 @Composable
-fun EconomyChart(uiState: MainUiState) {
+fun EconomySlide(uiState: MainUiState) {
 
     Column {
 
