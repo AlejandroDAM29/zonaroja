@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-03-03T13:10:42.989441Z">
+        <DropdownSelection timestamp="2026-03-05T12:49:03.975635700Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\0021526\.android\avd\Pixel_7a_API_30.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\0021526\.android\avd\Medium_Phone_API_35.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -34,6 +34,9 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="InfoPanelMapPreviewHighRisk (1)">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="EconomyBarChart2">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

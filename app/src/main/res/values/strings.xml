@@ -51,4 +51,43 @@
     <string name="high_danger_map_legend">Alta peligrosidad</string>
     <string name="medium_danger_map_legend">Media peligrosidad</string>
     <string name="low_danger_map_legend">Baja peligrosidad</string>
+
+
+    <!--Map Graphics Slides-->
+    <string name="economy_title">Economía</string>
+    <string name="empty_map_stat_economy">No hay datos económicos disponibles para esta zona.</string>
+    <string name="empty_map_stat_society">No hay datos sociales disponibles para esta zona.</string>
+    <string name="society_title">Sociedad</string>
+    <string name="demography_title">Demografía</string>
+    <string name="empty_map_stat_demography">No hay datos demográficos disponibles para esta zona.</string>
+    <string name="dist_nationality">Distribución de nacionalidades en la zona:</string>
+    <string name="unemployment_higher_city">El paro es %1$d%% mayor que la media de la ciudad.</string>
+    <string name="unemployment_lower_city">El paro es %1$d%% menor que la media de la ciudad.</string>
+    <string name="average_income_chart">Renta media</string>
+    <string name="Price_m">Precio m²</string>
+    <string name="close_button_statisticsbottomsheet">Cerrar</string>
+    <string name="comeback_description_statisticsbottomsheet">Volver</string>
+    <string name="unemployed_population">Población en paro</string>
+    <string name="risk_poverty">Población en \nriesgo de pobreza</string>
+    <string name="low">Bajo</string>
+    <string name="medium">Medio</string>
+    <string name="high">Alto</string>
+    <string name="average_rent_first_part">"La renta media es "</string>
+    <string name="average_rent_lower_second_part">" menor que la media de la ciudad."</string>
+    <string name="average_rent_higher_second_part">" menor que la media de la ciudad."</string>
+    <string name="unemployment_line_first_part">El paro es</string>
+    <string name="unemployment_high_second_part">mayor que la media de la ciudad</string>
+    <string name="unemployment_low_second_part">menor que la media de la ciudad</string>
+
+    <!--InfoPanelMap-->
+    <string name="see_stadistics_button">Ver estadísticas</string>
+    <string name="save_favourites_button">Guardar en favoritos</string>
+
+    <!--RadialComparison-->
+    <string name="hood_legend">Barrio</string>
+    <string name="city_legend">Ciudad</string>
+    <string name="label_animation_demography">Animación de label</string>
+
+
+
 </resources>

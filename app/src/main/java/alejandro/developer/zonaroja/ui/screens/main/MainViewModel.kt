@@ -1,11 +1,11 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
 import alejandro.developer.domain.models.DangerZone
-import alejandro.developer.domain.usecase.LogoutUseCase
-import alejandro.developer.domain.usecase.GetCiudadesUseCase
-import alejandro.developer.domain.usecase.GetDangerZonesUseCase
-import alejandro.developer.domain.repositories.LocationSearchRepository
 import alejandro.developer.domain.models.MapBounds
+import alejandro.developer.domain.repositories.LocationSearchRepository
+import alejandro.developer.domain.usecase.GetDangerZonesUseCase
+import alejandro.developer.domain.usecase.GetGraphicsStatsUseCase
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
@@ -25,10 +25,9 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getCiudadesUseCase: GetCiudadesUseCase,
-    private val logoutUseCase: LogoutUseCase,
     private val getDangerZonesUseCase: GetDangerZonesUseCase,
-    private val locationSearchRepository: LocationSearchRepository
+    private val locationSearchRepository: LocationSearchRepository,
+    private val getGraphicsStatsUseCase: GetGraphicsStatsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState(isLoading = false))
@@ -41,26 +40,38 @@ class MainViewModel @Inject constructor(
         extraBufferCapacity = 1
     )
 
-    /*private var texts: List<String> = emptyList()*/
 
     init {
         observeBounds()
+    }
+
+
+    fun openStats() {
+
+        _uiState.update {
+            it.copy(
+                isPanelOpen = false,
+                isStatsOpen = true
+            )
+        }
+        getMapStatsWithZoneId()
     }
 
     fun openPanel(zone: DangerZone) {
         _uiState.update {
             it.copy(
                 isPanelOpen = true,
+                isStatsOpen = false,
                 selectedZone = zone
             )
         }
     }
 
-    fun closePanel(){
+    fun closeBottomSheets() {
         _uiState.update {
             it.copy(
                 isPanelOpen = false,
-                selectedZone = null
+                isStatsOpen = false
             )
         }
     }
@@ -83,7 +94,6 @@ class MainViewModel @Inject constructor(
         if (query.isBlank()) return
 
         viewModelScope.launch {
-
             _uiState.update { it.copy(isLoading = true) }
 
             val result = locationSearchRepository.searchCity(query)
@@ -107,6 +117,34 @@ class MainViewModel @Inject constructor(
                 isSearchExpanded = !it.isSearchExpanded,
                 searchQuery = if (it.isSearchExpanded) "" else it.searchQuery
             )
+        }
+    }
+
+    private fun getMapStatsWithZoneId() {
+        viewModelScope.launch {
+
+            try {
+
+                val zone = _uiState.value.selectedZone ?: return@launch
+                _uiState.update { it.copy(isStatsLoading = true) }
+
+                val stats = getGraphicsStatsUseCase(zone.id)
+
+                _uiState.update {
+                    it.copy(
+                        economyStats = stats.economy,
+                        societyStats = stats.society,
+                        demographyStats = stats.demography
+                    )
+                }
+
+            } catch (e: Exception) {
+                _uiEvents.emit(MainUiEvent.ShowError(e.message ?: "Unknown error"))
+                Log.e("Map Stats Call Error", e.message ?: "Unknown error")
+
+            } finally {
+                _uiState.update { it.copy(isStatsLoading = false) }
+            }
         }
     }
 

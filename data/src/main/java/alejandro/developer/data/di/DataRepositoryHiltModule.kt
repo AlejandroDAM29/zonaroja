@@ -4,10 +4,12 @@ import alejandro.developer.data.remote.datasources.FeatureFlagsRepositoryImpl
 import alejandro.developer.data.repositoriesimpl.CiudadesRepositoryImpl
 import alejandro.developer.data.repositoriesimpl.DangerZoneRepositoryImpl
 import alejandro.developer.data.repositoriesimpl.FirebaseAuthRepositoryImpl
+import alejandro.developer.data.repositoriesimpl.GraphicsRepositoryImpl
 import alejandro.developer.domain.repositories.AuthRepository
 import alejandro.developer.domain.repositories.FeatureFlagsRepository
 import alejandro.developer.domain.repositories.CiudadesRepository
 import alejandro.developer.domain.repositories.DangerZoneRepository
+import alejandro.developer.domain.repositories.GraphicsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -38,4 +40,10 @@ abstract class DataRepositoryHiltModule {
     abstract fun bindDangerZoneRepository(
         impl: DangerZoneRepositoryImpl
     ): DangerZoneRepository
+
+    @Binds
+    abstract fun bindGraphicsRepository(
+        impl: GraphicsRepositoryImpl
+    ): GraphicsRepository
+
 }
