@@ -2,13 +2,19 @@ package alejandro.developer.zonaroja.ui.components
 
 import alejandro.developer.core.CONSTANTS.LATITUDE_INITIAL_POSITION_MAP
 import alejandro.developer.core.CONSTANTS.LONGITUDE_INITIAL_POSITION_MAP
-import alejandro.developer.domain.models.DangerZone
+import alejandro.developer.domain.models.DangerZoneModel
+import alejandro.developer.domain.models.GeoPoint
 import alejandro.developer.domain.models.MapBounds
 import alejandro.developer.domain.models.RiskLevel
+import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.theme.Black
 import alejandro.developer.zonaroja.ui.theme.GreenClearMap
 import alejandro.developer.zonaroja.ui.theme.RedClearMap
 import alejandro.developer.zonaroja.ui.theme.YellowClearMap
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -20,10 +26,15 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Bookmark
+import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -32,23 +43,37 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerComposable
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun DangerMapContent(
     isSearcherNameSpacerExpanded: Boolean,
-    zones: List<DangerZone>,
+    zones: List<DangerZoneModel>,
     searchQuery: String,
     onBoundsChanged: (MapBounds) -> Unit,
     modifier: Modifier = Modifier,
@@ -57,14 +82,17 @@ fun DangerMapContent(
     onSearchTriggered: () -> Unit,
     onSearchConsumed: () -> Unit,
     onExpandHideClick: () -> Unit,
-    onOpenPanel: (DangerZone) -> Unit
+    onOpenPanel: (DangerZoneModel) -> Unit
 ) {
 
     val inititalPositionMap = LatLng(LATITUDE_INITIAL_POSITION_MAP, LONGITUDE_INITIAL_POSITION_MAP)
     val cameraPositionState = rememberCameraPositionState()
-    val currentZoom = cameraPositionState.position.zoom
-    val minZoomToShowZones = 12f
-    val shouldShowZones = currentZoom >= minZoomToShowZones
+    var currentZoom by remember { mutableFloatStateOf(cameraPositionState.position.zoom) }
+    val zoomBucket = when {
+        currentZoom < 13f -> 0
+        currentZoom < 15f -> 1
+        else -> 2
+    }
 
     var hasLoadedInitialBounds by remember { mutableStateOf(false) }
 
@@ -72,6 +100,13 @@ fun DangerMapContent(
         cameraPositionState.move(
             CameraUpdateFactory.newLatLngZoom(inititalPositionMap, 12f)
         )
+    }
+
+    LaunchedEffect(cameraPositionState) {
+        snapshotFlow { cameraPositionState.position.zoom }
+            .collect { newZoom ->
+                currentZoom = newZoom
+            }
     }
 
     LaunchedEffect(cameraPositionState.position) {
@@ -137,9 +172,13 @@ fun DangerMapContent(
 
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState
+            cameraPositionState = cameraPositionState,
+            properties = MapProperties(
+                maxZoomPreference = 16f,
+                minZoomPreference = 12f
+            )
         ) {
-            if (shouldShowZones) {
+
                 zones.forEach { zone ->
                     Polygon(
                         clickable = true,
@@ -149,8 +188,36 @@ fun DangerMapContent(
                         strokeWidth = 2f,
                         onClick = { onOpenPanel(zone) }
                     )
+
+                    /*if (zone.isFavorite && currentZoom > 13f) {*/
+                    val center = polygonCenter(zone.points)
+
+                    key( zoomBucket) {
+
+                        MarkerComposable(
+                            state = remember { MarkerState(position = center) },
+                            anchor = Offset(0.5f, 0.5f)
+                        ) {
+
+                            Log.i("test-100", "zoom: $currentZoom");
+                            val iconSize = when {
+                                currentZoom < 13f -> 14.dp
+                                currentZoom < 15f -> 20.dp
+                                currentZoom < 16f -> 24.dp
+                                else -> 28.dp
+                            }
+
+                            Icon(
+                                imageVector = Icons.Filled.PushPin,
+                                contentDescription = "Zona favorita",
+                                tint = Color.Blue,
+                                modifier = Modifier.size(iconSize)
+                            )
+                        }
+                        /*}*/
+                    }
                 }
-            }
+
         }
 
         BoxWithConstraints(
@@ -184,7 +251,7 @@ fun DangerMapContent(
                         value = searchQuery,
                         onValueChange = onSearchQueryChanged,
                         modifier = Modifier.fillMaxSize(),
-                        placeholder = { Text("Buscar ciudad...") },
+                        placeholder = { Text(stringResource(R.string.look_for_city)) },
                         singleLine = true,
                         leadingIcon = {
                             IconButton(onClick = onExpandHideClick) {
@@ -214,26 +281,6 @@ fun DangerMapContent(
             }
         }
 
-        if (!shouldShowZones) {
-            AnimatedVisibility(
-                visible = !shouldShowZones,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                modifier = Modifier.align(Alignment.Center)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .background(Color.Black.copy(alpha = 0.7f))
-                        .padding(horizontal = 20.dp, vertical = 12.dp)
-                ) {
-                    Text(
-                        text = "Acércate más para ver los barrios",
-                        color = Color.White
-                    )
-                }
-            }
-        }
-
         LegendCard(
             modifier = Modifier
                 .align(Alignment.BottomStart)
@@ -249,4 +296,30 @@ fun RiskLevel.toColor(): Color {
         RiskLevel.MEDIUM -> YellowClearMap
         RiskLevel.HIGH -> RedClearMap
     }
+}
+
+fun polygonCenter(points: List<GeoPoint>): LatLng {
+
+    var area = 0.0
+    var centroidLat = 0.0
+    var centroidLng = 0.0
+
+    for (i in points.indices) {
+
+        val p1 = points[i]
+        val p2 = points[(i + 1) % points.size]
+
+        val factor = (p1.lat * p2.lng - p2.lat * p1.lng)
+
+        area += factor
+        centroidLat += (p1.lat + p2.lat) * factor
+        centroidLng += (p1.lng + p2.lng) * factor
+    }
+
+    area *= 0.5
+
+    centroidLat /= (6 * area)
+    centroidLng /= (6 * area)
+
+    return LatLng(centroidLat, centroidLng)
 }

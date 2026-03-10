@@ -87,7 +87,7 @@
     <string name="hood_legend">Barrio</string>
     <string name="city_legend">Ciudad</string>
     <string name="label_animation_demography">Animación de label</string>
-
+    <string name="look_for_city">Buscar ciudad...</string>
 
 
 </resources>

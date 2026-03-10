@@ -1,14 +1,14 @@
 package alejandro.developer.domain.usecase
 
 import alejandro.developer.domain.models.DangerZoneModel
-import alejandro.developer.domain.models.MapBounds
 import alejandro.developer.domain.repositories.DangerZoneRepository
 import javax.inject.Inject
 
-class GetDangerZonesUseCase @Inject constructor(
+class SaveDangerZoneUseCase @Inject constructor(
     private val repository: DangerZoneRepository
 ) {
-    suspend operator fun invoke(bounds: MapBounds): List<DangerZoneModel> {
-        return repository.getDangerZonesRemote(bounds = bounds)
+
+    suspend operator fun invoke(zone: DangerZoneModel) {
+        repository.saveDangerZoneLocal(zone)
     }
 }

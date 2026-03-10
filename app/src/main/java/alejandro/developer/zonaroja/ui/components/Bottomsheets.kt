@@ -1,6 +1,6 @@
 package alejandro.developer.zonaroja.ui.components
 
-import alejandro.developer.domain.models.DangerZone
+import alejandro.developer.domain.models.DangerZoneModel
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.screens.main.MainUiState
 import alejandro.developer.zonaroja.ui.screens.main.MainViewModel
@@ -49,7 +49,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun InfoPanelMap(
-    zone: DangerZone,
+    zone: DangerZoneModel,
     onClose: () -> Unit,
     onOpenStats: () -> Unit
 ) {

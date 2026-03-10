@@ -1,23 +1,42 @@
 package alejandro.developer.data.repositoriesimpl
 
+import alejandro.developer.data.local.datasources.DangerZoneLocalDataSource
 import alejandro.developer.data.mappers.toDomain
+import alejandro.developer.data.mappers.toEntity
+import alejandro.developer.data.mappers.toGeoEntities
 import alejandro.developer.data.remote.apis.DangerZoneApi
+import alejandro.developer.data.remote.datasources.DangerZoneRemoteDataSource
 import alejandro.developer.domain.repositories.DangerZoneRepository
 import jakarta.inject.Inject
-import alejandro.developer.domain.models.DangerZone
+import alejandro.developer.domain.models.DangerZoneModel
 import alejandro.developer.domain.models.MapBounds
+import alejandro.developer.domain.models.StatsGraphicsModel
 import kotlin.collections.map
 
 class DangerZoneRepositoryImpl @Inject constructor(
-    private val api: DangerZoneApi
+    private val remote: DangerZoneRemoteDataSource,
+    private val local: DangerZoneLocalDataSource
 ) : DangerZoneRepository {
 
-    override suspend fun getDangerZones(bounds: MapBounds): List<DangerZone> {
-        return api.getDangerZones(
-            bounds.minLat,
-            bounds.maxLat,
-            bounds.minLng,
-            bounds.maxLng
+    override suspend fun getDangerZonesRemote(bounds: MapBounds): List<DangerZoneModel> {
+
+        return remote.getDangerZones(
+            bounds
         ).map { it.toDomain() }
     }
+
+    override suspend fun saveDangerZoneLocal(zone: DangerZoneModel) {
+
+        local.insertZone(zone.toEntity())
+        local.insertPoints(zone.toGeoEntities())
+    }
+
+    override suspend fun getGraphicsStatsRemote(
+        zoneId: Int
+    ): StatsGraphicsModel {
+
+        return remote.getGraphicsStats(zoneId).toDomain()
+    }
+
+
 }

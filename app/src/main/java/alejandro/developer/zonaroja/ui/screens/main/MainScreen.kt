@@ -1,10 +1,8 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
 import alejandro.developer.zonaroja.R
-import alejandro.developer.zonaroja.ui.common.globalApp.AppViewModel
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
-import alejandro.developer.zonaroja.ui.common.globalApp.activityHiltViewModel
 import alejandro.developer.zonaroja.ui.components.DangerMapContent
 import alejandro.developer.zonaroja.ui.components.InfoPanelMap
 import alejandro.developer.zonaroja.ui.components.StatisticsBottomSheet
@@ -85,7 +83,7 @@ fun ContentMainScreen(
     ) {
         DangerMapContent(
             isSearcherNameSpacerExpanded = uiState.isSearchExpanded,
-            zones = uiState.dangerZonesPoints,
+            zones = uiState.dangerZonesPointModels,
             searchQuery = uiState.searchQuery,
             searchedLocation = uiState.searchedLocation,
             onBoundsChanged = viewModel::onBoundsChanged,

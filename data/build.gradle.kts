@@ -5,6 +5,9 @@ plugins {
 
 }
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
 
 android {
     namespace = "alejandro.developer.data"
@@ -41,4 +44,10 @@ dependencies {
 
     //Testing
     testImplementation(libs.junit)
+
+    //Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+
+    ksp(libs.androidx.room.compiler)
 }

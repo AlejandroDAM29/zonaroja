@@ -1,6 +1,6 @@
 package alejandro.developer.domain.models
 
-data class DangerZone(
+data class DangerZoneModel(
     val id: Int,
     val zoneName: String,
     val city: String,

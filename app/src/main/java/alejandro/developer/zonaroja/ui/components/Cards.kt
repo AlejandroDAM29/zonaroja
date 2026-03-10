@@ -1,6 +1,6 @@
 package alejandro.developer.zonaroja.ui.components
 
-import alejandro.developer.domain.models.DangerZone
+import alejandro.developer.domain.models.DangerZoneModel
 import alejandro.developer.domain.models.RiskLevel
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.theme.Black
@@ -71,7 +71,7 @@ fun LegendItem(
 
 
 @Composable
-fun StatsCard(zone: DangerZone) {
+fun StatsCard(zone: DangerZoneModel) {
 
     Card(
         shape = RoundedCornerShape(16.dp),

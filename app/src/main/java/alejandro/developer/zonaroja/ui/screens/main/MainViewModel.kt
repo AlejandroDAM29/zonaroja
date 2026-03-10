@@ -1,10 +1,11 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
-import alejandro.developer.domain.models.DangerZone
+import alejandro.developer.domain.models.DangerZoneModel
 import alejandro.developer.domain.models.MapBounds
 import alejandro.developer.domain.repositories.LocationSearchRepository
 import alejandro.developer.domain.usecase.GetDangerZonesUseCase
 import alejandro.developer.domain.usecase.GetGraphicsStatsUseCase
+import alejandro.developer.domain.usecase.SaveDangerZoneUseCase
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,7 +28,8 @@ import kotlinx.coroutines.launch
 class MainViewModel @Inject constructor(
     private val getDangerZonesUseCase: GetDangerZonesUseCase,
     private val locationSearchRepository: LocationSearchRepository,
-    private val getGraphicsStatsUseCase: GetGraphicsStatsUseCase
+    private val getGraphicsStatsUseCase: GetGraphicsStatsUseCase,
+    private val saveDangerZoneUseCase: SaveDangerZoneUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState(isLoading = false))
@@ -57,7 +59,7 @@ class MainViewModel @Inject constructor(
         getMapStatsWithZoneId()
     }
 
-    fun openPanel(zone: DangerZone) {
+    fun openPanel(zone: DangerZoneModel) {
         _uiState.update {
             it.copy(
                 isPanelOpen = true,
@@ -161,7 +163,7 @@ class MainViewModel @Inject constructor(
                     val dangerPoints = getDangerZonesUseCase(bounds)
 
                     _uiState.value = _uiState.value.copy(
-                        dangerZonesPoints = dangerPoints,
+                        dangerZonesPointModels = dangerPoints,
                         isLoading = false
                     )
                 }
