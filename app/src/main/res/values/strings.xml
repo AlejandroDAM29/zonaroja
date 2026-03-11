@@ -82,6 +82,7 @@
     <!--InfoPanelMap-->
     <string name="see_stadistics_button">Ver estadísticas</string>
     <string name="save_favourites_button">Guardar en favoritos</string>
+    <string name="sup_from_favourites">Eliminar de favoritos</string>
 
     <!--RadialComparison-->
     <string name="hood_legend">Barrio</string>

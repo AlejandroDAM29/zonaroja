@@ -5,6 +5,7 @@ import alejandro.developer.domain.models.MapBounds
 import alejandro.developer.domain.repositories.LocationSearchRepository
 import alejandro.developer.domain.usecase.GetDangerZonesUseCase
 import alejandro.developer.domain.usecase.GetGraphicsStatsUseCase
+import alejandro.developer.domain.usecase.GetSavedZonesUseCase
 import alejandro.developer.domain.usecase.SaveDangerZoneUseCase
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -15,12 +16,14 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -29,7 +32,8 @@ class MainViewModel @Inject constructor(
     private val getDangerZonesUseCase: GetDangerZonesUseCase,
     private val locationSearchRepository: LocationSearchRepository,
     private val getGraphicsStatsUseCase: GetGraphicsStatsUseCase,
-    private val saveDangerZoneUseCase: SaveDangerZoneUseCase
+    private val saveDangerZoneUseCase: SaveDangerZoneUseCase,
+    private val getSavedZonesUseCase: GetSavedZonesUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState(isLoading = false))
@@ -45,8 +49,38 @@ class MainViewModel @Inject constructor(
 
     init {
         observeBounds()
+        observeSavedZones()
     }
 
+
+
+    fun observeSavedZones() {
+        viewModelScope.launch {
+
+            getSavedZonesUseCase().collect { ids ->
+
+                _uiState.update {
+                    it.copy(savedZonesIds = ids)
+                }
+            }
+        }
+    }
+
+    fun onFavoriteButtonClicked(zone: DangerZoneModel) {
+
+        viewModelScope.launch {
+
+            if (uiState.value.savedZonesIds.contains(zone.id)) {
+
+                /*deleteDangerZoneUseCase(zone.id)*/
+
+            } else {
+
+                saveDangerZoneUseCase(zone)
+
+            }
+        }
+    }
 
     fun openStats() {
 

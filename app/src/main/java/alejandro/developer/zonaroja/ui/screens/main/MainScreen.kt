@@ -84,6 +84,7 @@ fun ContentMainScreen(
         DangerMapContent(
             isSearcherNameSpacerExpanded = uiState.isSearchExpanded,
             zones = uiState.dangerZonesPointModels,
+            savedZones = uiState.savedZonesIds,
             searchQuery = uiState.searchQuery,
             searchedLocation = uiState.searchedLocation,
             onBoundsChanged = viewModel::onBoundsChanged,
@@ -103,9 +104,10 @@ fun ContentMainScreen(
             ) {
 
                 InfoPanelMap(
-                    zone = uiState.selectedZone,
+                    uiState = uiState,
                     onClose = viewModel::closeBottomSheets,
-                    onOpenStats = viewModel::openStats
+                    onOpenStats = viewModel::openStats,
+                    onFavoriteButtonClicked = viewModel::onFavoriteButtonClicked,
                 )
             }
         }
@@ -123,9 +125,10 @@ fun ContentMainScreen(
                 when {
                     uiState.isPanelOpen -> {
                         InfoPanelMap(
-                            zone = uiState.selectedZone,
+                            uiState = uiState,
                             onClose = viewModel::closeBottomSheets,
-                            onOpenStats = viewModel::openStats
+                            onOpenStats = viewModel::openStats,
+                            onFavoriteButtonClicked = viewModel::onFavoriteButtonClicked,
                         )
                     }
 

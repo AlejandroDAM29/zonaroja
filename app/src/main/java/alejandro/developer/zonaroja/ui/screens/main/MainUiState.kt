@@ -19,5 +19,6 @@ data class MainUiState(
     val isSearchExpanded: Boolean = false,
     val isPanelOpen: Boolean = false,
     val selectedZone: DangerZoneModel? = null,
+    val savedZonesIds: List<Int> = emptyList(),
     val isStatsOpen: Boolean = false
 )

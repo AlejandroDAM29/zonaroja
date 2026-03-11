@@ -34,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,9 +50,10 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun InfoPanelMap(
-    zone: DangerZoneModel,
+    uiState: MainUiState,
     onClose: () -> Unit,
-    onOpenStats: () -> Unit
+    onOpenStats: () -> Unit,
+    onFavoriteButtonClicked: (DangerZoneModel) -> Unit
 ) {
 
     Column(
@@ -76,7 +78,7 @@ fun InfoPanelMap(
             Spacer(Modifier.width(8.dp))
 
             Text(
-                text = zone.zoneName,
+                text = uiState.selectedZone!!.zoneName,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -90,11 +92,11 @@ fun InfoPanelMap(
 
         Spacer(Modifier.height(12.dp))
 
-        RiskBadge(zone.riskLevel)
+        RiskBadge(uiState.selectedZone!!.riskLevel)
 
         Spacer(Modifier.height(20.dp))
 
-        StatsCard(zone)
+        StatsCard(uiState.selectedZone)
 
         Spacer(Modifier.height(16.dp))
 
@@ -114,8 +116,7 @@ fun InfoPanelMap(
         Spacer(Modifier.height(12.dp))
 
         OutlinedButton(
-            onClick = { //TODO implementar guardado de favoritos
-            },
+            onClick = { onFavoriteButtonClicked(uiState.selectedZone)},
             modifier = Modifier.fillMaxWidth()
         ) {
             Icon(
@@ -127,7 +128,11 @@ fun InfoPanelMap(
             Spacer(Modifier.width(8.dp))
 
             Text(
-                text = stringResource(R.string.save_favourites_button),
+                text = if (uiState.savedZonesIds.contains(uiState.selectedZone.id)){
+                    stringResource(R.string.sup_from_favourites)
+                } else{
+                    stringResource(R.string.save_favourites_button)
+                },
                 fontSize = 16.sp
             )
         }

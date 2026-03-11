@@ -11,6 +11,9 @@ import jakarta.inject.Inject
 import alejandro.developer.domain.models.DangerZoneModel
 import alejandro.developer.domain.models.MapBounds
 import alejandro.developer.domain.models.StatsGraphicsModel
+import android.util.Log
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlin.collections.map
 
 class DangerZoneRepositoryImpl @Inject constructor(
@@ -36,6 +39,14 @@ class DangerZoneRepositoryImpl @Inject constructor(
     ): StatsGraphicsModel {
 
         return remote.getGraphicsStats(zoneId).toDomain()
+    }
+
+    override fun getSavedZoneIds(): Flow<List<Int>> {
+        val test = local.getSavedZoneIds()
+        test.map { myIds ->
+            Log.i("test-100", "Entra con 2 ids: $myIds");
+        }
+        return local.getSavedZoneIds()
     }
 
 

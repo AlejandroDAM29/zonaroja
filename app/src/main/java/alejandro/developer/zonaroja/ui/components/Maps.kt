@@ -11,16 +11,11 @@ import alejandro.developer.zonaroja.ui.theme.Black
 import alejandro.developer.zonaroja.ui.theme.GreenClearMap
 import alejandro.developer.zonaroja.ui.theme.RedClearMap
 import alejandro.developer.zonaroja.ui.theme.YellowClearMap
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,9 +27,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Bookmark
-import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -47,24 +39,18 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerComposable
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polygon
@@ -74,6 +60,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 fun DangerMapContent(
     isSearcherNameSpacerExpanded: Boolean,
     zones: List<DangerZoneModel>,
+    savedZones: List<Int>,
     searchQuery: String,
     onBoundsChanged: (MapBounds) -> Unit,
     modifier: Modifier = Modifier,
@@ -100,6 +87,8 @@ fun DangerMapContent(
         cameraPositionState.move(
             CameraUpdateFactory.newLatLngZoom(inititalPositionMap, 12f)
         )
+        //Obtain ids saved from bbdd
+        /*obtainSavedZoneIds()*/
     }
 
     LaunchedEffect(cameraPositionState) {
@@ -179,21 +168,20 @@ fun DangerMapContent(
             )
         ) {
 
-                zones.forEach { zone ->
-                    Polygon(
-                        clickable = true,
-                        points = zone.points.map { LatLng(it.lat, it.lng) },
-                        fillColor = zone.riskLevel.toColor(),
-                        strokeColor = Black,
-                        strokeWidth = 2f,
-                        onClick = { onOpenPanel(zone) }
-                    )
+            zones.forEach { zone ->
+                Polygon(
+                    clickable = true,
+                    points = zone.points.map { LatLng(it.lat, it.lng) },
+                    fillColor = zone.riskLevel.toColor(),
+                    strokeColor = Black,
+                    strokeWidth = 2f,
+                    onClick = { onOpenPanel(zone) }
+                )
 
-                    /*if (zone.isFavorite && currentZoom > 13f) {*/
-                    val center = polygonCenter(zone.points)
+                val center = polygonCenter(zone.points)
 
-                    key( zoomBucket) {
-
+                key(zoomBucket) {
+                    if (savedZones.contains(zone.id)) {
                         MarkerComposable(
                             state = remember { MarkerState(position = center) },
                             anchor = Offset(0.5f, 0.5f)
@@ -201,7 +189,7 @@ fun DangerMapContent(
 
                             Log.i("test-100", "zoom: $currentZoom");
                             val iconSize = when {
-                                currentZoom < 13f -> 14.dp
+                                currentZoom < 13f -> 12.dp
                                 currentZoom < 15f -> 20.dp
                                 currentZoom < 16f -> 24.dp
                                 else -> 28.dp
@@ -214,9 +202,9 @@ fun DangerMapContent(
                                 modifier = Modifier.size(iconSize)
                             )
                         }
-                        /*}*/
                     }
                 }
+            }
 
         }
 
