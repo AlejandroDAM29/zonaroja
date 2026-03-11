@@ -87,8 +87,6 @@ fun DangerMapContent(
         cameraPositionState.move(
             CameraUpdateFactory.newLatLngZoom(inititalPositionMap, 12f)
         )
-        //Obtain ids saved from bbdd
-        /*obtainSavedZoneIds()*/
     }
 
     LaunchedEffect(cameraPositionState) {
@@ -184,7 +182,11 @@ fun DangerMapContent(
                     if (savedZones.contains(zone.id)) {
                         MarkerComposable(
                             state = remember { MarkerState(position = center) },
-                            anchor = Offset(0.5f, 0.5f)
+                            anchor = Offset(0.5f, 0.5f),
+                            onClick = {
+                                onOpenPanel(zone)
+                                true
+                            }
                         ) {
 
                             Log.i("test-100", "zoom: $currentZoom");

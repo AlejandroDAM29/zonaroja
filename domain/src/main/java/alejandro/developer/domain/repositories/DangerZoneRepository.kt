@@ -10,6 +10,8 @@ interface DangerZoneRepository {
 
     suspend fun saveDangerZoneLocal(zone: DangerZoneModel)
 
+    suspend fun deleteDangerZoneLocal(id: Int)
+
     suspend fun getGraphicsStatsRemote(zoneId: Int): StatsGraphicsModel
 
     fun getSavedZoneIds(): Flow<List<Int>>

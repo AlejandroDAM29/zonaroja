@@ -27,4 +27,8 @@ class DangerZoneLocalDataSource @Inject constructor(
         return dao.getSavedZoneIds()
     }
 
+    suspend fun deleteZone(id: Int) {
+        dao.deleteDangerZone(id)
+    }
+
 }

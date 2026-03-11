@@ -34,7 +34,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -116,21 +115,22 @@ fun InfoPanelMap(
         Spacer(Modifier.height(12.dp))
 
         OutlinedButton(
-            onClick = { onFavoriteButtonClicked(uiState.selectedZone)},
+            onClick = { onFavoriteButtonClicked(uiState.selectedZone) },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Icon(
-                imageVector = Icons.Default.FavoriteBorder,
-                contentDescription = null,
-                modifier = Modifier.size(22.dp)
-            )
+            if (!uiState.savedZonesIds.contains(uiState.selectedZone.id))
+                Icon(
+                    imageVector = Icons.Default.FavoriteBorder,
+                    contentDescription = null,
+                    modifier = Modifier.size(22.dp)
+                )
 
             Spacer(Modifier.width(8.dp))
 
             Text(
-                text = if (uiState.savedZonesIds.contains(uiState.selectedZone.id)){
+                text = if (uiState.savedZonesIds.contains(uiState.selectedZone.id)) {
                     stringResource(R.string.sup_from_favourites)
-                } else{
+                } else {
                     stringResource(R.string.save_favourites_button)
                 },
                 fontSize = 16.sp

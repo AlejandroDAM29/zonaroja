@@ -7,6 +7,7 @@ import alejandro.developer.domain.usecase.GetDangerZonesUseCase
 import alejandro.developer.domain.usecase.GetGraphicsStatsUseCase
 import alejandro.developer.domain.usecase.GetSavedZonesUseCase
 import alejandro.developer.domain.usecase.SaveDangerZoneUseCase
+import alejandro.developer.domain.usecase.DeleteDangerZoneUseCase
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -33,7 +34,8 @@ class MainViewModel @Inject constructor(
     private val locationSearchRepository: LocationSearchRepository,
     private val getGraphicsStatsUseCase: GetGraphicsStatsUseCase,
     private val saveDangerZoneUseCase: SaveDangerZoneUseCase,
-    private val getSavedZonesUseCase: GetSavedZonesUseCase
+    private val getSavedZonesUseCase: GetSavedZonesUseCase,
+    private val deleteDangerZoneUseCase: DeleteDangerZoneUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState(isLoading = false))
@@ -72,13 +74,25 @@ class MainViewModel @Inject constructor(
 
             if (uiState.value.savedZonesIds.contains(zone.id)) {
 
-                /*deleteDangerZoneUseCase(zone.id)*/
+                deleteDangerZoneUseCase(zone.id)
 
             } else {
 
                 saveDangerZoneUseCase(zone)
 
             }
+        }
+    }
+
+    fun onMarkerClicked(zone: DangerZoneModel) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(selectedZone = zone) }
+            if (uiState.value.savedZonesIds.contains(zone.id)) {
+                deleteDangerZoneUseCase(zone.id)
+            } else {
+                saveDangerZoneUseCase(zone)
+            }
+            openStats()
         }
     }
 

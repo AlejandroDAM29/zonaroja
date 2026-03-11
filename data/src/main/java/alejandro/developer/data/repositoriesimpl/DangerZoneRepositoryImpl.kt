@@ -34,6 +34,10 @@ class DangerZoneRepositoryImpl @Inject constructor(
         local.insertPoints(zone.toGeoEntities())
     }
 
+    override suspend fun deleteDangerZoneLocal(id: Int) {
+        local.deleteZone(id)
+    }
+
     override suspend fun getGraphicsStatsRemote(
         zoneId: Int
     ): StatsGraphicsModel {
@@ -42,10 +46,6 @@ class DangerZoneRepositoryImpl @Inject constructor(
     }
 
     override fun getSavedZoneIds(): Flow<List<Int>> {
-        val test = local.getSavedZoneIds()
-        test.map { myIds ->
-            Log.i("test-100", "Entra con 2 ids: $myIds");
-        }
         return local.getSavedZoneIds()
     }
 

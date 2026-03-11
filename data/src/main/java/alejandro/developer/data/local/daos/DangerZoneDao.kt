@@ -26,4 +26,7 @@ interface DangerZoneDao {
     @Transaction
     @Query("SELECT id FROM danger_zones")
     fun getSavedZoneIds(): Flow<List<Int>>
+
+    @Query("DELETE FROM danger_zones WHERE id = :id")
+    suspend fun deleteDangerZone(id: Int)
 }
