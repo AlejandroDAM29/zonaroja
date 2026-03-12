@@ -87,17 +87,17 @@ fun StatsCard(zone: DangerZoneModel) {
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(zone.priceSquareMeter.toString(), fontWeight = FontWeight.Bold)
-                Text("€/m²")
+                Text(stringResource(R.string.square_meter_price))
             }
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("${zone.povertyRiskRate}%", fontWeight = FontWeight.Bold)
-                Text("tasa pobreza")
+                Text(stringResource(R.string.poberty_taxes))
             }
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("${zone.unemploymentRate}%", fontWeight = FontWeight.Bold)
-                Text("tasa paro")
+                Text(stringResource(R.string.unemployment_rate))
             }
         }
     }

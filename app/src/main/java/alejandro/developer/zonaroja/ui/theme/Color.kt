@@ -22,3 +22,5 @@ val RedClearMap = Color(0x55FF0000)
 val White = Color(0xFFFFFFFF)
 val Black = Color.Black
 val GreaseHorizontalDivider = Color(0x55ABABAB)
+val GreenItemFavourite = Color(0xFF01A201)
+val YellowItemFavourite = Color(0xFFFFA500)

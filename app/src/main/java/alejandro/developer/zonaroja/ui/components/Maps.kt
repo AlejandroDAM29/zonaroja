@@ -199,7 +199,7 @@ fun DangerMapContent(
 
                             Icon(
                                 imageVector = Icons.Filled.PushPin,
-                                contentDescription = "Zona favorita",
+                                contentDescription = stringResource(R.string.favourite_zone_lbel_description),
                                 tint = Color.Blue,
                                 modifier = Modifier.size(iconSize)
                             )

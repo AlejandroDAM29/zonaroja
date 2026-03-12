@@ -1,13 +1,21 @@
 package alejandro.developer.zonaroja.ui.screens.favourites
 
 import alejandro.developer.domain.models.DangerZoneModel
+import alejandro.developer.domain.models.RiskLevel
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.components.DangerZoneStatisticsSheetContent
 import alejandro.developer.zonaroja.ui.components.RiskBadge
 import alejandro.developer.zonaroja.ui.components.StatsCard
+import alejandro.developer.zonaroja.ui.components.toColor
+import alejandro.developer.zonaroja.ui.theme.Black
+import alejandro.developer.zonaroja.ui.theme.GreenClearMap
+import alejandro.developer.zonaroja.ui.theme.GreenItemFavourite
+import alejandro.developer.zonaroja.ui.theme.RedClearMap
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
+import alejandro.developer.zonaroja.ui.theme.YellowClearMap
+import alejandro.developer.zonaroja.ui.theme.YellowItemFavourite
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -157,7 +165,7 @@ private fun FavouriteZoneCard(
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
             modifier = Modifier.padding(18.dp)
@@ -175,7 +183,7 @@ private fun FavouriteZoneCard(
                     Icon(
                         imageVector = Icons.Default.Warning,
                         contentDescription = null,
-                        tint = RedZoneColor,
+                        tint = zone.riskLevel.toColorRiskZone(),
                         modifier = Modifier.size(22.dp)
                     )
 
@@ -185,7 +193,7 @@ private fun FavouriteZoneCard(
                         text = zone.zoneName,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF221814)
+                        color = Black
                     )
                 }
 
@@ -193,7 +201,7 @@ private fun FavouriteZoneCard(
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(R.string.delete_favourite_description),
-                        tint = RedZoneColor
+                        tint = zone.riskLevel.toColorRiskZone()
                     )
                 }
             }
@@ -315,5 +323,13 @@ private fun EmptyFavouritesState() {
                 color = Color(0xFF7B6258)
             )
         }
+    }
+}
+
+fun RiskLevel.toColorRiskZone(): Color {
+    return when (this) {
+        RiskLevel.LOW -> GreenItemFavourite
+        RiskLevel.MEDIUM -> YellowItemFavourite
+        RiskLevel.HIGH -> RedZoneColor
     }
 }

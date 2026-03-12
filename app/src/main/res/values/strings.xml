@@ -78,6 +78,7 @@
     <string name="unemployment_line_first_part">El paro es</string>
     <string name="unemployment_high_second_part">mayor que la media de la ciudad</string>
     <string name="unemployment_low_second_part">menor que la media de la ciudad</string>
+    <string name="favourite_zone_lbel_description">Zona favorita</string>
 
     <!--InfoPanelMap-->
     <string name="see_stadistics_button">Ver estadísticas</string>
@@ -99,5 +100,8 @@
     <string name="favourites_poverty_label">Riesgo pobreza</string>
     <string name="favourites_unemployment_label">Tasa paro</string>
     <string name="favourites_points_label">Puntos</string>
+    <string name="square_meter_price">€/m²</string>
+    <string name="poberty_taxes">tasa pobreza</string>
+    <string name="unemployment_rate">tasa paro</string>
 
 </resources>
