@@ -90,5 +90,14 @@
     <string name="label_animation_demography">Animación de label</string>
     <string name="look_for_city">Buscar ciudad...</string>
 
+    <!--Favourites Screen-->
+    <string name="favourites_empty_title">No hay zonas guardadas</string>
+    <string name="favourites_empty_description">Guarda una zona desde el mapa y aparecera aqui automaticamente.</string>
+    <string name="delete_favourite_description">Eliminar favorito</string>
+    <string name="favourites_city_label">Ciudad</string>
+    <string name="favourites_price_label">Precio</string>
+    <string name="favourites_poverty_label">Riesgo pobreza</string>
+    <string name="favourites_unemployment_label">Tasa paro</string>
+    <string name="favourites_points_label">Puntos</string>
 
 </resources>

@@ -1,9 +1,9 @@
 package alejandro.developer.zonaroja.ui.components
 
 import alejandro.developer.domain.models.DemographyItemModel
+import alejandro.developer.domain.models.EconomyStatsModel
 import alejandro.developer.domain.models.SocietyStatsModel
 import alejandro.developer.zonaroja.R
-import alejandro.developer.zonaroja.ui.screens.main.MainUiState
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -38,7 +38,11 @@ import androidx.compose.ui.unit.sp
 import kotlin.math.abs
 
 @Composable
-fun EconomySlide(uiState: MainUiState) {
+fun EconomySlide(
+    zoneName: String,
+    cityName: String,
+    stats: EconomyStatsModel?
+) {
 
     Column {
 
@@ -50,7 +54,7 @@ fun EconomySlide(uiState: MainUiState) {
 
         Spacer(Modifier.size(20.dp))
 
-        if (uiState.economyStats == null) {
+        if (stats == null) {
 
             EmptyStatsState(
                 message = stringResource(R.string.empty_map_stat_economy)
@@ -60,7 +64,7 @@ fun EconomySlide(uiState: MainUiState) {
         }
 
         val rentDiff =
-            ((uiState.economyStats.hoodRent - uiState.economyStats.cityRent).toFloat() / uiState.economyStats.cityRent * 100).toInt()
+            ((stats.hoodRent - stats.cityRent).toFloat() / stats.cityRent * 100).toInt()
 
         val rentDiffDisplay = abs(rentDiff)
 
@@ -96,7 +100,11 @@ fun EconomySlide(uiState: MainUiState) {
 
             Spacer(Modifier.size(20.dp))
 
-            EconomyBarChart(uiState)
+            EconomyBarChart(
+                zoneName = zoneName,
+                cityName = cityName,
+                stats = stats
+            )
 
             Spacer(Modifier.size(12.dp))
         }

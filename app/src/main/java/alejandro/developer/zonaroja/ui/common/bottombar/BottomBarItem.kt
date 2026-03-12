@@ -1,7 +1,9 @@
 package alejandro.developer.zonaroja.ui.common.bottombar
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed interface BottomBarItem {
@@ -13,12 +15,17 @@ sealed interface BottomBarItem {
         override val icon = Icons.Default.Home
     }
 
+    object Favourites : BottomBarItem {
+        override val label = "Favoritos"
+        override val icon = Icons.Default.Favorite
+    }
+
     object Settings : BottomBarItem {
-        override val label = "Configuración"
-        override val icon = Icons.Default.Notifications
+        override val label = "Ajustes"
+        override val icon = Icons.Default.Settings
     }
 
     companion object {
-        val items = listOf(Home, Settings)
+        val items = listOf(Home, Favourites, Settings)
     }
 }

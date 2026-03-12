@@ -1,9 +1,11 @@
 package alejandro.developer.zonaroja.ui.components
 
 import alejandro.developer.domain.models.DangerZoneModel
+import alejandro.developer.domain.models.DemographyItemModel
+import alejandro.developer.domain.models.EconomyStatsModel
+import alejandro.developer.domain.models.SocietyStatsModel
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.screens.main.MainUiState
-import alejandro.developer.zonaroja.ui.screens.main.MainViewModel
 import alejandro.developer.zonaroja.ui.screens.main.StatsTab
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import alejandro.developer.zonaroja.ui.theme.White
@@ -145,11 +147,37 @@ fun InfoPanelMap(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatisticsBottomSheet(
-    viewmodel: MainViewModel,
-    uiState: MainUiState
+    uiState: MainUiState,
+    onBack: () -> Unit,
+    onClose: () -> Unit
+) {
+    val selectedZone = uiState.selectedZone ?: return
+    DangerZoneStatisticsSheetContent(
+        zoneName = selectedZone.zoneName,
+        cityName = selectedZone.city,
+        isLoading = uiState.isStatsLoading,
+        economyStats = uiState.economyStats,
+        societyStats = uiState.societyStats,
+        demographyStats = uiState.demographyStats,
+        onBack = onBack,
+        onClose = onClose
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DangerZoneStatisticsSheetContent(
+    zoneName: String,
+    cityName: String,
+    isLoading: Boolean,
+    economyStats: EconomyStatsModel?,
+    societyStats: SocietyStatsModel?,
+    demographyStats: List<DemographyItemModel>,
+    onBack: () -> Unit,
+    onClose: () -> Unit
 ) {
 
-    if (uiState.isStatsLoading) {
+    if (isLoading) {
 
         Box(
             modifier = Modifier
@@ -181,7 +209,7 @@ fun StatisticsBottomSheet(
             ) {
 
                 IconButton(
-                    onClick = { viewmodel.openPanel(uiState.selectedZone!!) },
+                    onClick = onBack,
                     modifier = Modifier.align(Alignment.CenterStart)
                 ) {
                     Icon(
@@ -191,7 +219,7 @@ fun StatisticsBottomSheet(
                 }
 
                 Text(
-                    text = uiState.selectedZone!!.zoneName,
+                    text = zoneName,
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.align(Alignment.Center),
                     textAlign = TextAlign.Center,
@@ -199,7 +227,7 @@ fun StatisticsBottomSheet(
                 )
 
                 IconButton(
-                    onClick = viewmodel::closeBottomSheets,
+                    onClick = onClose,
                     modifier = Modifier.align(Alignment.CenterEnd)
                 ) {
                     Icon(
@@ -225,16 +253,21 @@ fun StatisticsBottomSheet(
                     .animateContentSize()
             ) {
                 when (selectedTab) {
-                    is StatsTab.Economy -> EconomySlide(uiState)
-                    is StatsTab.Society -> SocietySlide(uiState.societyStats)
-                    is StatsTab.Demography -> DemographySlide(uiState.demographyStats)
+                    is StatsTab.Economy -> EconomySlide(
+                        zoneName = zoneName,
+                        cityName = cityName,
+                        stats = economyStats
+                    )
+
+                    is StatsTab.Society -> SocietySlide(societyStats)
+                    is StatsTab.Demography -> DemographySlide(demographyStats)
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = viewmodel::closeBottomSheets,
+                onClick = onClose,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonColors(
                     containerColor = RedZoneColor,

@@ -16,4 +16,6 @@ interface DangerZoneRepository {
 
     fun getSavedZoneIds(): Flow<List<Int>>
 
+    fun observeSavedDangerZones(): Flow<List<DangerZoneModel>>
+
 }

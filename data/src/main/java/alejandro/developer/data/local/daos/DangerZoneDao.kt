@@ -17,6 +17,10 @@ interface DangerZoneDao {
     @Query("SELECT * FROM danger_zones")
     suspend fun getAllDangerZones(): List<DangerZoneWithPoints>
 
+    @Transaction
+    @Query("SELECT * FROM danger_zones")
+    fun observeAllDangerZones(): Flow<List<DangerZoneWithPoints>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDangerZone(zone: DangerZoneEntity)
 

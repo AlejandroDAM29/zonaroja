@@ -1,9 +1,9 @@
 package alejandro.developer.zonaroja.ui.components
 
 import alejandro.developer.domain.models.DemographyItemModel
+import alejandro.developer.domain.models.EconomyStatsModel
 import alejandro.developer.domain.models.SocietyStatsModel
 import alejandro.developer.zonaroja.R
-import alejandro.developer.zonaroja.ui.screens.main.MainUiState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -45,9 +45,11 @@ import androidx.compose.ui.unit.sp
 
 
 @Composable
-fun EconomyBarChart(uiState: MainUiState) {
-
-    val stats = uiState.economyStats!!
+fun EconomyBarChart(
+    zoneName: String,
+    cityName: String,
+    stats: EconomyStatsModel
+) {
 
     val categories = listOf(
         Triple(
@@ -225,12 +227,16 @@ fun EconomyBarChart(uiState: MainUiState) {
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    Legend(uiState)
+    Legend(
+        zoneName = zoneName,
+        cityName = cityName
+    )
 }
 
 @Composable
 fun Legend(
-    uiState: MainUiState
+    zoneName: String,
+    cityName: String
 ) {
 
     Row(
@@ -246,7 +252,7 @@ fun Legend(
         )
 
         Spacer(modifier = Modifier.width(8.dp))
-        Text(uiState.selectedZone!!.zoneName)
+        Text(zoneName)
 
         Spacer(modifier = Modifier.width(24.dp))
 
@@ -257,7 +263,7 @@ fun Legend(
         )
 
         Spacer(modifier = Modifier.width(8.dp))
-        Text(uiState.selectedZone.city)
+        Text(cityName)
     }
 }
 

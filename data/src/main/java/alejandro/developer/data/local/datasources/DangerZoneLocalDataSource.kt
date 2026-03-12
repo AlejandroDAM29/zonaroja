@@ -15,6 +15,10 @@ class DangerZoneLocalDataSource @Inject constructor(
         return dao.getAllDangerZones()
     }
 
+    fun observeDangerZones(): Flow<List<DangerZoneWithPoints>> {
+        return dao.observeAllDangerZones()
+    }
+
     suspend fun insertZone(zone: DangerZoneEntity) {
         dao.insertDangerZone(zone)
     }

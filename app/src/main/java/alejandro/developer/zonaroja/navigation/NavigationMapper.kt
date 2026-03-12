@@ -13,6 +13,7 @@ fun NavBackStackEntry.currentScreenType(): KClass<*>? {
         route.startsWith(Main::class.qualifiedName!!) -> Main::class
         route.startsWith(Register::class.qualifiedName!!) -> Register::class
         route.startsWith(Setting::class.qualifiedName!!) -> Setting::class
+        route.startsWith(Favourites::class.qualifiedName!!) -> Favourites::class
         else -> null
     }
 }

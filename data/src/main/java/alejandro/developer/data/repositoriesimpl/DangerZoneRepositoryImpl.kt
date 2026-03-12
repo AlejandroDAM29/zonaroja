@@ -49,5 +49,11 @@ class DangerZoneRepositoryImpl @Inject constructor(
         return local.getSavedZoneIds()
     }
 
+    override fun observeSavedDangerZones(): Flow<List<DangerZoneModel>> {
+        return local.observeDangerZones().map { zones ->
+            zones.map { it.toDomain() }
+        }
+    }
+
 
 }

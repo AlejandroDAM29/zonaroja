@@ -134,8 +134,9 @@ fun ContentMainScreen(
 
                     uiState.isStatsOpen -> {
                         StatisticsBottomSheet(
-                            viewModel,
-                            uiState = uiState
+                            uiState = uiState,
+                            onBack = { viewModel.openPanel(uiState.selectedZone!!) },
+                            onClose = viewModel::closeBottomSheets
                         )
                     }
                 }

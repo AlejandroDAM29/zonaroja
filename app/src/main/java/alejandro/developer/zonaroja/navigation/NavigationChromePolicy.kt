@@ -8,6 +8,7 @@ object NavigationChromePolicy {
     fun showTopBar(screen: KClass<*>?): Boolean {
         return screen in setOf(
             Main::class,
+            Favourites::class,
             Setting::class
         )
     }
@@ -15,6 +16,7 @@ object NavigationChromePolicy {
     fun showBottomBar(screen: KClass<*>?): Boolean {
         return screen in setOf(
             Main::class,
+            Favourites::class,
             Setting::class
         )
     }
@@ -22,6 +24,7 @@ object NavigationChromePolicy {
     fun selectedBottomBarItem(screen: KClass<*>?) =
         when (screen) {
             Main::class -> BottomBarItem.Home
+            Favourites::class -> BottomBarItem.Favourites
             Setting::class -> BottomBarItem.Settings
             else -> null
         }
