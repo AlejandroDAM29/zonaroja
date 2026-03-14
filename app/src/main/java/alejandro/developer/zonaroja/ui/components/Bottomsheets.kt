@@ -10,13 +10,17 @@ import alejandro.developer.zonaroja.ui.screens.main.StatsTab
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import alejandro.developer.zonaroja.ui.theme.White
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -199,8 +203,11 @@ fun DangerZoneStatisticsSheetContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .fillMaxHeight(0.92f)
+                .navigationBarsPadding()
+                .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
+            val contentScrollState = rememberScrollState()
 
             Box(
                 modifier = Modifier
@@ -247,9 +254,11 @@ fun DangerZoneStatisticsSheetContent(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .weight(1f)
+                    .verticalScroll(contentScrollState)
                     .animateContentSize()
             ) {
                 when (selectedTab) {
@@ -262,21 +271,21 @@ fun DangerZoneStatisticsSheetContent(
                     is StatsTab.Society -> SocietySlide(societyStats)
                     is StatsTab.Demography -> DemographySlide(demographyStats)
                 }
-            }
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-            Button(
-                onClick = onClose,
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonColors(
-                    containerColor = RedZoneColor,
-                    contentColor = White,
-                    disabledContainerColor = RedZoneColor,
-                    disabledContentColor = White
-                )
-            ) {
-                Text(stringResource(R.string.close_button_statisticsbottomsheet))
+                Button(
+                    onClick = onClose,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonColors(
+                        containerColor = RedZoneColor,
+                        contentColor = White,
+                        disabledContainerColor = RedZoneColor,
+                        disabledContentColor = White
+                    )
+                ) {
+                    Text(stringResource(R.string.close_button_statisticsbottomsheet))
+                }
             }
         }
     }
