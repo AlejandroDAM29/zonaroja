@@ -10,3 +10,6 @@ object AuthGraph
 
 @Serializable
 object MainGraph
+
+@Serializable
+object ZoneComparisonGraph

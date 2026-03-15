@@ -24,3 +24,4 @@ val Black = Color.Black
 val GreaseHorizontalDivider = Color(0x55ABABAB)
 val GreenItemFavourite = Color(0xFF01A201)
 val YellowItemFavourite = Color(0xFFFFA500)
+val BlackComparisonChart = Color(0xFF221814)

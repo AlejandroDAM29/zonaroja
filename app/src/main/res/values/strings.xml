@@ -104,4 +104,33 @@
     <string name="poberty_taxes">tasa pobreza</string>
     <string name="unemployment_rate">tasa paro</string>
 
+    <string name="comparison_entry_button">Comparar barrios</string>
+    <string name="comparison_selector_title">Comparador de barrios</string>
+    <string name="comparison_selector_description">Selecciona dos barrios para ver sus indicadores lado a lado.</string>
+    <string name="comparison_first_selector_label">Primer barrio</string>
+    <string name="comparison_second_selector_label">Segundo barrio</string>
+    <string name="comparison_selector_placeholder">Selecciona un barrio</string>
+    <string name="comparison_button_label">Comparar</string>
+    <string name="comparison_close_description">Cerrar comparador</string>
+    <string name="comparison_empty_title">No hay zonas disponibles</string>
+    <string name="comparison_empty_description">El servicio no ha devuelto zonas peligrosas para comparar en este momento.</string>
+    <string name="comparison_empty_share_button">Compartir PDF</string>
+    <string name="comparison_empty_share_subject">Informe del comparador de barrios</string>
+    <string name="comparison_empty_share_chooser">Compartir informe PDF</string>
+    <string name="comparison_empty_share_error">No se ha podido generar el PDF.</string>
+    <string name="comparison_empty_pdf_title">Comparador de barrios</string>
+    <string name="comparison_empty_pdf_subtitle">Informe sin zonas disponibles</string>
+    <string name="comparison_empty_pdf_body_line_1">No hay datos de barrios disponibles para rellenar los desplegables.</string>
+    <string name="comparison_empty_pdf_body_line_2">Vuelve a intentarlo cuando el servicio remoto devuelva resultados.</string>
+    <string name="comparison_empty_pdf_date_label">Fecha de generacion:</string>
+    <string name="comparison_result_title">Resultado de la comparativa</string>
+    <string name="comparison_result_description">Pulsa atras para volver a la seleccion y cambiar cualquiera de los dos barrios.</string>
+    <string name="comparison_metric_risk_level">Nivel de riesgo</string>
+    <string name="comparison_metric_poverty">Riesgo de pobreza</string>
+    <string name="comparison_metric_unemployment">Tasa de paro</string>
+    <string name="comparison_metric_price">Precio por metro cuadrado</string>
+    <string name="comparison_unavailable_title">No se puede mostrar la comparativa</string>
+    <string name="comparison_unavailable_description">Las zonas seleccionadas ya no estan disponibles en el servicio remoto.</string>
+    <string name="comparison_back_to_selector">Volver a seleccion</string>
+
 </resources>

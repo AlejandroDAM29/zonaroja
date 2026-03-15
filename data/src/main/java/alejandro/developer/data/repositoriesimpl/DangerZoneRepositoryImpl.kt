@@ -4,14 +4,13 @@ import alejandro.developer.data.local.datasources.DangerZoneLocalDataSource
 import alejandro.developer.data.mappers.toDomain
 import alejandro.developer.data.mappers.toEntity
 import alejandro.developer.data.mappers.toGeoEntities
-import alejandro.developer.data.remote.apis.DangerZoneApi
 import alejandro.developer.data.remote.datasources.DangerZoneRemoteDataSource
-import alejandro.developer.domain.repositories.DangerZoneRepository
-import jakarta.inject.Inject
+import alejandro.developer.domain.models.DangerZoneComparisonModel
 import alejandro.developer.domain.models.DangerZoneModel
 import alejandro.developer.domain.models.MapBounds
 import alejandro.developer.domain.models.StatsGraphicsModel
-import android.util.Log
+import alejandro.developer.domain.repositories.DangerZoneRepository
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlin.collections.map
@@ -20,6 +19,10 @@ class DangerZoneRepositoryImpl @Inject constructor(
     private val remote: DangerZoneRemoteDataSource,
     private val local: DangerZoneLocalDataSource
 ) : DangerZoneRepository {
+
+    override suspend fun getDangerZonesForComparisonRemote(): List<DangerZoneComparisonModel> {
+        return remote.getDangerZonesForComparison().map { it.toDomain() }
+    }
 
     override suspend fun getDangerZonesRemote(bounds: MapBounds): List<DangerZoneModel> {
 

@@ -9,13 +9,15 @@ object NavigationChromePolicy {
         return screen in setOf(
             Main::class,
             Favourites::class,
-            Setting::class
+            Setting::class,
+            ZoneComparisonSelector::class
         )
     }
 
     fun showBottomBar(screen: KClass<*>?): Boolean {
         return screen in setOf(
             Main::class,
+            ZoneComparisonSelector::class,
             Favourites::class,
             Setting::class
         )
@@ -24,6 +26,7 @@ object NavigationChromePolicy {
     fun selectedBottomBarItem(screen: KClass<*>?) =
         when (screen) {
             Main::class -> BottomBarItem.Home
+            ZoneComparisonSelector::class -> BottomBarItem.Comparison
             Favourites::class -> BottomBarItem.Favourites
             Setting::class -> BottomBarItem.Settings
             else -> null
@@ -31,7 +34,7 @@ object NavigationChromePolicy {
 
     fun isDrawerGestureEnabled(screen: KClass<*>?) =
         screen !in setOf(
-            Main::class
+            Main::class,
         )
 
 }

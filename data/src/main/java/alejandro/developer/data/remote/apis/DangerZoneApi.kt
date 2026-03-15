@@ -1,11 +1,15 @@
 package alejandro.developer.data.remote.apis
 
+import alejandro.developer.data.remote.dto.DangerZoneComparisonDto
 import alejandro.developer.data.remote.dto.DangerZoneDto
 import alejandro.developer.data.remote.dto.StatsGraphicsDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface DangerZoneApi {
+
+    @GET("getZonasComparables.php")
+    suspend fun getDangerZonesForComparison(): List<DangerZoneComparisonDto>
 
     @GET("getZonasRojas.php")
     suspend fun getDangerZones(

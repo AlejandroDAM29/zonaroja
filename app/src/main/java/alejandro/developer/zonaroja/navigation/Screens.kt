@@ -22,3 +22,12 @@ object Favourites
 
 @Serializable
 object ForgotPassword
+
+@Serializable
+object ZoneComparisonSelector
+
+@Serializable
+data class ZoneComparisonResult(
+    val firstZoneId: Int,
+    val secondZoneId: Int
+)

@@ -6,7 +6,6 @@ import alejandro.developer.data.local.relations.DangerZoneWithPoints
 import alejandro.developer.data.remote.dto.DangerZoneDto
 import alejandro.developer.domain.models.DangerZoneModel
 import alejandro.developer.domain.models.GeoPoint
-import alejandro.developer.domain.models.RiskLevel
 
 fun DangerZoneDto.toDomain(): DangerZoneModel {
     return DangerZoneModel(
@@ -22,15 +21,6 @@ fun DangerZoneDto.toDomain(): DangerZoneModel {
         unemploymentRate = unemploymentRate,
         priceSquareMeter = priceSquareMeter
     )
-}
-
-private fun String.toRiskLevel(): RiskLevel {
-    return when(this.uppercase()) {
-        "LOW" -> RiskLevel.LOW
-        "MEDIUM" -> RiskLevel.MEDIUM
-        "HIGH" -> RiskLevel.HIGH
-        else -> RiskLevel.LOW
-    }
 }
 
 fun DangerZoneModel.toEntity(): DangerZoneEntity {

@@ -14,6 +14,7 @@ fun NavBackStackEntry.currentScreenType(): KClass<*>? {
         route.startsWith(Register::class.qualifiedName!!) -> Register::class
         route.startsWith(Setting::class.qualifiedName!!) -> Setting::class
         route.startsWith(Favourites::class.qualifiedName!!) -> Favourites::class
+        route.startsWith(ZoneComparisonSelector::class.qualifiedName!!) -> ZoneComparisonSelector::class
         else -> null
     }
 }

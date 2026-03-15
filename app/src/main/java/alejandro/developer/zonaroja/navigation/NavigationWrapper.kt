@@ -134,6 +134,16 @@ fun NavigationWrapper() {
                         }
                     }
 
+                    BottomBarItem.Comparison -> {
+                        navController.navigate(ZoneComparisonSelector) {
+                            popUpTo(MainGraph) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+
                     BottomBarItem.Favourites -> {
                         navController.navigate(Favourites) {
                             popUpTo(MainGraph) {

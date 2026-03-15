@@ -2,8 +2,13 @@ package alejandro.developer.zonaroja.ui.components
 
 import alejandro.developer.domain.models.DemographyItemModel
 import alejandro.developer.domain.models.EconomyStatsModel
+import alejandro.developer.domain.models.RiskLevel
 import alejandro.developer.domain.models.SocietyStatsModel
+import alejandro.developer.domain.models.ZoneComparisonBarChartUiModel
+import alejandro.developer.domain.models.ZoneComparisonMetricType
+import alejandro.developer.domain.models.ZoneComparisonRiskChartUiModel
 import alejandro.developer.zonaroja.R
+import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -15,11 +20,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +54,196 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+@Composable
+fun ZoneComparisonRiskChartCard(
+    chart: ZoneComparisonRiskChartUiModel
+) {
+    Card(
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.comparison_metric_risk_level),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF221814)
+            )
+
+            chart.entries.forEach { entry ->
+                val animatedRatio = animateFloatAsState(
+                    targetValue = (entry.score / chart.maxScore).coerceIn(0f, 1f),
+                    animationSpec = tween(durationMillis = 700),
+                    label = "comparison_risk_${entry.label}"
+                )
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = entry.label,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF221814)
+                            )
+                            Text(
+                                text = entry.city,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color(0xFF8A746D)
+                            )
+                        }
+
+                        Text(
+                            text = entry.riskLevel.toPresentationLabel(),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = entry.riskLevel.toRiskChartColor()
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(14.dp)
+                            .background(
+                                color = Color(0xFFF3ECE8),
+                                shape = RoundedCornerShape(20.dp)
+                            )
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(animatedRatio.value)
+                                .height(14.dp)
+                                .background(
+                                    color = entry.riskLevel.toRiskChartColor(),
+                                    shape = RoundedCornerShape(20.dp)
+                                )
+                        )
+                    }
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                ComparisonLegendItem(
+                    color = RiskLevel.LOW.toRiskChartColor(),
+                    label = stringResource(R.string.low)
+                )
+                ComparisonLegendItem(
+                    color = RiskLevel.MEDIUM.toRiskChartColor(),
+                    label = stringResource(R.string.medium)
+                )
+                ComparisonLegendItem(
+                    color = RiskLevel.HIGH.toRiskChartColor(),
+                    label = stringResource(R.string.high)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ZoneComparisonMetricChartCard(
+    chart: ZoneComparisonBarChartUiModel
+) {
+    Card(
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            Text(
+                text = chart.metricTitle(),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF221814)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                chart.entries.forEachIndexed { index, entry ->
+                    val animatedRatio = animateFloatAsState(
+                        targetValue = (entry.value / chart.maxValue).coerceIn(0f, 1f),
+                        animationSpec = tween(durationMillis = 700),
+                        label = "comparison_metric_${chart.metricType.name}_$index"
+                    )
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = entry.formattedValue,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF221814),
+                            textAlign = TextAlign.Center
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Box(
+                            modifier = Modifier
+                                .width(70.dp)
+                                .height(180.dp)
+                                .background(
+                                    color = Color(0xFFF3ECE8),
+                                    shape = RoundedCornerShape(24.dp)
+                                ),
+                            contentAlignment = Alignment.BottomCenter
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(animatedRatio.value)
+                                    .background(
+                                        color = chart.entryColor(index),
+                                        shape = RoundedCornerShape(24.dp)
+                                    )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Text(
+                            text = entry.label,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF221814),
+                            textAlign = TextAlign.Center
+                        )
+
+                        Text(
+                            text = entry.city,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFF8A746D),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun EconomyBarChart(
@@ -536,10 +737,68 @@ fun RadialComparison(
     }
 }
 
+@Composable
+private fun ComparisonLegendItem(
+    color: Color,
+    label: String
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(10.dp)
+                .background(color = color, shape = CircleShape)
+        )
+
+        Spacer(modifier = Modifier.width(6.dp))
+
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = Color(0xFF6E5B55)
+        )
+    }
+}
+
 fun getRiskColor(value: Float): Color {
     return when {
         value < 20 -> Color(0xFF2E7D32)
         value < 30 -> Color(0xFFF9A825)
         else -> Color(0xFFE53935)
+    }
+}
+
+private fun RiskLevel.toPresentationLabel(): String {
+    return when (this) {
+        RiskLevel.LOW -> "Bajo"
+        RiskLevel.MEDIUM -> "Medio"
+        RiskLevel.HIGH -> "Alto"
+    }
+}
+
+private fun RiskLevel.toRiskChartColor(): Color {
+    return when (this) {
+        RiskLevel.LOW -> Color(0xFF2E7D32)
+        RiskLevel.MEDIUM -> Color(0xFFF9A825)
+        RiskLevel.HIGH -> Color(0xFFE53935)
+    }
+}
+
+
+
+private fun ZoneComparisonBarChartUiModel.metricTitle(): String {
+    return when (metricType) {
+        ZoneComparisonMetricType.POVERTY_RISK -> "Riesgo de pobreza"
+        ZoneComparisonMetricType.UNEMPLOYMENT -> "Tasa de paro"
+        ZoneComparisonMetricType.PRICE_SQUARE_METER -> "Precio por metro cuadrado"
+    }
+}
+
+private fun ZoneComparisonBarChartUiModel.entryColor(index: Int): Color {
+    return if (index == 0) {
+        RedZoneColor
+    } else {
+        Color(0xFF1F1F1F)
     }
 }

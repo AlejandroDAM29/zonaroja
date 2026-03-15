@@ -23,7 +23,7 @@ fun NavGraphBuilder.mainNavGraph(
             val args: Main = backStackEntry.toRoute()
 
             MainScreen(
-                showSnackbarRegisterSuccess = args.showSnackbarRegisterSuccess,
+                showSnackbarRegisterSuccess = args.showSnackbarRegisterSuccess
             )
         }
 
@@ -34,5 +34,7 @@ fun NavGraphBuilder.mainNavGraph(
         composable<Favourites> {
             FavouritesScreen()
         }
+
+        zoneComparisonNavGraph(navController)
     }
 }
