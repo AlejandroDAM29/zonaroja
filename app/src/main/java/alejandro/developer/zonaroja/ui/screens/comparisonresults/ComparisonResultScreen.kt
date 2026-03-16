@@ -83,18 +83,30 @@ fun ComparisonResultScreen(
     }
 
     BaseScreen(isLoading = uiState.isLoading) {
-        if (!uiState.comparisonAvailable || firstZone == null || secondZone == null || charts == null) {
-            ComparisonUnavailableState(
-                onBack = onBack,
-                onClose = onClose
-            )
-        } else {
-            ComparisonResultContent(
-                firstZone = firstZone,
-                secondZone = secondZone,
-                charts = charts,
-                onClose = onClose
-            )
+        when {
+            uiState.isLoading && firstZone == null && secondZone == null && charts == null -> {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(GreaseBackground)
+                )
+            }
+
+            !uiState.comparisonAvailable -> {
+                ComparisonUnavailableState(
+                    onBack = onBack,
+                    onClose = onClose
+                )
+            }
+
+            firstZone != null && secondZone != null && charts != null -> {
+                ComparisonResultContent(
+                    firstZone = firstZone,
+                    secondZone = secondZone,
+                    charts = charts,
+                    onClose = onClose
+                )
+            }
         }
     }
 }
