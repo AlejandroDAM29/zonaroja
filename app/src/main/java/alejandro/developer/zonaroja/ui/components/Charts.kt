@@ -909,7 +909,6 @@ private fun ZoneComparisonBarChartUiModel.middleValueLabel(): String {
         ZoneComparisonMetricType.UNEMPLOYMENT -> String.format("%.1f%%", middleValue)
 
         ZoneComparisonMetricType.PRICE_SQUARE_METER -> formatPrice(middleValue)
-        //middleValue
     }
 }
 
