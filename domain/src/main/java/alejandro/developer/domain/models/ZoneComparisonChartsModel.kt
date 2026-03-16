@@ -5,17 +5,28 @@ data class ZoneComparisonChartsUiModel(
     val metricCharts: List<ZoneComparisonBarChartUiModel>
 )
 
+interface ZoneComparisonChartEntryUiModel {
+    val label: String
+    val city: String
+    val value: Float
+    val formattedValue: String
+}
+
 data class ZoneComparisonRiskChartUiModel(
     val entries: List<ZoneComparisonRiskChartEntryUiModel>,
     val maxScore: Float = 3f
 )
 
 data class ZoneComparisonRiskChartEntryUiModel(
-    val label: String,
-    val city: String,
+    override val label: String,
+    override val city: String,
     val riskLevel: RiskLevel,
-    val score: Float
-)
+    val score: Float,
+    val formattedScore: String
+) : ZoneComparisonChartEntryUiModel {
+    override val value: Float = score
+    override val formattedValue: String = formattedScore
+}
 
 data class ZoneComparisonBarChartUiModel(
     val metricType: ZoneComparisonMetricType,
@@ -24,11 +35,11 @@ data class ZoneComparisonBarChartUiModel(
 )
 
 data class ZoneComparisonBarChartEntryUiModel(
-    val label: String,
-    val city: String,
-    val value: Float,
-    val formattedValue: String
-)
+    override val label: String,
+    override val city: String,
+    override val value: Float,
+    override val formattedValue: String
+) : ZoneComparisonChartEntryUiModel
 
 enum class ZoneComparisonMetricType {
     POVERTY_RISK,

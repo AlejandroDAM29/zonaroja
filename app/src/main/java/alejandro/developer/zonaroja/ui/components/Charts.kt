@@ -32,8 +32,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,6 +50,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -157,9 +158,23 @@ fun ZoneComparisonRiskChartCard(
 }
 
 @Composable
-fun ZoneComparisonMetricChartCard(
+fun ZoneComparisonBarChartCard(
     chart: ZoneComparisonBarChartUiModel
 ) {
+    val animatedValues = chart.entries.mapIndexed { index, entry ->
+        val animation = remember(chart.metricType, entry.label, entry.city) { Animatable(0f) }
+
+        LaunchedEffect(chart.metricType, index, entry.value) {
+            animation.snapTo(0f)
+            animation.animateTo(
+                targetValue = entry.value,
+                animationSpec = tween(1000 + (index * 200), easing = FastOutSlowInEasing)
+            )
+        }
+
+        animation
+    }
+
     Card(
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -167,7 +182,7 @@ fun ZoneComparisonMetricChartCard(
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
                 text = chart.metricTitle(),
@@ -176,71 +191,117 @@ fun ZoneComparisonMetricChartCard(
                 color = Color(0xFF221814)
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.Bottom
+            Canvas(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(220.dp)
             ) {
+
+                val maxValue = chart.maxValue.coerceAtLeast(1f)
+                val chartWidth = size.width
+                val chartHeight = size.height * 0.7f
+                val axisX = chartWidth * 0.14f
+                val baselineY = size.height
+                val middleGuideY = baselineY - (chartHeight * 0.5f)
+
+                val availableWidth = chartWidth - axisX
+                val barWidth = availableWidth / 5f
+                val barSpacing = barWidth * 0.7f
+
+                val totalBarsWidth =
+                    (barWidth * chart.entries.size) +
+                            (barSpacing * (chart.entries.size - 1).coerceAtLeast(0))
+
+                val startX = axisX + ((availableWidth - totalBarsWidth) / 2f)
+
+                val legendTextSize = calculateResponsiveTextSize(chartWidth).sp.toPx()
+                val valueTextSize = (legendTextSize * 0.9f)
+
+                val axisPaintLegend = android.graphics.Paint().apply {
+                    color = android.graphics.Color.BLACK
+                    textSize = legendTextSize
+                    textAlign = android.graphics.Paint.Align.RIGHT
+                    isAntiAlias = true
+                }
+
+                val axisPaint = android.graphics.Paint().apply {
+                    color = android.graphics.Color.BLACK
+                    textSize = valueTextSize
+                    textAlign = android.graphics.Paint.Align.CENTER
+                    isAntiAlias = true
+                }
+
+                val dashEffect = PathEffect.dashPathEffect(
+                    floatArrayOf(10f, 10f),
+                    0f
+                )
+
+                drawLine(
+                    color = Color.Gray,
+                    start = Offset(axisX, middleGuideY),
+                    end = Offset(chartWidth, middleGuideY),
+                    strokeWidth = 2f,
+                    pathEffect = dashEffect
+                )
+
+                drawContext.canvas.nativeCanvas.drawText(
+                    chart.middleValueLabel(),
+                    axisX - 8f,
+                    middleGuideY - 10f,
+                    axisPaintLegend
+                )
+
+                drawLine(
+                    color = Color.Black,
+                    start = Offset(axisX, baselineY - chartHeight),
+                    end = Offset(axisX, baselineY),
+                    strokeWidth = 2f
+                )
+
                 chart.entries.forEachIndexed { index, entry ->
-                    val animatedRatio = animateFloatAsState(
-                        targetValue = (entry.value / chart.maxValue).coerceIn(0f, 1f),
-                        animationSpec = tween(durationMillis = 700),
-                        label = "comparison_metric_${chart.metricType.name}_$index"
+
+                    val animatedValue = animatedValues[index].value
+                    val barHeight = chartHeight * (animatedValue / maxValue).coerceIn(0f, 1f)
+                    val barLeft = startX + index * (barWidth + barSpacing)
+
+                    drawRect(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                chart.entryColor(index),
+                                chart.entryColor(index).darker()
+                            )
+                        ),
+                        topLeft = Offset(x = barLeft, y = baselineY - barHeight),
+                        size = Size(barWidth, barHeight)
                     )
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = entry.formattedValue,
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF221814),
-                            textAlign = TextAlign.Center
-                        )
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .width(70.dp)
-                                .height(180.dp)
-                                .background(
-                                    color = Color(0xFFF3ECE8),
-                                    shape = RoundedCornerShape(24.dp)
-                                ),
-                            contentAlignment = Alignment.BottomCenter
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .fillMaxHeight(animatedRatio.value)
-                                    .background(
-                                        color = chart.entryColor(index),
-                                        shape = RoundedCornerShape(24.dp)
-                                    )
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        Text(
-                            text = entry.label,
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF221814),
-                            textAlign = TextAlign.Center
-                        )
-
-                        Text(
-                            text = entry.city,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF8A746D),
-                            textAlign = TextAlign.Center
-                        )
-                    }
+                    drawContext.canvas.nativeCanvas.drawText(
+                        entry.formattedValue,
+                        barLeft + (barWidth / 2f),
+                        baselineY - barHeight - 12f,
+                        axisPaint
+                    )
                 }
+
+                drawLine(
+                    color = Color.Black,
+                    start = Offset(axisX, baselineY),
+                    end = Offset(chartWidth, baselineY),
+                    strokeWidth = 2f
+                )
             }
+
+
+
+            Text(
+                text = chart.metricTitle(),
+                modifier = Modifier.fillMaxWidth(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color(0xFF6E5B55),
+                textAlign = TextAlign.Center
+            )
+
+            ZoneComparisonChartLegend(chart = chart)
         }
     }
 }
@@ -465,6 +526,51 @@ fun Legend(
 
         Spacer(modifier = Modifier.width(8.dp))
         Text(cityName)
+    }
+}
+
+@Composable
+private fun ZoneComparisonChartLegend(
+    chart: ZoneComparisonBarChartUiModel
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.Top
+    ) {
+        chart.entries.forEachIndexed { index, entry ->
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(10.dp)
+                        .background(chart.entryColor(index), CircleShape)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    Text(
+                        text = entry.label,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF221814),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = entry.city,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFF8A746D)
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -795,10 +901,42 @@ private fun ZoneComparisonBarChartUiModel.metricTitle(): String {
     }
 }
 
+private fun ZoneComparisonBarChartUiModel.middleValueLabel(): String {
+    val middleValue = maxValue / 2f
+
+    return when (metricType) {
+        ZoneComparisonMetricType.POVERTY_RISK,
+        ZoneComparisonMetricType.UNEMPLOYMENT -> String.format("%.1f%%", middleValue)
+
+        ZoneComparisonMetricType.PRICE_SQUARE_METER -> formatPrice(middleValue)
+        //middleValue
+    }
+}
+
 private fun ZoneComparisonBarChartUiModel.entryColor(index: Int): Color {
     return if (index == 0) {
         RedZoneColor
     } else {
-        Color(0xFF1F1F1F)
+        Color(0xFFDADADA)
     }
 }
+
+fun formatPrice(value: Float): String {
+    return when {
+        value >= 10000 -> "${(value / 1000).toInt()}K €/m²"
+        value >= 1000 -> String.format("%.1fK €/m²", value / 1000)
+        else -> "${value.toInt()} €/m²"
+    }
+}
+
+fun calculateResponsiveTextSize(chartWidth: Float): Float {
+
+    return when {
+        chartWidth < 500f -> 10f
+        chartWidth < 700f -> 12f
+        chartWidth < 900f -> 14f
+        else -> 16f
+    }
+}
+
+

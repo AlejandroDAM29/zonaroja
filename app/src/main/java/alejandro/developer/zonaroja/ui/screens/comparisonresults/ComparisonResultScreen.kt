@@ -5,10 +5,11 @@ import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.components.RiskBadge
-import alejandro.developer.zonaroja.ui.components.ZoneComparisonMetricChartCard
+import alejandro.developer.zonaroja.ui.components.ZoneComparisonBarChartCard
 import alejandro.developer.zonaroja.ui.components.ZoneComparisonRiskChartCard
 import alejandro.developer.zonaroja.ui.screens.comparisonselector.ComparisonHeader
 import alejandro.developer.domain.models.ZoneComparisonChartsUiModel
+import alejandro.developer.zonaroja.ui.theme.GreaseBackground
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -105,7 +106,7 @@ private fun ComparisonResultContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F4F1))
+            .background(GreaseBackground)
             .navigationBarsPadding(),
         contentPadding = PaddingValues(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -149,7 +150,7 @@ private fun ComparisonResultContent(
             items = charts.metricCharts,
             key = { it.metricType.name }
         ) { chart ->
-            ZoneComparisonMetricChartCard(chart = chart)
+            ZoneComparisonBarChartCard(chart = chart)
         }
     }
 }
