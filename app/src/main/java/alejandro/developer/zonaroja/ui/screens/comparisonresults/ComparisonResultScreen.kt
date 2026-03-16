@@ -5,20 +5,24 @@ import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.components.RiskBadge
-import alejandro.developer.zonaroja.ui.components.ZoneComparisonMetricChartCard
+import alejandro.developer.zonaroja.ui.components.ZoneComparisonBarChartCard
 import alejandro.developer.zonaroja.ui.components.ZoneComparisonRiskChartCard
 import alejandro.developer.zonaroja.ui.screens.comparisonselector.ComparisonHeader
 import alejandro.developer.domain.models.ZoneComparisonChartsUiModel
+import alejandro.developer.zonaroja.ui.theme.GreaseBackground
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,11 +40,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -79,18 +89,30 @@ fun ComparisonResultScreen(
     }
 
     BaseScreen(isLoading = uiState.isLoading) {
-        if (!uiState.comparisonAvailable || firstZone == null || secondZone == null || charts == null) {
-            ComparisonUnavailableState(
-                onBack = onBack,
-                onClose = onClose
-            )
-        } else {
-            ComparisonResultContent(
-                firstZone = firstZone,
-                secondZone = secondZone,
-                charts = charts,
-                onClose = onClose
-            )
+        when {
+            uiState.isLoading && firstZone == null && secondZone == null && charts == null -> {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(GreaseBackground)
+                )
+            }
+
+            !uiState.comparisonAvailable -> {
+                ComparisonUnavailableState(
+                    onBack = onBack,
+                    onClose = onClose
+                )
+            }
+
+            firstZone != null && secondZone != null && charts != null -> {
+                ComparisonResultContent(
+                    firstZone = firstZone,
+                    secondZone = secondZone,
+                    charts = charts,
+                    onClose = onClose
+                )
+            }
         }
     }
 }
@@ -105,7 +127,7 @@ private fun ComparisonResultContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F4F1))
+            .background(GreaseBackground)
             .navigationBarsPadding(),
         contentPadding = PaddingValues(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -126,18 +148,54 @@ private fun ComparisonResultContent(
         }
 
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                ComparisonZoneSummaryCard(
-                    zone = firstZone,
-                    modifier = Modifier.weight(1f)
-                )
-                ComparisonZoneSummaryCard(
-                    zone = secondZone,
-                    modifier = Modifier.weight(1f)
-                )
+            BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+                val textMeasurer = rememberTextMeasurer()
+                val density = LocalDensity.current
+                val titleStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                val cardInnerHorizontalPadding = 18.dp * 2
+                val cardSpacing = 12.dp
+                val cardWidth = (maxWidth - cardSpacing) / 2
+                val titleMaxWidthPx = with(density) {
+                    ((cardWidth - cardInnerHorizontalPadding).value * this.density).toInt()
+                }.coerceAtLeast(0)
+                val shouldReserveTwoLines = remember(
+                    firstZone.zoneName,
+                    secondZone.zoneName,
+                    titleStyle,
+                    titleMaxWidthPx
+                ) {
+                    requiresTwoTitleLines(
+                        text = firstZone.zoneName,
+                        style = titleStyle,
+                        maxWidthPx = titleMaxWidthPx,
+                        textMeasurer = textMeasurer
+                    ) || requiresTwoTitleLines(
+                        text = secondZone.zoneName,
+                        style = titleStyle,
+                        maxWidthPx = titleMaxWidthPx,
+                        textMeasurer = textMeasurer
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    ComparisonZoneSummaryCard(
+                        zone = firstZone,
+                        reserveTitleTwoLines = shouldReserveTwoLines,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                    )
+                    ComparisonZoneSummaryCard(
+                        zone = secondZone,
+                        reserveTitleTwoLines = shouldReserveTwoLines,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                    )
+                }
             }
         }
 
@@ -149,7 +207,7 @@ private fun ComparisonResultContent(
             items = charts.metricCharts,
             key = { it.metricType.name }
         ) { chart ->
-            ZoneComparisonMetricChartCard(chart = chart)
+            ZoneComparisonBarChartCard(chart = chart)
         }
     }
 }
@@ -157,6 +215,7 @@ private fun ComparisonResultContent(
 @Composable
 private fun ComparisonZoneSummaryCard(
     zone: DangerZoneComparisonModel,
+    reserveTitleTwoLines: Boolean,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -174,6 +233,7 @@ private fun ComparisonZoneSummaryCard(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF221814),
+                minLines = if (reserveTitleTwoLines) 2 else 1,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -225,6 +285,25 @@ private fun ComparisonSummaryLine(
             color = Color(0xFF221814)
         )
     }
+}
+
+private fun requiresTwoTitleLines(
+    text: String,
+    style: TextStyle,
+    maxWidthPx: Int,
+    textMeasurer: TextMeasurer
+): Boolean {
+    if (maxWidthPx <= 0) return false
+
+    val result = textMeasurer.measure(
+        text = text,
+        style = style,
+        overflow = TextOverflow.Ellipsis,
+        maxLines = 2,
+        constraints = Constraints(maxWidth = maxWidthPx)
+    )
+
+    return result.lineCount > 1
 }
 
 @Composable

@@ -22,13 +22,15 @@ fun buildZoneComparisonCharts(
                     label = firstZone.zoneName,
                     city = firstZone.city,
                     riskLevel = firstZone.riskLevel,
-                    score = firstZone.riskLevel.toChartScore()
+                    score = firstZone.riskLevel.toChartScore(),
+                    formattedScore = firstZone.riskLevel.toChartLabel()
                 ),
                 ZoneComparisonRiskChartEntryUiModel(
                     label = secondZone.zoneName,
                     city = secondZone.city,
                     riskLevel = secondZone.riskLevel,
-                    score = secondZone.riskLevel.toChartScore()
+                    score = secondZone.riskLevel.toChartScore(),
+                    formattedScore = secondZone.riskLevel.toChartLabel()
                 )
             )
         ),
@@ -109,5 +111,13 @@ private fun RiskLevel.toChartScore(): Float {
         RiskLevel.LOW -> 1f
         RiskLevel.MEDIUM -> 2f
         RiskLevel.HIGH -> 3f
+    }
+}
+
+private fun RiskLevel.toChartLabel(): String {
+    return when (this) {
+        RiskLevel.LOW -> "Bajo"
+        RiskLevel.MEDIUM -> "Medio"
+        RiskLevel.HIGH -> "Alto"
     }
 }

@@ -6,6 +6,7 @@ import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.theme.BlackComparisonChart
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
+import alejandro.developer.zonaroja.ui.theme.White
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -93,8 +95,10 @@ private fun ComparisonSelectorContent(
     onSecondZoneSelected: (Int?) -> Unit,
     onCompareClicked: () -> Unit
 ) {
-    val firstSelectedZone = uiState.availableZones.firstOrNull { it.id == uiState.firstSelectedZoneId }
-    val secondSelectedZone = uiState.availableZones.firstOrNull { it.id == uiState.secondSelectedZoneId }
+    val firstSelectedZone =
+        uiState.availableZones.firstOrNull { it.id == uiState.firstSelectedZoneId }
+    val secondSelectedZone =
+        uiState.availableZones.firstOrNull { it.id == uiState.secondSelectedZoneId }
 
     val firstOptions = uiState.availableZones.filter { it.id != uiState.secondSelectedZoneId }
     val secondOptions = uiState.availableZones.filter { it.id != uiState.firstSelectedZoneId }
@@ -177,7 +181,7 @@ private fun ZoneSelectorDropdown(
     var expanded by remember { mutableStateOf(false) }
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             text = title,
@@ -188,7 +192,7 @@ private fun ZoneSelectorDropdown(
 
         ExposedDropdownMenuBox(
             expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
+            onExpandedChange = { expanded = !expanded },
         ) {
             OutlinedTextField(
                 value = selectedZone.toDropdownLabel(),
@@ -211,9 +215,10 @@ private fun ZoneSelectorDropdown(
 
             DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.background(White)
             ) {
-                options.forEach { zone ->
+                options.forEachIndexed { index, zone ->
                     DropdownMenuItem(
                         text = {
                             Text(zone.toDropdownLabel())
@@ -221,8 +226,14 @@ private fun ZoneSelectorDropdown(
                         onClick = {
                             onZoneSelected(zone.id)
                             expanded = false
-                        }
+                        },
+                        modifier = Modifier.background(White)
                     )
+
+                    if (index != options.lastIndex) {
+                        HorizontalDivider(Modifier.fillMaxWidth(), thickness = 1.dp)
+                    }
+
                 }
             }
         }
