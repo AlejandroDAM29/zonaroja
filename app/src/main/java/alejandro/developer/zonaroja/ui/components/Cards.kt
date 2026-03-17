@@ -3,6 +3,8 @@ package alejandro.developer.zonaroja.ui.components
 import alejandro.developer.domain.models.DangerZoneModel
 import alejandro.developer.domain.models.RiskLevel
 import alejandro.developer.zonaroja.R
+import alejandro.developer.zonaroja.ui.common.format.formatCurrencyAmount
+import alejandro.developer.zonaroja.ui.common.preferences.LocalUserPreferences
 import alejandro.developer.zonaroja.ui.theme.Black
 import alejandro.developer.zonaroja.ui.theme.White
 import androidx.compose.foundation.background
@@ -72,6 +74,7 @@ fun LegendItem(
 
 @Composable
 fun StatsCard(zone: DangerZoneModel) {
+    val userPreferences = LocalUserPreferences.current
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -86,8 +89,16 @@ fun StatsCard(zone: DangerZoneModel) {
         ) {
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(zone.priceSquareMeter.toString(), fontWeight = FontWeight.Bold)
-                Text(stringResource(R.string.square_meter_price))
+                Text(
+                    text = formatCurrencyAmount(zone.priceSquareMeter, userPreferences),
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = stringResource(
+                        R.string.square_meter_price,
+                        userPreferences.selectedCurrency.symbol
+                    )
+                )
             }
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {

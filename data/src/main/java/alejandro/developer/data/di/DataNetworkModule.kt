@@ -5,6 +5,7 @@ import alejandro.developer.core.auth.AuthRetryInterceptor
 import alejandro.developer.data.remote.general.RemoteConfigKeys
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
@@ -51,6 +52,11 @@ object DataNetworkModule {
     @Provides
     fun provideFirebaseAuth(): FirebaseAuth =
         FirebaseAuth.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideFirebaseMessaging(): FirebaseMessaging =
+        FirebaseMessaging.getInstance()
 
     @Provides
     @Singleton

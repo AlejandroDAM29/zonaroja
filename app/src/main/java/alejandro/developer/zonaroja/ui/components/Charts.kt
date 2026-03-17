@@ -8,6 +8,9 @@ import alejandro.developer.domain.models.ZoneComparisonBarChartUiModel
 import alejandro.developer.domain.models.ZoneComparisonMetricType
 import alejandro.developer.domain.models.ZoneComparisonRiskChartUiModel
 import alejandro.developer.zonaroja.R
+import alejandro.developer.zonaroja.ui.common.format.formatCompactPricePerSquareMeter
+import alejandro.developer.zonaroja.ui.common.format.formatCurrencyAmount
+import alejandro.developer.zonaroja.ui.common.preferences.LocalUserPreferences
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -161,6 +164,7 @@ fun ZoneComparisonRiskChartCard(
 fun ZoneComparisonBarChartCard(
     chart: ZoneComparisonBarChartUiModel
 ) {
+    val userPreferences = LocalUserPreferences.current
     val animatedValues = chart.entries.mapIndexed { index, entry ->
         val animation = remember(chart.metricType, entry.label, entry.city) { Animatable(0f) }
 
@@ -245,7 +249,7 @@ fun ZoneComparisonBarChartCard(
                 )
 
                 drawContext.canvas.nativeCanvas.drawText(
-                    chart.middleValueLabel(),
+                    chart.middleValueLabel(userPreferences),
                     axisX - 8f,
                     middleGuideY - 10f,
                     axisPaintLegend
@@ -276,7 +280,10 @@ fun ZoneComparisonBarChartCard(
                     )
 
                     drawContext.canvas.nativeCanvas.drawText(
-                        entry.formattedValue,
+                        chart.entryValueLabel(
+                            value = entry.value,
+                            userPreferences = userPreferences
+                        ),
                         barLeft + (barWidth / 2f),
                         baselineY - barHeight - 12f,
                         axisPaint
@@ -312,6 +319,7 @@ fun EconomyBarChart(
     cityName: String,
     stats: EconomyStatsModel
 ) {
+    val userPreferences = LocalUserPreferences.current
 
     val categories = listOf(
         Triple(
@@ -373,7 +381,8 @@ fun EconomyBarChart(
                 textSize = 24f
             }
 
-            val textWidth = textPaint.measureText("${maxValue.toInt()}€")
+            val middleValueLabel = formatCurrencyAmount(maxValue, userPreferences)
+            val textWidth = textPaint.measureText(middleValueLabel)
 
             val dashEffect = PathEffect.dashPathEffect(
                 floatArrayOf(10f, 10f),
@@ -391,7 +400,7 @@ fun EconomyBarChart(
             )
 
             drawContext.canvas.nativeCanvas.drawText(
-                "${maxValue.toInt()}€",
+                middleValueLabel,
                 axisX - textWidth / 2,
                 size.height * 0.3f - 10f,
                 textPaint
@@ -435,10 +444,11 @@ fun EconomyBarChart(
                     val textPaint = android.graphics.Paint().apply {
                         textSize = 24f
                     }
-                    val textWidth = textPaint.measureText("${maxValue.toInt()}€")
+                    val entryLabel = formatCurrencyAmount(value, userPreferences)
+                    val textWidth = textPaint.measureText(entryLabel)
 
                     drawContext.canvas.nativeCanvas.drawText(
-                        "${value}€",
+                        entryLabel,
                         startX + offset + textWidth / 4,
                         size.height - barHeight - 10f,
                         textPaint
@@ -901,14 +911,19 @@ private fun ZoneComparisonBarChartUiModel.metricTitle(): String {
     }
 }
 
-private fun ZoneComparisonBarChartUiModel.middleValueLabel(): String {
+private fun ZoneComparisonBarChartUiModel.middleValueLabel(
+    userPreferences: alejandro.developer.domain.models.UserPreferencesModel
+): String {
     val middleValue = maxValue / 2f
 
     return when (metricType) {
         ZoneComparisonMetricType.POVERTY_RISK,
         ZoneComparisonMetricType.UNEMPLOYMENT -> String.format("%.1f%%", middleValue)
 
-        ZoneComparisonMetricType.PRICE_SQUARE_METER -> formatPrice(middleValue)
+        ZoneComparisonMetricType.PRICE_SQUARE_METER -> formatCompactPricePerSquareMeter(
+            amountInEuro = middleValue,
+            preferences = userPreferences
+        )
     }
 }
 
@@ -925,6 +940,21 @@ fun formatPrice(value: Float): String {
         value >= 10000 -> "${(value / 1000).toInt()}K €/m²"
         value >= 1000 -> String.format("%.1fK €/m²", value / 1000)
         else -> "${value.toInt()} €/m²"
+    }
+}
+
+private fun ZoneComparisonBarChartUiModel.entryValueLabel(
+    value: Float,
+    userPreferences: alejandro.developer.domain.models.UserPreferencesModel
+): String {
+    return when (metricType) {
+        ZoneComparisonMetricType.POVERTY_RISK,
+        ZoneComparisonMetricType.UNEMPLOYMENT -> String.format("%.1f%%", value)
+
+        ZoneComparisonMetricType.PRICE_SQUARE_METER -> formatCompactPricePerSquareMeter(
+            amountInEuro = value,
+            preferences = userPreferences
+        )
     }
 }
 

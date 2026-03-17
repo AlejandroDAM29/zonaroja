@@ -19,9 +19,11 @@ interface AuthRepository {
         email: String
     ): Result<Unit>
 
+    fun getCurrentUserEmail(): String?
+
     fun isUserLoggedIn(): Boolean
 
+    suspend fun deleteCurrentUser(): Result<Unit>
+
     suspend fun logout()
-
-
 }

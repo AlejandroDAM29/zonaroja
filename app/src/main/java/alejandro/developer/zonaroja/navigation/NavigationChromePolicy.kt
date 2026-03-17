@@ -9,7 +9,6 @@ object NavigationChromePolicy {
         return screen in setOf(
             Main::class,
             Favourites::class,
-            Setting::class,
             ZoneComparisonSelector::class
         )
     }
@@ -18,8 +17,7 @@ object NavigationChromePolicy {
         return screen in setOf(
             Main::class,
             ZoneComparisonSelector::class,
-            Favourites::class,
-            Setting::class
+            Favourites::class
         )
     }
 
@@ -28,7 +26,6 @@ object NavigationChromePolicy {
             Main::class -> BottomBarItem.Home
             ZoneComparisonSelector::class -> BottomBarItem.Comparison
             Favourites::class -> BottomBarItem.Favourites
-            Setting::class -> BottomBarItem.Settings
             else -> null
         }
 

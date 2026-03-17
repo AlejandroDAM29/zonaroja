@@ -1,0 +1,95 @@
+package alejandro.developer.zonaroja.notifications
+
+import alejandro.developer.domain.usecase.GetUserPreferencesUseCase
+import alejandro.developer.domain.usecase.SyncNotificationSubscriptionsUseCase
+import alejandro.developer.zonaroja.MainActivity
+import alejandro.developer.zonaroja.R
+import android.Manifest
+import android.app.PendingIntent
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
+import com.google.firebase.messaging.FirebaseMessagingService
+import com.google.firebase.messaging.RemoteMessage
+import dagger.hilt.android.AndroidEntryPoint
+import jakarta.inject.Inject
+import kotlinx.coroutines.runBlocking
+
+@AndroidEntryPoint
+class ZonaRojaFirebaseMessagingService : FirebaseMessagingService() {
+
+    @Inject
+    lateinit var getUserPreferencesUseCase: GetUserPreferencesUseCase
+
+    @Inject
+    lateinit var syncNotificationSubscriptionsUseCase: SyncNotificationSubscriptionsUseCase
+
+    override fun onCreate() {
+        super.onCreate()
+        NotificationChannelManager.ensureGeneralChannel(this)
+    }
+
+    override fun onNewToken(token: String) {
+        super.onNewToken(token)
+        runBlocking {
+            syncNotificationSubscriptionsUseCase()
+        }
+    }
+
+    override fun onMessageReceived(message: RemoteMessage) {
+        super.onMessageReceived(message)
+
+        val userPreferences = runBlocking { getUserPreferencesUseCase() }
+        if (!userPreferences.notificationsEnabled) return
+
+        if (!hasNotificationPermission()) return
+
+        val title = message.notification?.title
+            ?: message.data["title"]
+            ?: getString(R.string.app_name)
+        val body = message.notification?.body
+            ?: message.data["body"]
+            ?: return
+
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(
+            this,
+            NotificationChannelManager.GENERAL_CHANNEL_ID
+        )
+            .setSmallIcon(R.drawable.zona_roja_warning_icon)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
+
+        NotificationManagerCompat.from(this).notify(
+            message.messageId?.hashCode() ?: System.currentTimeMillis().toInt(),
+            notification
+        )
+    }
+
+    private fun hasNotificationPermission(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return true
+        }
+
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+}

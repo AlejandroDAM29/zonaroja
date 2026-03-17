@@ -1,5 +1,6 @@
 package alejandro.developer.zonaroja.navigation.graphs
 
+import alejandro.developer.zonaroja.navigation.ChangePassword
 import alejandro.developer.zonaroja.navigation.Favourites
 import alejandro.developer.zonaroja.navigation.Main
 import alejandro.developer.zonaroja.navigation.Setting
@@ -28,11 +29,17 @@ fun NavGraphBuilder.mainNavGraph(
         }
 
         composable<Setting> {
-            SettingScreen()
-        }
-
-        composable<Favourites> {
-            FavouritesScreen()
+            SettingScreen(
+                onClose = {
+                    navController.popBackStack()
+                          },
+                onNavigateToChangePassword = { navController.navigate(ChangePassword) },
+                onNavigateToLogin = {
+                    navController.navigate(AuthGraph) {
+                        popUpTo(MainGraph) { inclusive = true }
+                    }
+                }
+            )
         }
 
         zoneComparisonNavGraph(navController)

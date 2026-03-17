@@ -78,11 +78,11 @@ fun buildZoneComparisonCharts(
                 entries = listOf(
                     firstZone.toBarEntry(
                         value = firstZone.priceSquareMeter.toDouble(),
-                        formattedValue = "${firstZone.priceSquareMeter} EUR/m2"
+                        formattedValue = firstZone.priceSquareMeter.toString()
                     ),
                     secondZone.toBarEntry(
                         value = secondZone.priceSquareMeter.toDouble(),
-                        formattedValue = "${secondZone.priceSquareMeter} EUR/m2"
+                        formattedValue = secondZone.priceSquareMeter.toString()
                     )
                 )
             )

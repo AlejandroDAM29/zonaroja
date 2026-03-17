@@ -2,8 +2,10 @@ package alejandro.developer.zonaroja.ui.screens.comparisonresults
 
 import alejandro.developer.domain.models.DangerZoneComparisonModel
 import alejandro.developer.zonaroja.R
+import alejandro.developer.zonaroja.ui.common.format.formatPricePerSquareMeter
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
+import alejandro.developer.zonaroja.ui.common.preferences.LocalUserPreferences
 import alejandro.developer.zonaroja.ui.components.RiskBadge
 import alejandro.developer.zonaroja.ui.components.ZoneComparisonBarChartCard
 import alejandro.developer.zonaroja.ui.components.ZoneComparisonRiskChartCard
@@ -124,6 +126,8 @@ private fun ComparisonResultContent(
     charts: ZoneComparisonChartsUiModel,
     onClose: () -> Unit
 ) {
+    val userPreferences = LocalUserPreferences.current
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -184,6 +188,7 @@ private fun ComparisonResultContent(
                     ComparisonZoneSummaryCard(
                         zone = firstZone,
                         reserveTitleTwoLines = shouldReserveTwoLines,
+                        userPreferences = userPreferences,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
@@ -191,6 +196,7 @@ private fun ComparisonResultContent(
                     ComparisonZoneSummaryCard(
                         zone = secondZone,
                         reserveTitleTwoLines = shouldReserveTwoLines,
+                        userPreferences = userPreferences,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
@@ -216,6 +222,7 @@ private fun ComparisonResultContent(
 private fun ComparisonZoneSummaryCard(
     zone: DangerZoneComparisonModel,
     reserveTitleTwoLines: Boolean,
+    userPreferences: alejandro.developer.domain.models.UserPreferencesModel,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -258,7 +265,7 @@ private fun ComparisonZoneSummaryCard(
             )
             ComparisonSummaryLine(
                 label = stringResource(R.string.comparison_metric_price),
-                value = "${zone.priceSquareMeter} EUR/m2"
+                value = formatPricePerSquareMeter(zone.priceSquareMeter, userPreferences)
             )
         }
     }

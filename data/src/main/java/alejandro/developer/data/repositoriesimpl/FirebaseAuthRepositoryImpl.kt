@@ -49,9 +49,17 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
             .await()
     }
 
+    override fun getCurrentUserEmail(): String? {
+        return firebaseAuth.currentUser?.email
+    }
 
     override fun isUserLoggedIn(): Boolean {
         return firebaseAuth.currentUser != null
+    }
+
+    override suspend fun deleteCurrentUser(): Result<Unit> = runCatching {
+        firebaseAuth.currentUser?.delete()?.await()
+            ?: error("No hay ningun usuario autenticado")
     }
 
     override suspend fun logout() {

@@ -100,7 +100,7 @@
     <string name="favourites_poverty_label">Riesgo pobreza</string>
     <string name="favourites_unemployment_label">Tasa paro</string>
     <string name="favourites_points_label">Puntos</string>
-    <string name="square_meter_price">€/m²</string>
+    <string name="square_meter_price">%1$s/m²</string>
     <string name="poberty_taxes">tasa pobreza</string>
     <string name="unemployment_rate">tasa paro</string>
 
@@ -132,5 +132,31 @@
     <string name="comparison_unavailable_title">No se puede mostrar la comparativa</string>
     <string name="comparison_unavailable_description">Las zonas seleccionadas ya no estan disponibles en el servicio remoto.</string>
     <string name="comparison_back_to_selector">Volver a seleccion</string>
+
+    <!--Settings-->
+    <string name="settings_preferences">Preferencias</string>
+    <string name="settings_logout">Log out</string>
+    <string name="settings_notifications">Notificaciones</string>
+    <string name="settings_notifications_permission_required">Activa el permiso para recibir avisos en primer plano y en segundo plano.</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Oscuro</string>
+    <string name="settings_currency">Moneda</string>
+    <string name="settings_selected_currency">Actual</string>
+    <string name="settings_change_password">Cambiar contrasena</string>
+    <string name="settings_change_password_description">Te enviaremos un correo de restablecimiento al email asociado a tu cuenta actual.</string>
+    <string name="settings_current_email">Correo actual</string>
+    <string name="settings_send_reset_email">Enviar email de restablecimiento</string>
+    <string name="settings_email_fallback">usuario@zonaroja.app</string>
+    <string name="settings_email_not_available">No hay un correo asociado a esta sesion.</string>
+    <string name="settings_delete_account">Borrar cuenta</string>
+    <string name="settings_delete_account_confirm">Borrar</string>
+    <string name="settings_delete_account_dialog_message">Esta accion eliminara tu cuenta actual de Firebase. Si Firebase exige autenticacion reciente, tendras que volver a iniciar sesion antes de intentarlo otra vez.</string>
+    <string name="settings_delete_account_success">Cuenta eliminada correctamente.</string>
+    <string name="settings_delete_account_error">No se ha podido borrar la cuenta.</string>
+    <string name="settings_delete_account_recent_login_required">Firebase requiere que vuelvas a autenticarte antes de borrar la cuenta.</string>
+    <string name="default_notification_channel_id">zonaroja_general_channel</string>
+    <string name="default_notification_channel_name">Notificaciones generales</string>
+    <string name="default_notification_channel_description">Avisos push enviados desde Firebase Cloud Messaging.</string>
 
 </resources>

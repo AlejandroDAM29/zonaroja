@@ -3,8 +3,10 @@ package alejandro.developer.zonaroja.ui.screens.favourites
 import alejandro.developer.domain.models.DangerZoneModel
 import alejandro.developer.domain.models.RiskLevel
 import alejandro.developer.zonaroja.R
+import alejandro.developer.zonaroja.ui.common.format.formatPricePerSquareMeter
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
+import alejandro.developer.zonaroja.ui.common.preferences.LocalUserPreferences
 import alejandro.developer.zonaroja.ui.components.DangerZoneStatisticsSheetContent
 import alejandro.developer.zonaroja.ui.components.RiskBadge
 import alejandro.developer.zonaroja.ui.components.StatsCard
@@ -157,6 +159,8 @@ private fun FavouriteZoneCard(
     onDeleteClicked: () -> Unit,
     onOpenStats: () -> Unit
 ) {
+    val userPreferences = LocalUserPreferences.current
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -220,7 +224,7 @@ private fun FavouriteZoneCard(
                     )
                     FavouriteInfoRow(
                         label = stringResource(R.string.favourites_price_label),
-                        value = "${zone.priceSquareMeter} EUR/m2"
+                        value = formatPricePerSquareMeter(zone.priceSquareMeter, userPreferences)
                     )
                     FavouriteInfoRow(
                         label = stringResource(R.string.favourites_poverty_label),
