@@ -5,8 +5,6 @@ import alejandro.developer.domain.models.RiskLevel
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.format.formatCurrencyAmount
 import alejandro.developer.zonaroja.ui.common.preferences.LocalUserPreferences
-import alejandro.developer.zonaroja.ui.theme.Black
-import alejandro.developer.zonaroja.ui.theme.White
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,8 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,11 +32,9 @@ fun LegendCard(modifier: Modifier = Modifier) {
 
     Card(
         modifier = modifier,
-        colors = CardColors(
-            containerColor = White,
-            contentColor = Black,
-            disabledContainerColor = White,
-            disabledContentColor = Black
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
         ),
         elevation = CardDefaults.cardElevation(8.dp)
     ) {

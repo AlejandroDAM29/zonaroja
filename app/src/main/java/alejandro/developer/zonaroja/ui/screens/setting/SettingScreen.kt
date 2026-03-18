@@ -632,7 +632,7 @@ private fun CurrencyBadge(symbol: String) {
     ) {
         Text(
             text = symbol,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
             color = RedZoneColor
         )

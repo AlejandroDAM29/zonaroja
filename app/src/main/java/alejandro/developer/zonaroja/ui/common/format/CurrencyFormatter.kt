@@ -41,22 +41,26 @@ fun formatPricePerSquareMeter(
 
 fun formatCompactPricePerSquareMeter(
     amountInEuro: Float,
-    preferences: UserPreferencesModel
+    preferences: UserPreferencesModel,
+    compactDecimals: Int = 1,
+    unitDecimals: Int = 1,
+    symbolOverride: String? = null
 ): String {
     val convertedAmount = convertFromEuro(amountInEuro.toDouble(), preferences)
+    val symbol = symbolOverride ?: preferences.selectedCurrency.symbol
 
     return when {
         convertedAmount >= 10_000 -> {
-            "${preferences.selectedCurrency.symbol} ${(convertedAmount / 1_000).toCurrencyNumberString(0)}K/m²"
+            "$symbol ${(convertedAmount / 1_000).toCurrencyNumberString(0)}K/m²"
         }
 
         convertedAmount >= 1_000 -> {
-            "${preferences.selectedCurrency.symbol} ${(convertedAmount / 1_000).toCurrencyNumberString(1)}K/m²"
+            "$symbol ${(convertedAmount / 1_000).toCurrencyNumberString(compactDecimals)}K/m²"
         }
 
         else -> {
-            val decimals = if (abs(convertedAmount % 1) < 0.01) 0 else 1
-            "${preferences.selectedCurrency.symbol} ${convertedAmount.toCurrencyNumberString(decimals)}/m²"
+            val decimals = if (abs(convertedAmount % 1) < 0.01) 0 else unitDecimals
+            "$symbol ${convertedAmount.toCurrencyNumberString(decimals)}/m²"
         }
     }
 }

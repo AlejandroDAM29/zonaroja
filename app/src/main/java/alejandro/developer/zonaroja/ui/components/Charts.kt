@@ -57,6 +57,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.roundToInt
 
 @Composable
 fun ZoneComparisonRiskChartCard(
@@ -64,7 +65,7 @@ fun ZoneComparisonRiskChartCard(
 ) {
     Card(
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
@@ -75,7 +76,7 @@ fun ZoneComparisonRiskChartCard(
                 text = stringResource(R.string.comparison_metric_risk_level),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF221814)
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             chart.entries.forEach { entry ->
@@ -100,12 +101,12 @@ fun ZoneComparisonRiskChartCard(
                                 text = entry.label,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color(0xFF221814)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = entry.city,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color(0xFF8A746D)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
 
@@ -122,7 +123,7 @@ fun ZoneComparisonRiskChartCard(
                             .fillMaxWidth()
                             .height(14.dp)
                             .background(
-                                color = Color(0xFFF3ECE8),
+                                color = MaterialTheme.colorScheme.surfaceVariant,
                                 shape = RoundedCornerShape(20.dp)
                             )
                     ) {
@@ -165,6 +166,8 @@ fun ZoneComparisonBarChartCard(
     chart: ZoneComparisonBarChartUiModel
 ) {
     val userPreferences = LocalUserPreferences.current
+    val chartBoundaryColor = MaterialTheme.colorScheme.onSurface
+    val chartGuideColor = MaterialTheme.colorScheme.onSurfaceVariant
     val animatedValues = chart.entries.mapIndexed { index, entry ->
         val animation = remember(chart.metricType, entry.label, entry.city) { Animatable(0f) }
 
@@ -181,7 +184,7 @@ fun ZoneComparisonBarChartCard(
 
     Card(
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
@@ -192,7 +195,7 @@ fun ZoneComparisonBarChartCard(
                 text = chart.metricTitle(),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF221814)
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Canvas(
@@ -222,14 +225,14 @@ fun ZoneComparisonBarChartCard(
                 val valueTextSize = (legendTextSize * 0.9f)
 
                 val axisPaintLegend = android.graphics.Paint().apply {
-                    color = android.graphics.Color.BLACK
+                    color = chartGuideColor.toArgb()
                     textSize = legendTextSize
                     textAlign = android.graphics.Paint.Align.RIGHT
                     isAntiAlias = true
                 }
 
                 val axisPaint = android.graphics.Paint().apply {
-                    color = android.graphics.Color.BLACK
+                    color = chartBoundaryColor.toArgb()
                     textSize = valueTextSize
                     textAlign = android.graphics.Paint.Align.CENTER
                     isAntiAlias = true
@@ -241,7 +244,7 @@ fun ZoneComparisonBarChartCard(
                 )
 
                 drawLine(
-                    color = Color.Gray,
+                    color = chartGuideColor,
                     start = Offset(axisX, middleGuideY),
                     end = Offset(chartWidth, middleGuideY),
                     strokeWidth = 2f,
@@ -256,7 +259,7 @@ fun ZoneComparisonBarChartCard(
                 )
 
                 drawLine(
-                    color = Color.Black,
+                    color = chartBoundaryColor,
                     start = Offset(axisX, baselineY - chartHeight),
                     end = Offset(axisX, baselineY),
                     strokeWidth = 2f
@@ -291,7 +294,7 @@ fun ZoneComparisonBarChartCard(
                 }
 
                 drawLine(
-                    color = Color.Black,
+                    color = chartBoundaryColor,
                     start = Offset(axisX, baselineY),
                     end = Offset(chartWidth, baselineY),
                     strokeWidth = 2f
@@ -304,7 +307,7 @@ fun ZoneComparisonBarChartCard(
                 text = chart.metricTitle(),
                 modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFF6E5B55),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
 
@@ -320,6 +323,8 @@ fun EconomyBarChart(
     stats: EconomyStatsModel
 ) {
     val userPreferences = LocalUserPreferences.current
+    val chartBoundaryColor = MaterialTheme.colorScheme.onSurface
+    val chartGuideColor = MaterialTheme.colorScheme.onSurfaceVariant
 
     val categories = listOf(
         Triple(
@@ -377,7 +382,7 @@ fun EconomyBarChart(
             val axisX = groupWidth / 5
 
             val textPaint = android.graphics.Paint().apply {
-                color = android.graphics.Color.BLACK
+                color = chartGuideColor.toArgb()
                 textSize = 24f
             }
 
@@ -392,7 +397,7 @@ fun EconomyBarChart(
             val chartHeight = size.height * 0.7f
 
             drawLine(
-                color = Color.Gray,
+                color = chartGuideColor,
                 start = Offset(axisX, size.height - chartHeight / 2),
                 end = Offset(size.width, size.height - chartHeight / 2),
                 strokeWidth = 2f,
@@ -408,7 +413,7 @@ fun EconomyBarChart(
 
 
             drawLine(
-                color = Color.Black,
+                color = chartBoundaryColor,
                 start = Offset(groupWidth / 5, size.height * 0.3f),
                 end = Offset(groupWidth / 5, size.height),
                 strokeWidth = 2f
@@ -442,6 +447,7 @@ fun EconomyBarChart(
 
 
                     val textPaint = android.graphics.Paint().apply {
+                        this.color = chartBoundaryColor.toArgb()
                         textSize = 24f
                     }
                     val entryLabel = formatCurrencyAmount(value, userPreferences)
@@ -461,7 +467,7 @@ fun EconomyBarChart(
             }
 
             drawLine(
-                color = Color.Black,
+                color = chartBoundaryColor,
                 start = Offset(axisX, size.height),
                 end = Offset(size.width, size.height),
                 strokeWidth = 2f
@@ -569,14 +575,14 @@ private fun ZoneComparisonChartLegend(
                         text = entry.label,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF221814),
+                        color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = entry.city,
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF8A746D)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -872,7 +878,7 @@ private fun ComparisonLegendItem(
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,
-            color = Color(0xFF6E5B55)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -915,14 +921,18 @@ private fun ZoneComparisonBarChartUiModel.middleValueLabel(
     userPreferences: alejandro.developer.domain.models.UserPreferencesModel
 ): String {
     val middleValue = maxValue / 2f
+    val roundedMiddleValue = middleValue.roundToInt()
 
     return when (metricType) {
         ZoneComparisonMetricType.POVERTY_RISK,
-        ZoneComparisonMetricType.UNEMPLOYMENT -> String.format("%.1f%%", middleValue)
+        ZoneComparisonMetricType.UNEMPLOYMENT -> "$roundedMiddleValue%"
 
         ZoneComparisonMetricType.PRICE_SQUARE_METER -> formatCompactPricePerSquareMeter(
-            amountInEuro = middleValue,
-            preferences = userPreferences
+            amountInEuro = roundedMiddleValue.toFloat(),
+            preferences = userPreferences,
+            compactDecimals = 0,
+            unitDecimals = 0,
+            symbolOverride = if (userPreferences.selectedCurrency.code == "MXN") "$" else null
         )
     }
 }
