@@ -145,7 +145,7 @@
     <string name="settings_selected_currency">Actual</string>
     <string name="settings_change_password">Cambiar contrasena</string>
     <string name="settings_change_password_description">Te enviaremos un correo de restablecimiento al email asociado a tu cuenta actual.</string>
-    <string name="settings_current_email">Correo actual</string>
+    <string name="settings_current_email">Correo al que se enviará la contraseña:</string>
     <string name="settings_send_reset_email">Enviar email de restablecimiento</string>
     <string name="settings_email_fallback">usuario@zonaroja.app</string>
     <string name="settings_email_not_available">No hay un correo asociado a esta sesion.</string>

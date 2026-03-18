@@ -8,17 +8,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Key
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -97,22 +98,27 @@ fun ChangePasswordScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                IconButton(
-                    onClick = onBack
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.settings_change_password),
-                        tint = RedZoneColor
-                    )
-                }
 
-                Text(
-                    text = stringResource(R.string.settings_change_password),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+                Row(Modifier.fillMaxWidth()) {
+                    IconButton(
+                        onClick = onBack
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.settings_change_password),
+                            tint = RedZoneColor
+                        )
+                    }
+
+                    Text(
+                        text = stringResource(R.string.settings_change_password),
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+
+                }
 
                 Text(
                     text = stringResource(R.string.settings_change_password_description),
@@ -131,11 +137,11 @@ fun ChangePasswordScreen(
                         modifier = Modifier.padding(20.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Key,
-                            contentDescription = null,
-                            tint = RedZoneColor
-                        )
+                        /* Icon(
+                             imageVector = Icons.Default.Key,
+                             contentDescription = null,
+                             tint = RedZoneColor
+                         )*/
 
                         Text(
                             text = stringResource(R.string.settings_current_email),
@@ -143,35 +149,30 @@ fun ChangePasswordScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
-                        Card(
-                            shape = RoundedCornerShape(18.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
+
+                        Row(
+                            modifier = Modifier.padding(
+                                horizontal = 16.dp,
+                                vertical = 14.dp
                             )
                         ) {
-                            Column(
-                                modifier = Modifier.padding(
-                                    horizontal = 16.dp,
-                                    vertical = 14.dp
-                                )
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Email,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
 
-                                Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.width(12.dp))
 
-                                Text(
-                                    text = uiState.email.ifBlank {
-                                        stringResource(R.string.settings_email_not_available)
-                                    },
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
+                            Text(
+                                text = uiState.email.ifBlank {
+                                    stringResource(R.string.settings_email_not_available)
+                                },
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
                         }
+
 
                         Button(
                             onClick = viewModel::onSendResetEmailClicked,
