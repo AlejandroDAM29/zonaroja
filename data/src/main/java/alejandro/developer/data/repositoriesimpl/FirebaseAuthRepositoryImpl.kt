@@ -2,6 +2,7 @@ package alejandro.developer.data.repositoriesimpl
 
 import alejandro.developer.domain.repositories.AuthRepository
 import android.util.Log
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
@@ -10,6 +11,12 @@ import javax.inject.Inject
 class FirebaseAuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) : AuthRepository {
+
+    private fun resolveCurrentUserEmail(): String? {
+        val user = firebaseAuth.currentUser ?: return null
+        return user.email
+            ?: user.providerData.firstNotNullOfOrNull { provider -> provider.email }
+    }
 
     override suspend fun loginWithEmail(
         email: String,
@@ -50,16 +57,37 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     }
 
     override fun getCurrentUserEmail(): String? {
-        return firebaseAuth.currentUser?.email
+        return resolveCurrentUserEmail()
+    }
+
+    override fun isCurrentUserPasswordProvider(): Boolean {
+        return firebaseAuth.currentUser
+            ?.providerData
+            ?.any { it.providerId == EmailAuthProvider.PROVIDER_ID } == true
     }
 
     override fun isUserLoggedIn(): Boolean {
         return firebaseAuth.currentUser != null
     }
 
+    override suspend fun reauthenticateWithEmail(
+        email: String,
+        password: String
+    ): Result<Unit> = runCatching {
+        val currentUser = firebaseAuth.currentUser
+            ?: throw IllegalStateException("No authenticated user")
+        val resolvedEmail = email.ifBlank {
+            resolveCurrentUserEmail()
+                ?: throw IllegalStateException("No email associated with authenticated user")
+        }
+        val credential = EmailAuthProvider.getCredential(resolvedEmail, password)
+        currentUser.reauthenticate(credential).await()
+    }
+
     override suspend fun deleteCurrentUser(): Result<Unit> = runCatching {
-        firebaseAuth.currentUser?.delete()?.await()
-            ?: error("No hay ningun usuario autenticado")
+        val currentUser = firebaseAuth.currentUser
+            ?: throw IllegalStateException("No authenticated user")
+        currentUser.delete().await()
     }
 
     override suspend fun logout() {

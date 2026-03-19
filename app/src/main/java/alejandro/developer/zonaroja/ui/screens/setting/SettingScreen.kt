@@ -4,6 +4,7 @@ import alejandro.developer.domain.models.AppCurrency
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
+import alejandro.developer.zonaroja.ui.components.RedOutlinedTextField
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import android.Manifest
 import android.content.Context
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -38,6 +40,7 @@ import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -94,6 +97,8 @@ fun SettingScreen(
         mutableStateOf(context.hasNotificationPermission())
     }
     var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
+    var showDeleteReauthDialog by rememberSaveable { mutableStateOf(false) }
+    var deletePassword by rememberSaveable { mutableStateOf("") }
     var showCurrencySheet by rememberSaveable { mutableStateOf(false) }
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
@@ -130,6 +135,11 @@ fun SettingScreen(
         viewModel.uiEvents.collect { event ->
             when (event) {
                 is SettingUiEvent.NavigateToLogin -> onNavigateToLogin()
+
+                is SettingUiEvent.RequestDeleteAccountReauthentication -> {
+                    showDeleteDialog = false
+                    showDeleteReauthDialog = true
+                }
 
                 is SettingUiEvent.ShowMessage -> {
                     when (event.type) {
@@ -188,6 +198,18 @@ fun SettingScreen(
             onDeleteAccountConfirmed = {
                 showDeleteDialog = false
                 viewModel.onDeleteAccountConfirmed()
+            },
+            showDeleteReauthDialog = showDeleteReauthDialog,
+            deletePassword = deletePassword,
+            onDeletePasswordChanged = { deletePassword = it },
+            onDismissDeleteReauthDialog = {
+                showDeleteReauthDialog = false
+                deletePassword = ""
+            },
+            onDeleteAccountReauthenticated = {
+                showDeleteReauthDialog = false
+                viewModel.onDeleteAccountConfirmed(deletePassword)
+                deletePassword = ""
             }
         )
     }
@@ -210,7 +232,12 @@ private fun SettingsContent(
     onChangePasswordClicked: () -> Unit,
     onShowDeleteDialog: () -> Unit,
     onDismissDeleteDialog: () -> Unit,
-    onDeleteAccountConfirmed: () -> Unit
+    onDeleteAccountConfirmed: () -> Unit,
+    showDeleteReauthDialog: Boolean,
+    deletePassword: String,
+    onDeletePasswordChanged: (String) -> Unit,
+    onDismissDeleteReauthDialog: () -> Unit,
+    onDeleteAccountReauthenticated: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val surfaceColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f)
@@ -434,6 +461,46 @@ private fun SettingsContent(
             },
             text = {
                 Text(text = stringResource(R.string.settings_delete_account_dialog_message))
+            }
+        )
+    }
+
+    if (showDeleteReauthDialog) {
+        AlertDialog(
+            onDismissRequest = onDismissDeleteReauthDialog,
+            confirmButton = {
+                TextButton(
+                    onClick = onDeleteAccountReauthenticated,
+                    enabled = deletePassword.isNotBlank()
+                ) {
+                    Text(
+                        text = stringResource(R.string.settings_delete_account_confirm),
+                        color = RedZoneColor
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismissDeleteReauthDialog) {
+                    Text(text = stringResource(R.string.close_snackbar_button))
+                }
+            },
+            title = {
+                Text(text = stringResource(R.string.settings_delete_account_reauth_title))
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(text = stringResource(R.string.settings_delete_account_reauth_message))
+                    RedOutlinedTextField(
+                        value = deletePassword,
+                        textPlaceHolder = stringResource(R.string.password_placeholder),
+                        leadingIcon = Icons.Default.Lock,
+                        onValueChange = onDeletePasswordChanged,
+                        isPassword = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                    )
+                }
             }
         )
     }

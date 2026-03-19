@@ -6,6 +6,8 @@ sealed interface SettingUiEvent {
         val type: SettingMessageType
     ) : SettingUiEvent
 
+    data object RequestDeleteAccountReauthentication : SettingUiEvent
+
     data object NavigateToLogin : SettingUiEvent
 }
 

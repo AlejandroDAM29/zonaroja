@@ -21,7 +21,14 @@ interface AuthRepository {
 
     fun getCurrentUserEmail(): String?
 
+    fun isCurrentUserPasswordProvider(): Boolean
+
     fun isUserLoggedIn(): Boolean
+
+    suspend fun reauthenticateWithEmail(
+        email: String,
+        password: String
+    ): Result<Unit>
 
     suspend fun deleteCurrentUser(): Result<Unit>
 

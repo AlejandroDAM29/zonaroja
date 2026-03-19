@@ -152,9 +152,12 @@
     <string name="settings_delete_account">Borrar cuenta</string>
     <string name="settings_delete_account_confirm">Borrar</string>
     <string name="settings_delete_account_dialog_message">Esta accion eliminara tu cuenta actual de Firebase. Si Firebase exige autenticacion reciente, tendras que volver a iniciar sesion antes de intentarlo otra vez.</string>
+    <string name="settings_delete_account_reauth_title">Confirma tu contrasena</string>
+    <string name="settings_delete_account_reauth_message">Por seguridad, introduce tu contrasena actual para volver a autenticarte antes de borrar la cuenta.</string>
     <string name="settings_delete_account_success">Cuenta eliminada correctamente.</string>
     <string name="settings_delete_account_error">No se ha podido borrar la cuenta.</string>
     <string name="settings_delete_account_recent_login_required">Firebase requiere que vuelvas a autenticarte antes de borrar la cuenta.</string>
+    <string name="settings_delete_account_invalid_password">La contrasena no es correcta.</string>
     <string name="default_notification_channel_id">zonaroja_general_channel</string>
     <string name="default_notification_channel_name">Notificaciones generales</string>
     <string name="default_notification_channel_description">Avisos push enviados desde Firebase Cloud Messaging.</string>
