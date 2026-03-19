@@ -75,6 +75,9 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.moshi.kotlin.v1150)
 
+    //Firebase messaging
+    implementation(libs.firebase.messaging)
+
     //Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

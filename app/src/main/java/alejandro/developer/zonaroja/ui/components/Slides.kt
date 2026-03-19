@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -69,11 +68,9 @@ fun EconomySlide(
         val rentDiffDisplay = abs(rentDiff)
 
         Card(
-            colors = CardColors(
-                containerColor = Color.White,
-                contentColor = Color.Black,
-                disabledContainerColor = Color.White,
-                disabledContentColor = Color.Black
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
             ),
             elevation = CardDefaults.cardElevation(0.dp)
         ) {
@@ -140,11 +137,9 @@ fun SocietySlide(stats: SocietyStatsModel?) {
         val unemploymentDiffDisplay = abs(unemploymentDiff)
 
         Card(
-            colors = CardColors(
-                containerColor = Color.White,
-                contentColor = Color.Black,
-                disabledContainerColor = Color.White,
-                disabledContentColor = Color.Black
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
             ),
             elevation = CardDefaults.cardElevation(0.dp),
             shape = RoundedCornerShape(20.dp)
@@ -205,11 +200,9 @@ fun DemographySlide(data: List<DemographyItemModel>) {
         val colors = generateChartColors(data.size)
 
         Card(
-            colors = CardColors(
-                containerColor = Color.White,
-                contentColor = Color.Black,
-                disabledContainerColor = Color.White,
-                disabledContentColor = Color.Black,
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
             ),
             elevation = CardDefaults.cardElevation(4.dp),
         ) {
@@ -285,7 +278,7 @@ fun EmptyStatsState(
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
     }

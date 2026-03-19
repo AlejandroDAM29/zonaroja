@@ -109,11 +109,11 @@ fun NavigationWrapper() {
 
                     DrawerItem.Settings -> {
                         navController.navigate(Setting) {
-                            popUpTo(MainGraph) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
+                            /*popUpTo(MainGraph) {
+                                saveState = false
+                            }*/
+                            launchSingleTop = true/*
+                            restoreState = false*/
                         }
                     }
 
@@ -146,16 +146,6 @@ fun NavigationWrapper() {
 
                     BottomBarItem.Favourites -> {
                         navController.navigate(Favourites) {
-                            popUpTo(MainGraph) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-
-                    BottomBarItem.Settings -> {
-                        navController.navigate(Setting) {
                             popUpTo(MainGraph) {
                                 saveState = true
                             }

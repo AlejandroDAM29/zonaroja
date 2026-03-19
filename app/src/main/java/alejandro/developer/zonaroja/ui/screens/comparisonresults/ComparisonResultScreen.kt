@@ -2,14 +2,15 @@ package alejandro.developer.zonaroja.ui.screens.comparisonresults
 
 import alejandro.developer.domain.models.DangerZoneComparisonModel
 import alejandro.developer.zonaroja.R
+import alejandro.developer.zonaroja.ui.common.format.formatPricePerSquareMeter
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
+import alejandro.developer.zonaroja.ui.common.preferences.LocalUserPreferences
 import alejandro.developer.zonaroja.ui.components.RiskBadge
 import alejandro.developer.zonaroja.ui.components.ZoneComparisonBarChartCard
 import alejandro.developer.zonaroja.ui.components.ZoneComparisonRiskChartCard
 import alejandro.developer.zonaroja.ui.screens.comparisonselector.ComparisonHeader
 import alejandro.developer.domain.models.ZoneComparisonChartsUiModel
-import alejandro.developer.zonaroja.ui.theme.GreaseBackground
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -94,7 +95,7 @@ fun ComparisonResultScreen(
                 Spacer(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(GreaseBackground)
+                        .background(MaterialTheme.colorScheme.background)
                 )
             }
 
@@ -124,10 +125,12 @@ private fun ComparisonResultContent(
     charts: ZoneComparisonChartsUiModel,
     onClose: () -> Unit
 ) {
+    val userPreferences = LocalUserPreferences.current
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(GreaseBackground)
+            .background(MaterialTheme.colorScheme.background)
             .navigationBarsPadding(),
         contentPadding = PaddingValues(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -143,7 +146,7 @@ private fun ComparisonResultContent(
             Text(
                 text = stringResource(R.string.comparison_result_description),
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color(0xFF6E5B55)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -184,6 +187,7 @@ private fun ComparisonResultContent(
                     ComparisonZoneSummaryCard(
                         zone = firstZone,
                         reserveTitleTwoLines = shouldReserveTwoLines,
+                        userPreferences = userPreferences,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
@@ -191,6 +195,7 @@ private fun ComparisonResultContent(
                     ComparisonZoneSummaryCard(
                         zone = secondZone,
                         reserveTitleTwoLines = shouldReserveTwoLines,
+                        userPreferences = userPreferences,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
@@ -216,12 +221,13 @@ private fun ComparisonResultContent(
 private fun ComparisonZoneSummaryCard(
     zone: DangerZoneComparisonModel,
     reserveTitleTwoLines: Boolean,
+    userPreferences: alejandro.developer.domain.models.UserPreferencesModel,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
@@ -232,7 +238,7 @@ private fun ComparisonZoneSummaryCard(
                 text = zone.zoneName,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF221814),
+                color = MaterialTheme.colorScheme.onSurface,
                 minLines = if (reserveTitleTwoLines) 2 else 1,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
@@ -241,7 +247,7 @@ private fun ComparisonZoneSummaryCard(
             Text(
                 text = zone.city,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFF6E5B55),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -258,7 +264,7 @@ private fun ComparisonZoneSummaryCard(
             )
             ComparisonSummaryLine(
                 label = stringResource(R.string.comparison_metric_price),
-                value = "${zone.priceSquareMeter} EUR/m2"
+                value = formatPricePerSquareMeter(zone.priceSquareMeter, userPreferences)
             )
         }
     }
@@ -275,14 +281,14 @@ private fun ComparisonSummaryLine(
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,
-            color = Color(0xFF8A746D)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF221814)
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }
@@ -314,7 +320,7 @@ private fun ComparisonUnavailableState(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F4F1))
+            .background(MaterialTheme.colorScheme.background)
             .navigationBarsPadding()
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -327,7 +333,7 @@ private fun ComparisonUnavailableState(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
             Column(
@@ -338,13 +344,13 @@ private fun ComparisonUnavailableState(
                     text = stringResource(R.string.comparison_unavailable_title),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF221814)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Text(
                     text = stringResource(R.string.comparison_unavailable_description),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Color(0xFF6E5B55)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Button(

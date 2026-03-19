@@ -26,12 +26,7 @@ sealed interface BottomBarItem {
         override val icon = Icons.Default.Favorite
     }
 
-    object Settings : BottomBarItem {
-        override val label = "Ajustes"
-        override val icon = Icons.Default.Settings
-    }
-
     companion object {
-        val items = listOf(Home, Comparison, Favourites, Settings)
+        val items = listOf(Home, Comparison, Favourites)
     }
 }

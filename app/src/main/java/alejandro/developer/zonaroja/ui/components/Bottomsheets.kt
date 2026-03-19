@@ -8,7 +8,6 @@ import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.screens.main.MainUiState
 import alejandro.developer.zonaroja.ui.screens.main.StatsTab
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
-import alejandro.developer.zonaroja.ui.theme.White
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -187,7 +186,7 @@ fun DangerZoneStatisticsSheetContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(320.dp)
-                .background(White),
+                .background(MaterialTheme.colorScheme.surface),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator(
@@ -279,9 +278,9 @@ fun DangerZoneStatisticsSheetContent(
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonColors(
                         containerColor = RedZoneColor,
-                        contentColor = White,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
                         disabledContainerColor = RedZoneColor,
-                        disabledContentColor = White
+                        disabledContentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
                     Text(stringResource(R.string.close_button_statisticsbottomsheet))

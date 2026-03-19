@@ -3,13 +3,14 @@ package alejandro.developer.zonaroja.ui.screens.favourites
 import alejandro.developer.domain.models.DangerZoneModel
 import alejandro.developer.domain.models.RiskLevel
 import alejandro.developer.zonaroja.R
+import alejandro.developer.zonaroja.ui.common.format.formatPricePerSquareMeter
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
+import alejandro.developer.zonaroja.ui.common.preferences.LocalUserPreferences
 import alejandro.developer.zonaroja.ui.components.DangerZoneStatisticsSheetContent
 import alejandro.developer.zonaroja.ui.components.RiskBadge
 import alejandro.developer.zonaroja.ui.components.StatsCard
 import alejandro.developer.zonaroja.ui.components.toColor
-import alejandro.developer.zonaroja.ui.theme.Black
 import alejandro.developer.zonaroja.ui.theme.GreenClearMap
 import alejandro.developer.zonaroja.ui.theme.GreenItemFavourite
 import alejandro.developer.zonaroja.ui.theme.RedClearMap
@@ -103,7 +104,7 @@ private fun FavouritesContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F4F1))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         if (uiState.favouriteZones.isEmpty() && !uiState.isLoading) {
             EmptyFavouritesState()
@@ -157,13 +158,15 @@ private fun FavouriteZoneCard(
     onDeleteClicked: () -> Unit,
     onOpenStats: () -> Unit
 ) {
+    val userPreferences = LocalUserPreferences.current
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
@@ -193,7 +196,7 @@ private fun FavouriteZoneCard(
                         text = zone.zoneName,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Black
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
@@ -220,7 +223,7 @@ private fun FavouriteZoneCard(
                     )
                     FavouriteInfoRow(
                         label = stringResource(R.string.favourites_price_label),
-                        value = "${zone.priceSquareMeter} EUR/m2"
+                        value = formatPricePerSquareMeter(zone.priceSquareMeter, userPreferences)
                     )
                     FavouriteInfoRow(
                         label = stringResource(R.string.favourites_poverty_label),
@@ -277,13 +280,13 @@ private fun FavouriteInfoRow(
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,
-            color = Color(0xFF7B6258)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF221814)
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }
@@ -312,7 +315,7 @@ private fun EmptyFavouritesState() {
                 text = stringResource(R.string.favourites_empty_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF221814)
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -320,7 +323,7 @@ private fun EmptyFavouritesState() {
             Text(
                 text = stringResource(R.string.favourites_empty_description),
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color(0xFF7B6258)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

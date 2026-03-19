@@ -18,6 +18,9 @@ object Register
 object Setting
 
 @Serializable
+object ChangePassword
+
+@Serializable
 object Favourites
 
 @Serializable

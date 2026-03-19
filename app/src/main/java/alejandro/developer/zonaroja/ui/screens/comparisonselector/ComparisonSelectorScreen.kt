@@ -4,9 +4,7 @@ import alejandro.developer.domain.models.DangerZoneComparisonModel
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
-import alejandro.developer.zonaroja.ui.theme.BlackComparisonChart
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
-import alejandro.developer.zonaroja.ui.theme.White
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -106,7 +104,7 @@ private fun ComparisonSelectorContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F4F1))
+            .background(MaterialTheme.colorScheme.background)
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
@@ -117,13 +115,13 @@ private fun ComparisonSelectorContent(
         Text(
             text = stringResource(R.string.comparison_selector_description),
             style = MaterialTheme.typography.bodyLarge,
-            color = Color(0xFF6E5B55)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
             Column(
@@ -187,7 +185,7 @@ private fun ZoneSelectorDropdown(
             text = title,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF221814)
+            color = MaterialTheme.colorScheme.onSurface
         )
 
         ExposedDropdownMenuBox(
@@ -216,7 +214,7 @@ private fun ZoneSelectorDropdown(
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.background(White)
+                modifier = Modifier.background(MaterialTheme.colorScheme.surface)
             ) {
                 options.forEachIndexed { index, zone ->
                     DropdownMenuItem(
@@ -227,7 +225,7 @@ private fun ZoneSelectorDropdown(
                             onZoneSelected(zone.id)
                             expanded = false
                         },
-                        modifier = Modifier.background(White)
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
                     )
 
                     if (index != options.lastIndex) {
@@ -246,7 +244,7 @@ private fun ComparisonEmptyState(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F4F1))
+            .background(MaterialTheme.colorScheme.background)
             .padding(20.dp)
     ) {
         ComparisonHeader(
@@ -259,7 +257,7 @@ private fun ComparisonEmptyState(
                 .fillMaxWidth()
                 .align(Alignment.Center),
             shape = RoundedCornerShape(28.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
             Column(
@@ -278,14 +276,14 @@ private fun ComparisonEmptyState(
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    color = Color(0xFF221814)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Text(
                     text = stringResource(R.string.comparison_empty_description),
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
-                    color = Color(0xFF6E5B55)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -306,7 +304,7 @@ internal fun ComparisonHeader(
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.align(Alignment.CenterStart),
-            color = BlackComparisonChart
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         if (onClose != null) {
