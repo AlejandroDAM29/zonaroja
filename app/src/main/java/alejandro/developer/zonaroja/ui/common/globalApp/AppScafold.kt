@@ -46,6 +46,7 @@ fun AppScaffold(
     currentScreen: KClass<*>?,
     snackbarHostState: SnackbarHostState,
     currentSnackbar: AppSnackbarModel?,
+    unreadNotificationsCount: Int,
     onDrawerItemSelected: (DrawerItem) -> Unit,
     onBottomItemSelected: (BottomBarItem) -> Unit,
     content: @Composable () -> Unit
@@ -59,6 +60,7 @@ fun AppScaffold(
         gesturesEnabled = isDrawerGestureEnabled(currentScreen),
         drawerContent = {
             AppDrawer(
+                unreadNotificationsCount = unreadNotificationsCount,
                 onItemSelected = {
                     scope.launch { drawerState.close() }
                     onDrawerItemSelected(it)
@@ -73,6 +75,7 @@ fun AppScaffold(
                 if (showTopBar(currentScreen)) {
                     AppTopBar(
                         title = stringResource(R.string.app_name),
+                        hasUnreadNotifications = unreadNotificationsCount > 0,
                         onMenuClick = {
                             scope.launch { drawerState.open() }
                         }

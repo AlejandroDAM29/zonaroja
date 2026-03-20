@@ -31,6 +31,7 @@ fun NavGraphBuilder.mainNavGraph(
         }
 
         settingsNavGraph(navController)
+        notificationsNavGraph(navController)
         zoneComparisonNavGraph(navController)
     }
 }

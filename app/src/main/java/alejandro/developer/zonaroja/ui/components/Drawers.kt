@@ -6,11 +6,14 @@ import alejandro.developer.zonaroja.ui.theme.Black
 import alejandro.developer.zonaroja.ui.theme.GreaseHorizontalDivider
 import alejandro.developer.zonaroja.ui.theme.GreaseTextFieldText
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Badge
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +29,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AppDrawer(
     selectedItem: DrawerItem? = null,
+    unreadNotificationsCount: Int = 0,
     onItemSelected: (DrawerItem) -> Unit
 ) {
 
@@ -52,7 +56,19 @@ fun AppDrawer(
 
         DrawerItem.items.forEachIndexed { index, item ->
             NavigationDrawerItem(
-                label = { Text(item.label) },
+                label = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(item.label)
+                        if (item == DrawerItem.Notifications && unreadNotificationsCount > 0) {
+                            Badge {
+                                Text(unreadNotificationsCount.toString())
+                            }
+                        }
+                    }
+                },
                 icon = {
                     Icon(
                         imageVector = item.icon,

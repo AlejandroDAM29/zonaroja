@@ -34,3 +34,11 @@ data class ZoneComparisonResult(
     val firstZoneId: Int,
     val secondZoneId: Int
 )
+
+@Serializable
+object Notifications
+
+@Serializable
+data class NotificationDetail(
+    val notificationId: Long
+)

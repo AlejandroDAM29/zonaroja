@@ -42,7 +42,9 @@ fun NavigationWrapper() {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val appViewmodel: AppViewModel = activityHiltViewModel()
+    val unreadNotificationsCount by appViewmodel.unreadNotificationsCount.collectAsState()
     var stableScreen by remember { mutableStateOf<KClass<*>?>(null) }
+    var pendingNotificationId by remember { mutableStateOf<Long?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     var currentSnackbar by remember { mutableStateOf<AppSnackbarModel?>(null) }
 
@@ -66,6 +68,30 @@ fun NavigationWrapper() {
     LaunchedEffect(currentScreen) {
         if (lifecycleState == Lifecycle.State.RESUMED) {
             stableScreen = currentScreen
+        }
+    }
+
+    LaunchedEffect(appViewmodel) {
+        appViewmodel.notificationOpenRequests.collect { notificationId ->
+            pendingNotificationId = notificationId
+        }
+    }
+
+    LaunchedEffect(currentScreen, stableScreen, pendingNotificationId) {
+        val notificationId = pendingNotificationId ?: return@LaunchedEffect
+        val resolvedScreen = currentScreen ?: stableScreen ?: return@LaunchedEffect
+
+        if (resolvedScreen !in setOf(
+                Splash::class,
+                Login::class,
+                Register::class,
+                ForgotPassword::class
+            )
+        ) {
+            navController.navigate(NotificationDetail(notificationId)) {
+                launchSingleTop = true
+            }
+            pendingNotificationId = null
         }
     }
 
@@ -95,6 +121,7 @@ fun NavigationWrapper() {
             currentScreen = stableScreen,
             snackbarHostState = snackbarHostState,
             currentSnackbar = currentSnackbar,
+            unreadNotificationsCount = unreadNotificationsCount,
             onDrawerItemSelected = { item ->
                 when (item) {
                     DrawerItem.Main -> {
@@ -114,6 +141,12 @@ fun NavigationWrapper() {
                             }*/
                             launchSingleTop = true/*
                             restoreState = false*/
+                        }
+                    }
+
+                    DrawerItem.Notifications -> {
+                        navController.navigate(Notifications) {
+                            launchSingleTop = true
                         }
                     }
 

@@ -163,5 +163,18 @@
     <string name="default_notification_channel_id">zonaroja_general_channel</string>
     <string name="default_notification_channel_name">Notificaciones generales</string>
     <string name="default_notification_channel_description">Avisos push enviados desde Firebase Cloud Messaging.</string>
+    <string name="notifications_screen_title">Notificaciones</string>
+    <string name="notifications_screen_subtitle">Consulta todos los avisos recibidos desde Firebase.</string>
+    <string name="notifications_back_description">Volver a la pantalla anterior</string>
+    <string name="notifications_close_description">Cerrar detalle de la notificación</string>
+    <string name="notifications_open_description">Abrir notificación</string>
+    <string name="notifications_delete_description">Borrar notificación</string>
+    <string name="notifications_read_label">Leído</string>
+    <string name="notifications_empty_title">No hay notificaciones todavía</string>
+    <string name="notifications_empty_description">Cuando llegue un nuevo aviso aparecerá aquí automáticamente.</string>
+    <string name="notifications_received_at_value">Recibida %1$s</string>
+    <string name="notifications_message_section_title">Mensaje</string>
+    <string name="notifications_missing_title">Esta notificación ya no está disponible</string>
+    <string name="notifications_missing_description">Puede que se haya eliminado del almacenamiento local.</string>
 
 </resources>
