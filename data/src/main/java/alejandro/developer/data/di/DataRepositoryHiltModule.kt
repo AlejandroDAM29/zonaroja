@@ -1,14 +1,12 @@
 package alejandro.developer.data.di
 
 import alejandro.developer.data.remote.datasources.FeatureFlagsRepositoryImpl
-import alejandro.developer.data.repositoriesimpl.CiudadesRepositoryImpl
 import alejandro.developer.data.repositoriesimpl.DangerZoneRepositoryImpl
 import alejandro.developer.data.repositoriesimpl.FirebaseAuthRepositoryImpl
 import alejandro.developer.data.repositoriesimpl.GraphicsRepositoryImpl
 import alejandro.developer.data.repositoriesimpl.UserSettingsRepositoryImpl
 import alejandro.developer.domain.repositories.AuthRepository
 import alejandro.developer.domain.repositories.FeatureFlagsRepository
-import alejandro.developer.domain.repositories.CiudadesRepository
 import alejandro.developer.domain.repositories.DangerZoneRepository
 import alejandro.developer.domain.repositories.GraphicsRepository
 import alejandro.developer.domain.repositories.UserSettingsRepository
@@ -26,11 +24,6 @@ abstract class DataRepositoryHiltModule {
     abstract fun bindAuthRepository(
         impl: FirebaseAuthRepositoryImpl
     ): AuthRepository
-
-    @Binds
-    abstract fun bindCiudadesRepository(
-        impl: CiudadesRepositoryImpl
-    ): CiudadesRepository
 
     @Binds
     abstract fun bindFeatureFlagsRepository(
