@@ -20,7 +20,6 @@ import alejandro.developer.zonaroja.ui.theme.YellowItemFavourite
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,6 +37,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -178,9 +179,7 @@ private fun FavouriteZoneCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable(onClick = onExpandToggle),
+                    modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -197,6 +196,24 @@ private fun FavouriteZoneCard(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                IconButton(onClick = onExpandToggle) {
+                    Icon(
+                        imageVector = if (isExpanded) {
+                            Icons.Default.KeyboardArrowUp
+                        } else {
+                            Icons.Default.KeyboardArrowDown
+                        },
+                        contentDescription = stringResource(
+                            if (isExpanded) {
+                                R.string.collapse_favourite_description
+                            } else {
+                                R.string.expand_favourite_description
+                            }
+                        ),
+                        tint = zone.riskLevel.toColorRiskZone()
                     )
                 }
 
