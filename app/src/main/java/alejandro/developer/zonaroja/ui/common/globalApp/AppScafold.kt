@@ -17,6 +17,7 @@ import alejandro.developer.zonaroja.ui.theme.SnackBarInfoColor
 import alejandro.developer.zonaroja.ui.theme.SnackBarSuccessColor
 import alejandro.developer.zonaroja.ui.theme.SnackbarErrorColor
 import alejandro.developer.zonaroja.ui.theme.SnackbarWarningColor
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
@@ -54,6 +55,10 @@ fun AppScaffold(
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    BackHandler(enabled = drawerState.isOpen) {
+        scope.launch { drawerState.close() }
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,

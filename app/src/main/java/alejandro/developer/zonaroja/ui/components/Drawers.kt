@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Badge
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -23,6 +24,7 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
@@ -32,8 +34,11 @@ fun AppDrawer(
     unreadNotificationsCount: Int = 0,
     onItemSelected: (DrawerItem) -> Unit
 ) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
-    ModalDrawerSheet {
+    ModalDrawerSheet(
+        modifier = Modifier.widthIn(max = screenWidth * 0.8f)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
