@@ -16,3 +16,6 @@ object SettingsGraph
 
 @Serializable
 object ZoneComparisonGraph
+
+@Serializable
+object NotificationsGraph
