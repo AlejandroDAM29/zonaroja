@@ -2,7 +2,7 @@ package alejandro.developer.zonaroja.navigation.graphs
 
 import alejandro.developer.zonaroja.navigation.ChangePassword
 import alejandro.developer.zonaroja.navigation.Setting
-import alejandro.developer.zonaroja.ui.screens.setting.ChangePasswordScreen
+import alejandro.developer.zonaroja.ui.screens.changepassword.ChangePasswordScreen
 import alejandro.developer.zonaroja.ui.screens.setting.SettingScreen
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder

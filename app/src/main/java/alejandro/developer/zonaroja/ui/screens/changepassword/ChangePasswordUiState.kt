@@ -1,4 +1,4 @@
-package alejandro.developer.zonaroja.ui.screens.setting
+package alejandro.developer.zonaroja.ui.screens.changepassword
 
 data class ChangePasswordUiState(
     val email: String = "",

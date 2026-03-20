@@ -1,8 +1,9 @@
-package alejandro.developer.zonaroja.ui.screens.setting
+package alejandro.developer.zonaroja.ui.screens.changepassword
 
 import alejandro.developer.domain.usecase.GetCurrentUserEmailUseCase
 import alejandro.developer.domain.usecase.SendPasswordResetEmailUseCase
 import alejandro.developer.zonaroja.R
+import alejandro.developer.zonaroja.ui.screens.setting.SettingMessageType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
