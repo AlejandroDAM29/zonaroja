@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ChangePasswordViewModel @Inject constructor(
-    private val getCurrentUserEmailUseCase: GetCurrentUserEmailUseCase,
+    getCurrentUserEmailUseCase: GetCurrentUserEmailUseCase,
     private val sendPasswordResetEmailUseCase: SendPasswordResetEmailUseCase
 ) : ViewModel() {
 
