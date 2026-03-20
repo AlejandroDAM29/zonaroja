@@ -75,6 +75,7 @@ fun AppScaffold(
                 if (showTopBar(currentScreen)) {
                     AppTopBar(
                         title = stringResource(R.string.app_name),
+                        hasUnreadNotifications = unreadNotificationsCount > 0,
                         onMenuClick = {
                             scope.launch { drawerState.open() }
                         }
