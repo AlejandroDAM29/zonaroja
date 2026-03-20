@@ -299,18 +299,10 @@ internal fun ComparisonHeader(
     Box(
         modifier = modifier.fillMaxWidth()
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.align(Alignment.CenterStart),
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
         if (onClose != null) {
             IconButton(
                 onClick = onClose,
-                modifier = Modifier.align(Alignment.CenterEnd)
+                modifier = Modifier.align(Alignment.TopEnd)
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
@@ -318,6 +310,16 @@ internal fun ComparisonHeader(
                 )
             }
         }
+
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = if (onClose != null) 40.dp else 0.dp, end = 56.dp),
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 }
 
