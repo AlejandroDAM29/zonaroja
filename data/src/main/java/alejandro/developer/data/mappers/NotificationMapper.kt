@@ -15,8 +15,9 @@ fun NotificationEntity.toDomain(): AppNotificationModel {
     )
 }
 
-fun IncomingNotificationModel.toEntity(): NotificationEntity {
+fun IncomingNotificationModel.toEntity(userId: String): NotificationEntity {
     return NotificationEntity(
+        userId = userId,
         remoteMessageId = remoteMessageId,
         title = title,
         body = body,

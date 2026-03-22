@@ -5,6 +5,7 @@ import alejandro.developer.domain.usecase.GetUserPreferencesUseCase
 import alejandro.developer.domain.usecase.LogoutUseCase
 import alejandro.developer.domain.usecase.ObserveUnreadNotificationsCountUseCase
 import alejandro.developer.domain.usecase.SaveNotificationUseCase
+import alejandro.developer.domain.usecase.SyncNotificationSubscriptionsUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +14,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,7 +24,8 @@ class AppViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val getUserPreferencesUseCase: GetUserPreferencesUseCase,
     observeUnreadNotificationsCountUseCase: ObserveUnreadNotificationsCountUseCase,
-    private val saveNotificationUseCase: SaveNotificationUseCase
+    private val saveNotificationUseCase: SaveNotificationUseCase,
+    private val syncNotificationSubscriptionsUseCase: SyncNotificationSubscriptionsUseCase
 ) : ViewModel() {
 
     private val _uiEffect = MutableSharedFlow<AppUiEffect>()
@@ -39,20 +43,26 @@ class AppViewModel @Inject constructor(
 
     fun onLogoutClicked() {
         viewModelScope.launch {
-            try {
-                logoutUseCase()
+            runCatching { logoutUseCase() }
+                .onSuccess {
+                    _uiEffect.emit(
+                        AppUiEffect.NavigateToLoginLogoutSuccess(
+                            message = "Logout correcto"
+                        )
+                    )
+                    syncNotificationSubscriptionsAfterNavigation()
+                }
+                .onFailure {
+                    _uiEffect.emit(
+                        AppUiEffect.ShowSnackbarError("Error al cerrar sesión")
+                    )
+                }
+        }
+    }
 
-                _uiEffect.emit(AppUiEffect.NavigateToLoginLogoutSuccess(
-                    message = "Logout correcto"
-                )
-                )
-
-            } catch (e: Exception) {
-
-                _uiEffect.emit(
-                    AppUiEffect.ShowSnackbarError("Error al cerrar sesión")
-                )
-            }
+    private suspend fun syncNotificationSubscriptionsAfterNavigation() {
+        withContext(NonCancellable) {
+            runCatching { syncNotificationSubscriptionsUseCase() }
         }
     }
 

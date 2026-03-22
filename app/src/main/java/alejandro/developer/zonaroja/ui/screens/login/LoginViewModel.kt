@@ -3,6 +3,7 @@ package alejandro.developer.zonaroja.ui.screens.login
 import alejandro.developer.data.providers.FeatureFlagsProvider
 import alejandro.developer.domain.usecase.LoginWithEmailUseCase
 import alejandro.developer.domain.usecase.LoginWithGoogleUseCase
+import alejandro.developer.domain.usecase.SyncNotificationSubscriptionsUseCase
 import alejandro.developer.zonaroja.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,7 +21,8 @@ import kotlinx.coroutines.launch
 class LoginViewModel @Inject constructor(
     private val loginWithEmailUseCase: LoginWithEmailUseCase,
     private val loginWithGoogle: LoginWithGoogleUseCase,
-    private val featureFlagsProvider: FeatureFlagsProvider
+    private val featureFlagsProvider: FeatureFlagsProvider,
+    private val syncNotificationSubscriptionsUseCase: SyncNotificationSubscriptionsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -58,6 +60,7 @@ class LoginViewModel @Inject constructor(
 
             result.fold(
                 onSuccess = {
+                    runCatching { syncNotificationSubscriptionsUseCase() }
                     _uiEvents.emit(LoginUiEvent.NavigateToMain)
                 },
                 onFailure = { exception ->
@@ -97,6 +100,7 @@ class LoginViewModel @Inject constructor(
 
             result.fold(
                 onSuccess = {
+                    runCatching { syncNotificationSubscriptionsUseCase() }
                     _uiEvents.emit(LoginUiEvent.NavigateToMain)
                 },
                 onFailure = {

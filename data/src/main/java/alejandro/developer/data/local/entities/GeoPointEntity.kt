@@ -7,19 +7,19 @@ import androidx.room.Index
 
 @Entity(
     tableName = "geo_points",
-    primaryKeys = ["dangerZoneId", "order"],
-    indices = [Index("dangerZoneId")],
+    primaryKeys = ["dangerZoneLocalId", "order"],
+    indices = [Index("dangerZoneLocalId")],
     foreignKeys = [
         ForeignKey(
             entity = DangerZoneEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["dangerZoneId"],
+            parentColumns = ["localId"],
+            childColumns = ["dangerZoneLocalId"],
             onDelete = ForeignKey.CASCADE
         )
     ]
 )
 data class GeoPointEntity(
-    val dangerZoneId: Int,
+    val dangerZoneLocalId: Long,
     val lat: Double,
     val lng: Double,
     val order: Int

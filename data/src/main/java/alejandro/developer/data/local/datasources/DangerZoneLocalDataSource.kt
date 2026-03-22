@@ -11,28 +11,28 @@ class DangerZoneLocalDataSource @Inject constructor(
     private val dao: DangerZoneDao
 ) {
 
-    suspend fun getDangerZones(): List<DangerZoneWithPoints> {
-        return dao.getAllDangerZones()
+    suspend fun getDangerZones(userId: String): List<DangerZoneWithPoints> {
+        return dao.getAllDangerZones(userId)
     }
 
-    fun observeDangerZones(): Flow<List<DangerZoneWithPoints>> {
-        return dao.observeAllDangerZones()
+    fun observeDangerZones(userId: String): Flow<List<DangerZoneWithPoints>> {
+        return dao.observeAllDangerZones(userId)
     }
 
-    suspend fun insertZone(zone: DangerZoneEntity) {
-        dao.insertDangerZone(zone)
+    suspend fun insertZone(zone: DangerZoneEntity): Long {
+        return dao.insertDangerZone(zone)
     }
 
     suspend fun insertPoints(points: List<GeoPointEntity>) {
         dao.insertGeoPoints(points)
     }
 
-    fun getSavedZoneIds(): Flow<List<Int>> {
-        return dao.getSavedZoneIds()
+    fun getSavedZoneIds(userId: String): Flow<List<Int>> {
+        return dao.getSavedZoneIds(userId)
     }
 
-    suspend fun deleteZone(id: Int) {
-        dao.deleteDangerZone(id)
+    suspend fun deleteZone(zoneId: Int, userId: String) {
+        dao.deleteDangerZone(zoneId, userId)
     }
 
 }

@@ -23,10 +23,11 @@ fun DangerZoneDto.toDomain(): DangerZoneModel {
     )
 }
 
-fun DangerZoneModel.toEntity(): DangerZoneEntity {
+fun DangerZoneModel.toEntity(userId: String): DangerZoneEntity {
 
     return DangerZoneEntity(
-        id = id,
+        zoneId = id,
+        userId = userId,
         zoneName = zoneName,
         city = city,
         riskLevel = riskLevel,
@@ -36,11 +37,11 @@ fun DangerZoneModel.toEntity(): DangerZoneEntity {
     )
 }
 
-fun DangerZoneModel.toGeoEntities(): List<GeoPointEntity> {
+fun DangerZoneModel.toGeoEntities(dangerZoneLocalId: Long): List<GeoPointEntity> {
 
     return points.map {
         GeoPointEntity(
-            dangerZoneId = id,
+            dangerZoneLocalId = dangerZoneLocalId,
             lat = it.lat,
             lng = it.lng,
             order = it.order
@@ -50,7 +51,7 @@ fun DangerZoneModel.toGeoEntities(): List<GeoPointEntity> {
 
 fun DangerZoneWithPoints.toDomain(): DangerZoneModel {
     return DangerZoneModel(
-        id = zone.id,
+        id = zone.zoneId,
         zoneName = zone.zoneName,
         city = zone.city,
         points = points.map { it.toDomain() }.sortedBy(GeoPoint::order),

@@ -16,7 +16,7 @@ import androidx.room.TypeConverters
         GeoPointEntity::class,
         NotificationEntity::class
     ],
-    version = 2
+    version = 3
 )
 @TypeConverters(RiskLevelConverter::class)
 abstract class AppDatabase : RoomDatabase() {

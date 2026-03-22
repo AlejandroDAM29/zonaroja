@@ -1,5 +1,7 @@
 package alejandro.developer.domain.repositories
 
+import kotlinx.coroutines.flow.Flow
+
 interface AuthRepository {
     suspend fun loginWithEmail(
         email: String,
@@ -20,6 +22,10 @@ interface AuthRepository {
     ): Result<Unit>
 
     fun getCurrentUserEmail(): String?
+
+    fun getCurrentUserId(): String?
+
+    fun observeCurrentUserId(): Flow<String?>
 
     fun isCurrentUserPasswordProvider(): Boolean
 

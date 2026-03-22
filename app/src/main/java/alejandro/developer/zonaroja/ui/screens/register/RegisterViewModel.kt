@@ -1,6 +1,7 @@
 package alejandro.developer.zonaroja.ui.screens.register
 
 import alejandro.developer.domain.usecase.RegisterWithEmailUseCase
+import alejandro.developer.domain.usecase.SyncNotificationSubscriptionsUseCase
 import alejandro.developer.zonaroja.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,7 +20,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val registerWithEmail: RegisterWithEmailUseCase
+    private val registerWithEmail: RegisterWithEmailUseCase,
+    private val syncNotificationSubscriptionsUseCase: SyncNotificationSubscriptionsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RegisterUiState(isLoading = false))
@@ -52,6 +54,7 @@ class RegisterViewModel @Inject constructor(
 
             result.fold(
                 onSuccess = {
+                    runCatching { syncNotificationSubscriptionsUseCase() }
                     _uiEvents.emit(
                         RegisterUiEvent.NavigateToMain)
                 },

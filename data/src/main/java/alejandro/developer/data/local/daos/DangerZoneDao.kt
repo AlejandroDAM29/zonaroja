@@ -14,23 +14,23 @@ import kotlinx.coroutines.flow.Flow
 interface DangerZoneDao {
 
     @Transaction
-    @Query("SELECT * FROM danger_zones")
-    suspend fun getAllDangerZones(): List<DangerZoneWithPoints>
+    @Query("SELECT * FROM danger_zones WHERE userId = :userId ORDER BY localId DESC")
+    suspend fun getAllDangerZones(userId: String): List<DangerZoneWithPoints>
 
     @Transaction
-    @Query("SELECT * FROM danger_zones")
-    fun observeAllDangerZones(): Flow<List<DangerZoneWithPoints>>
+    @Query("SELECT * FROM danger_zones WHERE userId = :userId ORDER BY localId DESC")
+    fun observeAllDangerZones(userId: String): Flow<List<DangerZoneWithPoints>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertDangerZone(zone: DangerZoneEntity)
+    suspend fun insertDangerZone(zone: DangerZoneEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGeoPoints(points: List<GeoPointEntity>)
 
     @Transaction
-    @Query("SELECT id FROM danger_zones")
-    fun getSavedZoneIds(): Flow<List<Int>>
+    @Query("SELECT zoneId FROM danger_zones WHERE userId = :userId")
+    fun getSavedZoneIds(userId: String): Flow<List<Int>>
 
-    @Query("DELETE FROM danger_zones WHERE id = :id")
-    suspend fun deleteDangerZone(id: Int)
+    @Query("DELETE FROM danger_zones WHERE zoneId = :zoneId AND userId = :userId")
+    suspend fun deleteDangerZone(zoneId: Int, userId: String)
 }

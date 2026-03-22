@@ -10,6 +10,7 @@ import alejandro.developer.domain.usecase.ReauthenticateWithEmailUseCase
 import alejandro.developer.domain.usecase.SetDarkThemeEnabledUseCase
 import alejandro.developer.domain.usecase.SetNotificationsEnabledUseCase
 import alejandro.developer.domain.usecase.SetSelectedCurrencyUseCase
+import alejandro.developer.domain.usecase.SyncNotificationSubscriptionsUseCase
 import alejandro.developer.zonaroja.R
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -24,7 +25,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
@@ -35,6 +38,7 @@ class SettingViewModel @Inject constructor(
     private val setSelectedCurrencyUseCase: SetSelectedCurrencyUseCase,
     private val setNotificationsEnabledUseCase: SetNotificationsEnabledUseCase,
     private val logoutUseCase: LogoutUseCase,
+    private val syncNotificationSubscriptionsUseCase: SyncNotificationSubscriptionsUseCase,
     private val deleteCurrentUserUseCase: DeleteCurrentUserUseCase,
     private val reauthenticateWithEmailUseCase: ReauthenticateWithEmailUseCase
 ) : ViewModel() {
@@ -91,24 +95,25 @@ class SettingViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            runCatching {
-                logoutUseCase()
-            }.onSuccess {
-                _uiEvents.emit(
-                    SettingUiEvent.ShowMessage(
-                        messageRes = R.string.logout_snackbar_success,
-                        type = SettingMessageType.SUCCESS
+            runCatching { logoutUseCase() }
+                .onSuccess {
+                    _uiEvents.emit(
+                        SettingUiEvent.ShowMessage(
+                            messageRes = R.string.logout_snackbar_success,
+                            type = SettingMessageType.SUCCESS
+                        )
                     )
-                )
-                _uiEvents.emit(SettingUiEvent.NavigateToLogin)
-            }.onFailure {
-                _uiEvents.emit(
-                    SettingUiEvent.ShowMessage(
-                        messageRes = R.string.logout_snackbar_error,
-                        type = SettingMessageType.ERROR
+                    _uiEvents.emit(SettingUiEvent.NavigateToLogin)
+                    syncNotificationSubscriptionsAfterNavigation()
+                }
+                .onFailure {
+                    _uiEvents.emit(
+                        SettingUiEvent.ShowMessage(
+                            messageRes = R.string.logout_snackbar_error,
+                            type = SettingMessageType.ERROR
+                        )
                     )
-                )
-            }
+                }
 
             _uiState.update { it.copy(isLoading = false) }
         }
@@ -163,6 +168,7 @@ class SettingViewModel @Inject constructor(
                                 )
                             )
                             _uiEvents.emit(SettingUiEvent.NavigateToLogin)
+                            syncNotificationSubscriptionsAfterNavigation()
                         },
                         onFailure = { throwable ->
                             Log.i("test-100", "Entra en opcion 4");
@@ -187,6 +193,12 @@ class SettingViewModel @Inject constructor(
             )
 
             _uiState.update { it.copy(isLoading = false) }
+        }
+    }
+
+    private suspend fun syncNotificationSubscriptionsAfterNavigation() {
+        withContext(NonCancellable) {
+            runCatching { syncNotificationSubscriptionsUseCase() }
         }
     }
 

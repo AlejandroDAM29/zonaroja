@@ -5,12 +5,20 @@ import android.util.Log
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FirebaseAuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) : AuthRepository {
+
+    private fun resolveCurrentUserId(): String? {
+        return firebaseAuth.currentUser?.uid
+    }
 
     private fun resolveCurrentUserEmail(): String? {
         val user = firebaseAuth.currentUser ?: return null
@@ -58,6 +66,25 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
 
     override fun getCurrentUserEmail(): String? {
         return resolveCurrentUserEmail()
+    }
+
+    override fun getCurrentUserId(): String? {
+        return resolveCurrentUserId()
+    }
+
+    override fun observeCurrentUserId(): Flow<String?> {
+        return callbackFlow {
+            val listener = FirebaseAuth.AuthStateListener { auth ->
+                trySend(auth.currentUser?.uid)
+            }
+
+            firebaseAuth.addAuthStateListener(listener)
+            trySend(resolveCurrentUserId())
+
+            awaitClose {
+                firebaseAuth.removeAuthStateListener(listener)
+            }
+        }.distinctUntilChanged()
     }
 
     override fun isCurrentUserPasswordProvider(): Boolean {

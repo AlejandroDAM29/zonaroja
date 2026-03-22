@@ -11,8 +11,8 @@ data class DangerZoneWithPoints(
     val zone: DangerZoneEntity,
 
     @Relation(
-        parentColumn = "id",
-        entityColumn = "dangerZoneId"
+        parentColumn = "localId",
+        entityColumn = "dangerZoneLocalId"
     )
     val points: List<GeoPointEntity>
 )

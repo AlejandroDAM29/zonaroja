@@ -9,27 +9,27 @@ class NotificationLocalDataSource @Inject constructor(
     private val dao: NotificationDao
 ) {
 
-    fun observeNotifications(): Flow<List<NotificationEntity>> {
-        return dao.observeNotifications()
+    fun observeNotifications(userId: String): Flow<List<NotificationEntity>> {
+        return dao.observeNotifications(userId)
     }
 
-    fun observeNotification(notificationId: Long): Flow<NotificationEntity?> {
-        return dao.observeNotification(notificationId)
+    fun observeNotification(notificationId: Long, userId: String): Flow<NotificationEntity?> {
+        return dao.observeNotification(notificationId, userId)
     }
 
-    fun observeUnreadNotificationsCount(): Flow<Int> {
-        return dao.observeUnreadNotificationsCount()
+    fun observeUnreadNotificationsCount(userId: String): Flow<Int> {
+        return dao.observeUnreadNotificationsCount(userId)
     }
 
     suspend fun insertNotification(notification: NotificationEntity): Long {
         return dao.insertNotification(notification)
     }
 
-    suspend fun markAsRead(notificationId: Long) {
-        dao.markAsRead(notificationId)
+    suspend fun markAsRead(notificationId: Long, userId: String) {
+        dao.markAsRead(notificationId, userId)
     }
 
-    suspend fun deleteNotification(notificationId: Long) {
-        dao.deleteNotification(notificationId)
+    suspend fun deleteNotification(notificationId: Long, userId: String) {
+        dao.deleteNotification(notificationId, userId)
     }
 }

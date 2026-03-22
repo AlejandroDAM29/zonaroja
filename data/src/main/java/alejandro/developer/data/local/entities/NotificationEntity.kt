@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "notifications",
     indices = [
+        Index(value = ["userId"]),
         Index(value = ["receivedAt"]),
         Index(value = ["isRead"])
     ]
@@ -14,6 +15,7 @@ import androidx.room.PrimaryKey
 data class NotificationEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
+    val userId: String,
     val remoteMessageId: String?,
     val title: String,
     val body: String,
