@@ -140,6 +140,7 @@ private fun FavouritesContent(
                     zoneName = uiState.selectedZone.zoneName,
                     cityName = uiState.selectedZone.city,
                     isLoading = uiState.isStatsLoading,
+                    isOffline = uiState.isStatsOffline,
                     economyStats = uiState.economyStats,
                     societyStats = uiState.societyStats,
                     demographyStats = uiState.demographyStats,

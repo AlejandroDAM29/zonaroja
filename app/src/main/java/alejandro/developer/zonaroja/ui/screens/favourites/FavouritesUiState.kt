@@ -12,6 +12,7 @@ data class FavouritesUiState(
     val selectedZone: DangerZoneModel? = null,
     val isStatsOpen: Boolean = false,
     val isStatsLoading: Boolean = false,
+    val isStatsOffline: Boolean = false,
     val economyStats: EconomyStatsModel? = null,
     val societyStats: SocietyStatsModel? = null,
     val demographyStats: List<DemographyItemModel> = emptyList()

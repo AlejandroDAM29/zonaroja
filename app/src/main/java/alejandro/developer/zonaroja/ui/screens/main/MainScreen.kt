@@ -5,6 +5,7 @@ import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.components.DangerMapContent
 import alejandro.developer.zonaroja.ui.components.InfoPanelMap
+import alejandro.developer.zonaroja.ui.components.NoInternetScreen
 import alejandro.developer.zonaroja.ui.components.StatisticsBottomSheet
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +19,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -42,7 +44,11 @@ fun MainScreen(
         viewModel.uiEvents.collect { event ->
             when (event) {
                 is MainUiEvent.ShowError -> {
-                    appUiEvents.showSnackbarWarning(event.message)
+                    appUiEvents.showSnackbarError(event.message)
+                }
+
+                is MainUiEvent.ShowErrorRes -> {
+                    appUiEvents.showSnackbarError(currentContext.getString(event.messageRes))
                 }
 
                 is MainUiEvent.ShowWarning -> {
@@ -81,6 +87,15 @@ fun ContentMainScreen(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if (uiState.isMapOffline) {
+            NoInternetScreen(
+                title = stringResource(R.string.no_internet_title),
+                description = stringResource(R.string.no_internet_map_description),
+                modifier = Modifier.weight(1f)
+            )
+            return@Column
+        }
+
         DangerMapContent(
             isSearcherNameSpacerExpanded = uiState.isSearchExpanded,
             zones = uiState.dangerZonesPointModels,

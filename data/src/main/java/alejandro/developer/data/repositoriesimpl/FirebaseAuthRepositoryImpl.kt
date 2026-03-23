@@ -1,5 +1,7 @@
 package alejandro.developer.data.repositoriesimpl
 
+import alejandro.developer.core.network.NetworkMonitor
+import alejandro.developer.core.network.requireInternet
 import alejandro.developer.domain.repositories.AuthRepository
 import android.util.Log
 import com.google.firebase.auth.EmailAuthProvider
@@ -13,7 +15,8 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FirebaseAuthRepositoryImpl @Inject constructor(
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private val networkMonitor: NetworkMonitor
 ) : AuthRepository {
 
     private fun resolveCurrentUserId(): String? {
@@ -30,6 +33,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         email: String,
         password: String
     ): Result<Unit> = runCatching {
+        networkMonitor.requireInternet()
         firebaseAuth
             .signInWithEmailAndPassword(email, password)
             .await()
@@ -39,6 +43,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         email: String,
         password: String
     ): Result<Unit> = runCatching {
+        networkMonitor.requireInternet()
         firebaseAuth
             .createUserWithEmailAndPassword(email, password)
             .await()
@@ -48,6 +53,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         idToken: String
     ): Result<Unit> =
         runCatching {
+            networkMonitor.requireInternet()
             val credential = GoogleAuthProvider.getCredential(idToken, null)
             firebaseAuth.signInWithCredential(credential)
                 .addOnFailureListener { e ->
@@ -59,6 +65,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     override suspend fun sendPasswordResetEmail(
         email: String
     ): Result<Unit> = runCatching {
+        networkMonitor.requireInternet()
         firebaseAuth
             .sendPasswordResetEmail(email)
             .await()
@@ -101,6 +108,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         email: String,
         password: String
     ): Result<Unit> = runCatching {
+        networkMonitor.requireInternet()
         val currentUser = firebaseAuth.currentUser
             ?: throw IllegalStateException("No authenticated user")
         val resolvedEmail = email.ifBlank {
@@ -112,12 +120,14 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteCurrentUser(): Result<Unit> = runCatching {
+        networkMonitor.requireInternet()
         val currentUser = firebaseAuth.currentUser
             ?: throw IllegalStateException("No authenticated user")
         currentUser.delete().await()
     }
 
     override suspend fun logout() {
+        networkMonitor.requireInternet()
         firebaseAuth.signOut()
     }
 }

@@ -66,7 +66,7 @@ fun LoginScreen(
                 is LoginUiEvent.NavigateToMain -> navigateToMain()
                 is LoginUiEvent.ShowErrorLogin -> {
                     appUiEvents.showSnackbarErrorWithActionButton(
-                        event.message,
+                        currentContext.getString(event.messageRes),
                         currentContext.getString(R.string.close_snackbar_button)
                     ) { }
                 }
@@ -231,6 +231,10 @@ fun LoginGoogle(
 
     LoginWithGoogleButton(
         onClick = {
+            if (!viewModel.onGoogleLoginClicked()) {
+                return@LoginWithGoogleButton
+            }
+
             coroutineScope.launch {
                 try {
                     val result = credentialManager.getCredential(

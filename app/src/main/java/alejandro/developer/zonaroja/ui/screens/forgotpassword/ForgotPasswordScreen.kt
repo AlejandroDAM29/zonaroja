@@ -57,7 +57,7 @@ fun ForgotPasswordScreen(
                     appUiEvents.showSnackbarSuccess(currentContext.getString(R.string.resend_password_success_message))
 
                 is ForgotPasswordUiEvent.ShowErrorResendPassword -> {
-                    appUiEvents.showSnackbarSuccess(currentContext.getString(R.string.resend_email_error_message))
+                    appUiEvents.showSnackbarError(currentContext.getString(event.messageRes))
                 }
             }
         }

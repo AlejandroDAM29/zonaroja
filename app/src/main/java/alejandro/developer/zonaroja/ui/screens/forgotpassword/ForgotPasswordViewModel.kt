@@ -1,6 +1,8 @@
 package alejandro.developer.zonaroja.ui.screens.forgotpassword
 
+import alejandro.developer.core.network.isNetworkConnectivityError
 import alejandro.developer.domain.usecase.SendPasswordResetEmailUseCase
+import alejandro.developer.zonaroja.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,8 +38,16 @@ class ForgotPasswordViewModel @Inject constructor(
                 onSuccess = {
                     _uiEvents.emit(ForgotPasswordUiEvent.ShowSuccessResendPassword)
                 },
-                onFailure = {
-                    _uiEvents.emit(ForgotPasswordUiEvent.ShowErrorResendPassword)
+                onFailure = { throwable ->
+                    _uiEvents.emit(
+                        ForgotPasswordUiEvent.ShowErrorResendPassword(
+                            messageRes = if (throwable.isNetworkConnectivityError()) {
+                                R.string.error_auth_network
+                            } else {
+                                R.string.resend_email_error_message
+                            }
+                        )
+                    )
                 }
             )
 

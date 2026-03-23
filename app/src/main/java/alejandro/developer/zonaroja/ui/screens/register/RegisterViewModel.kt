@@ -1,11 +1,11 @@
 package alejandro.developer.zonaroja.ui.screens.register
 
+import alejandro.developer.core.network.isNetworkConnectivityError
 import alejandro.developer.domain.usecase.RegisterWithEmailUseCase
 import alejandro.developer.domain.usecase.SyncNotificationSubscriptionsUseCase
 import alejandro.developer.zonaroja.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
@@ -81,8 +81,8 @@ class RegisterViewModel @Inject constructor(
             is FirebaseAuthInvalidCredentialsException ->
                 R.string.error_auth_invalid_credentials
 
-            is FirebaseNetworkException ->
-                R.string.error_auth_network
+            /*t.isNetworkConnectivityError() ->
+                R.string.error_auth_network*/
 
             else ->
                 R.string.error_auth_generic

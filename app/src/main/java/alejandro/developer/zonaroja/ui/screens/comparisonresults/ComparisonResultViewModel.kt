@@ -1,5 +1,7 @@
 package alejandro.developer.zonaroja.ui.screens.comparisonresults
 
+import alejandro.developer.core.network.NetworkMonitor
+import alejandro.developer.core.network.isNetworkConnectivityError
 import alejandro.developer.domain.usecase.GetDangerZonesComparisonUseCase
 import alejandro.developer.zonaroja.ui.mappers.buildZoneComparisonCharts
 import androidx.lifecycle.ViewModel
@@ -10,32 +12,87 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ComparisonResultViewModel @Inject constructor(
-    private val getDangerZonesComparisonUseCase: GetDangerZonesComparisonUseCase
+    private val getDangerZonesComparisonUseCase: GetDangerZonesComparisonUseCase,
+    private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ComparisonResultUiState())
+    private val _uiState = MutableStateFlow(
+        ComparisonResultUiState(
+            isLoading = networkMonitor.isCurrentlyOnline(),
+            isOffline = !networkMonitor.isCurrentlyOnline()
+        )
+    )
     val uiState = _uiState.asStateFlow()
 
     private val _uiEvents = MutableSharedFlow<ComparisonResultUiEvent>()
     val uiEvents = _uiEvents.asSharedFlow()
 
     private var loadedComparisonIds: Pair<Int, Int>? = null
+    private var requestedComparisonIds: Pair<Int, Int>? = null
 
-    fun loadComparison(firstZoneId: Int, secondZoneId: Int) {
+    init {
+        observeConnectivity()
+    }
+
+    private fun observeConnectivity() {
+        viewModelScope.launch {
+            networkMonitor.isOnline
+                .distinctUntilChanged()
+                .collect { isOnline ->
+                    if (!isOnline) {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                isOffline = true
+                            )
+                        }
+                    } else {
+                        _uiState.update { it.copy(isOffline = false) }
+                        requestedComparisonIds?.let { (firstZoneId, secondZoneId) ->
+                            loadComparison(
+                                firstZoneId = firstZoneId,
+                                secondZoneId = secondZoneId,
+                                forceRefresh = true
+                            )
+                        }
+                    }
+                }
+        }
+    }
+
+    fun loadComparison(
+        firstZoneId: Int,
+        secondZoneId: Int,
+        forceRefresh: Boolean = false
+    ) {
         val currentIds = firstZoneId to secondZoneId
-        if (loadedComparisonIds == currentIds) return
+        requestedComparisonIds = currentIds
 
-        loadedComparisonIds = currentIds
+        if (!forceRefresh && loadedComparisonIds == currentIds && uiState.value.charts != null) {
+            return
+        }
+
+        if (!networkMonitor.isCurrentlyOnline()) {
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    isOffline = true
+                )
+            }
+            return
+        }
 
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
                     isLoading = true,
+                    isOffline = false,
                     firstZone = null,
                     secondZone = null,
                     charts = null,
@@ -63,9 +120,11 @@ class ComparisonResultViewModel @Inject constructor(
                         return@onSuccess
                     }
 
+                    loadedComparisonIds = currentIds
                     _uiState.update {
                         it.copy(
                             isLoading = false,
+                            isOffline = false,
                             firstZone = firstZone,
                             secondZone = secondZone,
                             charts = buildZoneComparisonCharts(firstZone, secondZone),
@@ -74,17 +133,26 @@ class ComparisonResultViewModel @Inject constructor(
                     }
                 }
                 .onFailure { throwable ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            comparisonAvailable = false
+                    if (throwable.isNetworkConnectivityError()) {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                isOffline = true
+                            )
+                        }
+                    } else {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                comparisonAvailable = false
+                            )
+                        }
+                        _uiEvents.emit(
+                            ComparisonResultUiEvent.ShowError(
+                                throwable.message ?: "No se ha podido cargar la comparativa."
+                            )
                         )
                     }
-                    _uiEvents.emit(
-                        ComparisonResultUiEvent.ShowError(
-                            throwable.message ?: "No se ha podido cargar la comparativa."
-                        )
-                    )
                 }
         }
     }

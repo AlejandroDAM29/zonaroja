@@ -1,13 +1,16 @@
 package alejandro.developer.zonaroja.ui.screens.main
 
+import alejandro.developer.core.network.NetworkMonitor
+import alejandro.developer.core.network.isNetworkConnectivityError
 import alejandro.developer.domain.models.DangerZoneModel
 import alejandro.developer.domain.models.MapBounds
 import alejandro.developer.domain.repositories.LocationSearchRepository
+import alejandro.developer.domain.usecase.DeleteDangerZoneUseCase
 import alejandro.developer.domain.usecase.GetDangerZonesUseCase
 import alejandro.developer.domain.usecase.GetGraphicsStatsUseCase
 import alejandro.developer.domain.usecase.GetSavedZonesUseCase
 import alejandro.developer.domain.usecase.SaveDangerZoneUseCase
-import alejandro.developer.domain.usecase.DeleteDangerZoneUseCase
+import alejandro.developer.zonaroja.R
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,14 +20,11 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -35,32 +35,32 @@ class MainViewModel @Inject constructor(
     private val getGraphicsStatsUseCase: GetGraphicsStatsUseCase,
     private val saveDangerZoneUseCase: SaveDangerZoneUseCase,
     private val getSavedZonesUseCase: GetSavedZonesUseCase,
-    private val deleteDangerZoneUseCase: DeleteDangerZoneUseCase
+    private val deleteDangerZoneUseCase: DeleteDangerZoneUseCase,
+    private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(MainUiState(isLoading = false))
-    val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(
+        MainUiState(
+            isLoading = false,
+            isMapOffline = !networkMonitor.isCurrentlyOnline()
+        )
+    )
+    val uiState = _uiState.asStateFlow()
 
     private val _uiEvents = MutableSharedFlow<MainUiEvent>()
     val uiEvents = _uiEvents.asSharedFlow()
 
-    private val boundsFlow = MutableSharedFlow<MapBounds>(
-        extraBufferCapacity = 1
-    )
-
+    private val boundsFlow = MutableSharedFlow<MapBounds>(extraBufferCapacity = 1)
 
     init {
+        observeConnectivity()
         observeBounds()
         observeSavedZones()
     }
 
-
-
     fun observeSavedZones() {
         viewModelScope.launch {
-
             getSavedZonesUseCase().collect { ids ->
-
                 _uiState.update {
                     it.copy(savedZonesIds = ids)
                 }
@@ -69,17 +69,11 @@ class MainViewModel @Inject constructor(
     }
 
     fun onFavoriteButtonClicked(zone: DangerZoneModel) {
-
         viewModelScope.launch {
-
             if (uiState.value.savedZonesIds.contains(zone.id)) {
-
                 deleteDangerZoneUseCase(zone.id)
-
             } else {
-
                 saveDangerZoneUseCase(zone)
-
             }
         }
     }
@@ -97,11 +91,11 @@ class MainViewModel @Inject constructor(
     }
 
     fun openStats() {
-
         _uiState.update {
             it.copy(
                 isPanelOpen = false,
-                isStatsOpen = true
+                isStatsOpen = true,
+                isStatsOffline = false
             )
         }
         getMapStatsWithZoneId()
@@ -112,6 +106,7 @@ class MainViewModel @Inject constructor(
             it.copy(
                 isPanelOpen = true,
                 isStatsOpen = false,
+                isStatsOffline = false,
                 selectedZone = zone
             )
         }
@@ -121,7 +116,9 @@ class MainViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 isPanelOpen = false,
-                isStatsOpen = false
+                isStatsOpen = false,
+                isStatsLoading = false,
+                isStatsOffline = false
             )
         }
     }
@@ -140,8 +137,14 @@ class MainViewModel @Inject constructor(
 
     fun searchCity() {
         val query = _uiState.value.searchQuery
-
         if (query.isBlank()) return
+
+        if (!networkMonitor.isCurrentlyOnline()) {
+            viewModelScope.launch {
+                _uiEvents.emit(MainUiEvent.ShowErrorRes(R.string.error_auth_network))
+            }
+            return
+        }
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
@@ -170,13 +173,61 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    private fun observeConnectivity() {
+        viewModelScope.launch {
+            networkMonitor.isOnline
+                .distinctUntilChanged()
+                .collect { isOnline ->
+                    if (!isOnline) {
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                isMapOffline = true,
+                                isLoading = false,
+                                isStatsLoading = false,
+                                isStatsOffline = currentState.isStatsOpen
+                            )
+                        }
+                    } else {
+                        val shouldReloadStats = uiState.value.isStatsOpen &&
+                            uiState.value.isStatsOffline &&
+                            uiState.value.selectedZone != null
+
+                        _uiState.update {
+                            it.copy(isMapOffline = false)
+                        }
+
+                        if (shouldReloadStats) {
+                            getMapStatsWithZoneId()
+                        }
+                    }
+                }
+        }
+    }
+
     private fun getMapStatsWithZoneId() {
         viewModelScope.launch {
+            val zone = _uiState.value.selectedZone ?: return@launch
+
+            if (!networkMonitor.isCurrentlyOnline()) {
+                _uiState.update {
+                    it.copy(
+                        isStatsLoading = false,
+                        isStatsOffline = true,
+                        economyStats = null,
+                        societyStats = null,
+                        demographyStats = emptyList()
+                    )
+                }
+                return@launch
+            }
 
             try {
-
-                val zone = _uiState.value.selectedZone ?: return@launch
-                _uiState.update { it.copy(isStatsLoading = true) }
+                _uiState.update {
+                    it.copy(
+                        isStatsLoading = true,
+                        isStatsOffline = false
+                    )
+                }
 
                 val stats = getGraphicsStatsUseCase(zone.id)
 
@@ -184,14 +235,24 @@ class MainViewModel @Inject constructor(
                     it.copy(
                         economyStats = stats.economy,
                         societyStats = stats.society,
-                        demographyStats = stats.demography
+                        demographyStats = stats.demography,
+                        isStatsOffline = false
                     )
                 }
-
-            } catch (e: Exception) {
-                _uiEvents.emit(MainUiEvent.ShowError(e.message ?: "Unknown error"))
-                Log.e("Map Stats Call Error", e.message ?: "Unknown error")
-
+            } catch (throwable: Exception) {
+                if (throwable.isNetworkConnectivityError()) {
+                    _uiState.update {
+                        it.copy(
+                            isStatsOffline = true,
+                            economyStats = null,
+                            societyStats = null,
+                            demographyStats = emptyList()
+                        )
+                    }
+                } else {
+                    _uiEvents.emit(MainUiEvent.ShowWarning(throwable.message ?: "Unknown error"))
+                    Log.e("Map Stats Call Error", throwable.message ?: "Unknown error")
+                }
             } finally {
                 _uiState.update { it.copy(isStatsLoading = false) }
             }
@@ -205,15 +266,52 @@ class MainViewModel @Inject constructor(
                 .debounce(500)
                 .distinctUntilChanged()
                 .collectLatest { bounds ->
+                    if (!networkMonitor.isCurrentlyOnline()) {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                isMapOffline = true,
+                                dangerZonesPointModels = emptyList()
+                            )
+                        }
+                        return@collectLatest
+                    }
 
-                    _uiState.value = _uiState.value.copy(isLoading = true)
+                    _uiState.update {
+                        it.copy(
+                            isLoading = true,
+                            isMapOffline = false
+                        )
+                    }
 
-                    val dangerPoints = getDangerZonesUseCase(bounds)
-
-                    _uiState.value = _uiState.value.copy(
-                        dangerZonesPointModels = dangerPoints,
-                        isLoading = false
-                    )
+                    runCatching { getDangerZonesUseCase(bounds) }
+                        .onSuccess { dangerPoints ->
+                            _uiState.update {
+                                it.copy(
+                                    dangerZonesPointModels = dangerPoints,
+                                    isLoading = false,
+                                    isMapOffline = false
+                                )
+                            }
+                        }
+                        .onFailure { throwable ->
+                            if (throwable.isNetworkConnectivityError()) {
+                                _uiState.update {
+                                    it.copy(
+                                        dangerZonesPointModels = emptyList(),
+                                        isLoading = false,
+                                        isMapOffline = true
+                                    )
+                                }
+                            } else {
+                                _uiState.update { it.copy(isLoading = false) }
+                                _uiEvents.emit(
+                                    MainUiEvent.ShowWarning(
+                                        throwable.message ?: "Unknown error"
+                                    )
+                                )
+                            }
+                        }
                 }
         }
     }
@@ -221,5 +319,4 @@ class MainViewModel @Inject constructor(
     fun onBoundsChanged(bounds: MapBounds) {
         boundsFlow.tryEmit(bounds)
     }
-
 }

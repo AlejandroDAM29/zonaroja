@@ -6,6 +6,7 @@ import alejandro.developer.zonaroja.ui.common.format.formatPricePerSquareMeter
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
 import alejandro.developer.zonaroja.ui.common.preferences.LocalUserPreferences
+import alejandro.developer.zonaroja.ui.components.NoInternetCard
 import alejandro.developer.zonaroja.ui.components.RiskBadge
 import alejandro.developer.zonaroja.ui.components.ZoneComparisonBarChartCard
 import alejandro.developer.zonaroja.ui.components.ZoneComparisonRiskChartCard
@@ -99,6 +100,10 @@ fun ComparisonResultScreen(
                 )
             }
 
+            uiState.isOffline -> {
+                ComparisonOfflineState(onClose = onClose)
+            }
+
             !uiState.comparisonAvailable -> {
                 ComparisonUnavailableState(
                     onBack = onBack,
@@ -115,6 +120,32 @@ fun ComparisonResultScreen(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun ComparisonOfflineState(
+    onClose: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .navigationBarsPadding()
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        ComparisonHeader(
+            title = stringResource(R.string.comparison_result_title),
+            onClose = onClose
+        )
+
+        NoInternetCard(
+            title = stringResource(R.string.no_internet_title),
+            description = stringResource(R.string.no_internet_comparison_description)
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
     }
 }
 

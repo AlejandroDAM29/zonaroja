@@ -1,23 +1,27 @@
 package alejandro.developer.zonaroja.ui.common.globalApp
 
+import alejandro.developer.core.network.isNetworkConnectivityError
 import alejandro.developer.domain.models.IncomingNotificationModel
 import alejandro.developer.domain.usecase.GetUserPreferencesUseCase
 import alejandro.developer.domain.usecase.LogoutUseCase
 import alejandro.developer.domain.usecase.ObserveUnreadNotificationsCountUseCase
 import alejandro.developer.domain.usecase.SaveNotificationUseCase
 import alejandro.developer.domain.usecase.SyncNotificationSubscriptionsUseCase
+import alejandro.developer.zonaroja.R
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
@@ -25,7 +29,8 @@ class AppViewModel @Inject constructor(
     private val getUserPreferencesUseCase: GetUserPreferencesUseCase,
     observeUnreadNotificationsCountUseCase: ObserveUnreadNotificationsCountUseCase,
     private val saveNotificationUseCase: SaveNotificationUseCase,
-    private val syncNotificationSubscriptionsUseCase: SyncNotificationSubscriptionsUseCase
+    private val syncNotificationSubscriptionsUseCase: SyncNotificationSubscriptionsUseCase,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiEffect = MutableSharedFlow<AppUiEffect>()
@@ -47,14 +52,20 @@ class AppViewModel @Inject constructor(
                 .onSuccess {
                     _uiEffect.emit(
                         AppUiEffect.NavigateToLoginLogoutSuccess(
-                            message = "Logout correcto"
+                            message = context.getString(R.string.logout_snackbar_success)
                         )
                     )
                     syncNotificationSubscriptionsAfterNavigation()
                 }
-                .onFailure {
+                .onFailure { throwable ->
                     _uiEffect.emit(
-                        AppUiEffect.ShowSnackbarError("Error al cerrar sesión")
+                        AppUiEffect.ShowSnackbarError(
+                            if (throwable.isNetworkConnectivityError()) {
+                                context.getString(R.string.error_auth_network)
+                            } else {
+                                context.getString(R.string.logout_snackbar_error)
+                            }
+                        )
                     )
                 }
         }
