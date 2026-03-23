@@ -71,6 +71,12 @@ class AppViewModel @Inject constructor(
         }
     }
 
+    fun showSnackbarSuccess(message: String) {
+        viewModelScope.launch {
+            _uiEffect.emit(AppUiEffect.ShowSnackbarSuccess(message))
+        }
+    }
+
     private suspend fun syncNotificationSubscriptionsAfterNavigation() {
         withContext(NonCancellable) {
             runCatching { syncNotificationSubscriptionsUseCase() }

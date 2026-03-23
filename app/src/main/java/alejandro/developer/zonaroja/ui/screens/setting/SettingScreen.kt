@@ -2,8 +2,10 @@ package alejandro.developer.zonaroja.ui.screens.setting
 
 import alejandro.developer.domain.models.AppCurrency
 import alejandro.developer.zonaroja.R
+import alejandro.developer.zonaroja.ui.common.globalApp.AppViewModel
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
+import alejandro.developer.zonaroja.ui.common.globalApp.activityHiltViewModel
 import alejandro.developer.zonaroja.ui.components.RedOutlinedTextField
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import android.Manifest
@@ -90,6 +92,7 @@ fun SettingScreen(
     viewModel: SettingViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val appViewModel: AppViewModel = activityHiltViewModel()
     val appUiController = LocalAppUiController.current
     val context by rememberUpdatedState(LocalContext.current)
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -135,6 +138,13 @@ fun SettingScreen(
         viewModel.uiEvents.collect { event ->
             when (event) {
                 is SettingUiEvent.NavigateToLogin -> onNavigateToLogin()
+
+                is SettingUiEvent.NavigateToLoginLogoutSuccess -> {
+                    onNavigateToLogin()
+                    appViewModel.showSnackbarSuccess(
+                        context.getString(event.messageRes)
+                    )
+                }
 
                 is SettingUiEvent.RequestDeleteAccountReauthentication -> {
                     showDeleteDialog = false

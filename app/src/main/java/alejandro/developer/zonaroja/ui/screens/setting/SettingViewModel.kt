@@ -51,6 +51,8 @@ class SettingViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             observeUserPreferencesUseCase().collect { preferences ->
+                if (_uiState.value.isSessionClosing) return@collect
+
                 _uiState.update {
                     it.copy(
                         email = getCurrentUserEmailUseCase().orEmpty(),
@@ -92,20 +94,19 @@ class SettingViewModel @Inject constructor(
 
     fun onLogoutClicked() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, isSessionClosing = true) }
 
             runCatching { logoutUseCase() }
                 .onSuccess {
                     _uiEvents.emit(
-                        SettingUiEvent.ShowMessage(
-                            messageRes = R.string.logout_snackbar_success,
-                            type = SettingMessageType.SUCCESS
+                        SettingUiEvent.NavigateToLoginLogoutSuccess(
+                            messageRes = R.string.logout_snackbar_success
                         )
                     )
-                    _uiEvents.emit(SettingUiEvent.NavigateToLogin)
                     syncNotificationSubscriptionsAfterNavigation()
                 }
                 .onFailure { throwable ->
+                    _uiState.update { it.copy(isSessionClosing = false) }
                     _uiEvents.emit(
                         SettingUiEvent.ShowMessage(
                             messageRes = if (throwable.isNetworkConnectivityError()) {
@@ -160,6 +161,7 @@ class SettingViewModel @Inject constructor(
                 onSuccess = {
                     deleteCurrentUserUseCase().fold(
                         onSuccess = {
+                            _uiState.update { it.copy(isSessionClosing = true) }
                             runCatching { logoutUseCase() }
                             _uiEvents.emit(
                                 SettingUiEvent.ShowMessage(
