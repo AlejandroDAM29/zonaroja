@@ -19,7 +19,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Zonaroja">
+            android:theme="@style/Theme.Zonaroja.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,7 +43,7 @@
             android:value="@string/default_notification_channel_id" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/zona_roja_warning_icon" />
+            android:resource="@drawable/zona_roja_warning_icon_zona_roja" />
         <service
             android:name=".notifications.ZonaRojaFirebaseMessagingService"
             android:exported="false">

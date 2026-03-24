@@ -33,7 +33,13 @@ object NavigationChromePolicy {
         screen !in setOf(
             Main::class,
             Notifications::class,
-            NotificationDetail::class
+            NotificationDetail::class,
+            Login::class,
+            Register::class,
+            ForgotPassword::class,
+            ChangePassword::class,
+            Setting::class,
+            ZoneComparisonResult::class
         )
 
 }

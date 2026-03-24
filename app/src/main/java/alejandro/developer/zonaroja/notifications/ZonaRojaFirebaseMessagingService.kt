@@ -91,7 +91,7 @@ class ZonaRojaFirebaseMessagingService : FirebaseMessagingService() {
             this,
             NotificationChannelManager.GENERAL_CHANNEL_ID
         )
-            .setSmallIcon(R.drawable.zona_roja_warning_icon)
+            .setSmallIcon(R.drawable.zona_roja_warning_icon_zona_roja)
             .setContentTitle(title)
             .setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
