@@ -123,7 +123,7 @@ private fun NotificationsContent(
                 text = stringResource(R.string.notifications_screen_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(start = 68.dp, end = 16.dp, bottom = 8.dp)
+                modifier = Modifier.padding(start = 62.dp, end = 16.dp, bottom = 8.dp)
             )
 
             if (uiState.notifications.isEmpty() && !uiState.isLoading) {
