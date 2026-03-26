@@ -27,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun MainScreen(
     showSnackbarRegisterSuccess: Boolean,
+    onRegisterSuccessSnackbarShown: () -> Unit,
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -34,10 +35,12 @@ fun MainScreen(
     val appUiEvents = LocalAppUiController.current
 
     LaunchedEffect(showSnackbarRegisterSuccess) {
-        if (showSnackbarRegisterSuccess)
+        if (showSnackbarRegisterSuccess) {
             appUiEvents.showSnackbarSuccess(
                 currentContext.getString(R.string.register_success_snackbar)
             )
+            onRegisterSuccessSnackbarShown()
+        }
     }
 
     LaunchedEffect(Unit) {

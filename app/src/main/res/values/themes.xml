@@ -5,7 +5,7 @@
 
     <style name="Theme.Zonaroja.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">#000000</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/zona_roja_warning_icon_tm2</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/zona_roja_warning_icon_tm3</item>
         <item name="windowSplashScreenIconBackgroundColor">#000000</item>
         <item name="postSplashScreenTheme">@style/Theme.Zonaroja</item>
     </style>

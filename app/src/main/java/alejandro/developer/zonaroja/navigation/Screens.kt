@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 object Splash
 
 @Serializable
-data class Main(val showSnackbarRegisterSuccess: Boolean = false)
+object Main
 
 @Serializable
 object Login
