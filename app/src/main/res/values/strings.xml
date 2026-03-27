@@ -127,6 +127,15 @@
     <string name="comparison_empty_pdf_date_label">Fecha de generacion:</string>
     <string name="comparison_result_title">Resultado de la comparativa</string>
     <string name="comparison_result_description">Pulsa atras para volver a la seleccion y cambiar cualquiera de los dos barrios.</string>
+    <string name="comparison_result_share_button">Compartir PDF</string>
+    <string name="comparison_result_share_loading">Generando PDF...</string>
+    <string name="comparison_result_share_subject">Informe del comparador de barrios</string>
+    <string name="comparison_result_share_chooser">Compartir informe PDF</string>
+    <string name="comparison_result_share_error">No se ha podido generar el PDF.</string>
+    <string name="comparison_pdf_generated_on">Fecha de generacion</string>
+    <string name="comparison_pdf_overview">Comparativa de riesgo, pobreza, paro y precio por metro cuadrado de los barrios seleccionados.</string>
+    <string name="comparison_pdf_summary_title">Resumen de zonas</string>
+    <string name="comparison_pdf_metrics_title">Indicadores comparados</string>
     <string name="comparison_metric_risk_level">Nivel de riesgo</string>
     <string name="comparison_metric_poverty">Riesgo de pobreza</string>
     <string name="comparison_metric_unemployment">Tasa de paro</string>
