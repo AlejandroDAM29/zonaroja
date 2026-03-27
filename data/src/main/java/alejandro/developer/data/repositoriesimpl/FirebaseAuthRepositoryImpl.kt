@@ -6,6 +6,7 @@ import alejandro.developer.domain.repositories.AuthRepository
 import android.util.Log
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -37,6 +38,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         firebaseAuth
             .signInWithEmailAndPassword(email, password)
             .await()
+        Unit
     }
 
     override suspend fun registerWithEmail(
@@ -47,6 +49,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         firebaseAuth
             .createUserWithEmailAndPassword(email, password)
             .await()
+        Unit
     }
 
     override suspend fun loginWithGoogle(
@@ -56,10 +59,18 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
             networkMonitor.requireInternet()
             val credential = GoogleAuthProvider.getCredential(idToken, null)
             firebaseAuth.signInWithCredential(credential)
-                .addOnFailureListener { e ->
-                    Log.e("Google error:", e.message.toString())
-                }
                 .await()
+            Unit
+        }.onFailure { throwable ->
+            val firebaseErrorCode = (throwable as? FirebaseAuthException)?.errorCode
+                ?.let { " code=$it" }
+                .orEmpty()
+
+            Log.e(
+                TAG,
+                "Firebase Google login failed$firebaseErrorCode: ${throwable.message ?: "Unknown error"}",
+                throwable
+            )
         }
 
     override suspend fun sendPasswordResetEmail(
@@ -69,6 +80,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         firebaseAuth
             .sendPasswordResetEmail(email)
             .await()
+        Unit
     }
 
     override fun getCurrentUserEmail(): String? {
@@ -117,6 +129,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         }
         val credential = EmailAuthProvider.getCredential(resolvedEmail, password)
         currentUser.reauthenticate(credential).await()
+        Unit
     }
 
     override suspend fun deleteCurrentUser(): Result<Unit> = runCatching {
@@ -124,10 +137,15 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         val currentUser = firebaseAuth.currentUser
             ?: throw IllegalStateException("No authenticated user")
         currentUser.delete().await()
+        Unit
     }
 
     override suspend fun logout() {
         networkMonitor.requireInternet()
         firebaseAuth.signOut()
+    }
+
+    private companion object {
+        const val TAG = "FirebaseAuthRepo"
     }
 }
