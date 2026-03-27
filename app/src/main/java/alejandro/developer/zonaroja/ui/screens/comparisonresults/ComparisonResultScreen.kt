@@ -27,6 +27,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,15 +38,20 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.TextMeasurer
@@ -56,6 +63,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 
 @Composable
 fun ComparisonResultScreen(
@@ -67,9 +75,13 @@ fun ComparisonResultScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val appUiController = LocalAppUiController.current
+    val context = LocalContext.current
     val firstZone = uiState.firstZone
     val secondZone = uiState.secondZone
     val charts = uiState.charts
+    val userPreferences = LocalUserPreferences.current
+    val coroutineScope = rememberCoroutineScope()
+    var isGeneratingPdf by remember { mutableStateOf(false) }
 
     BackHandler(onBack = onBack)
 
@@ -116,7 +128,31 @@ fun ComparisonResultScreen(
                     firstZone = firstZone,
                     secondZone = secondZone,
                     charts = charts,
-                    onClose = onClose
+                    onClose = onClose,
+                    isGeneratingPdf = isGeneratingPdf,
+                    onSharePdf = {
+                        coroutineScope.launch {
+                            isGeneratingPdf = true
+                            runCatching {
+                                val pdfUri = createComparisonReportPdf(
+                                    context = context,
+                                    firstZone = firstZone,
+                                    secondZone = secondZone,
+                                    charts = charts,
+                                    userPreferences = userPreferences
+                                )
+                                shareComparisonReportPdf(
+                                    context = context,
+                                    pdfUri = pdfUri
+                                )
+                            }.onFailure {
+                                appUiController.showSnackbarWarning(
+                                    context.getString(R.string.comparison_result_share_error)
+                                )
+                            }
+                            isGeneratingPdf = false
+                        }
+                    }
                 )
             }
         }
@@ -154,7 +190,9 @@ private fun ComparisonResultContent(
     firstZone: DangerZoneComparisonModel,
     secondZone: DangerZoneComparisonModel,
     charts: ZoneComparisonChartsUiModel,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    isGeneratingPdf: Boolean,
+    onSharePdf: () -> Unit
 ) {
     val userPreferences = LocalUserPreferences.current
 
@@ -244,6 +282,41 @@ private fun ComparisonResultContent(
             key = { it.metricType.name }
         ) { chart ->
             ZoneComparisonBarChartCard(chart = chart)
+        }
+
+        item {
+            Button(
+                onClick = onSharePdf,
+                enabled = !isGeneratingPdf,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(54.dp),
+                shape = RoundedCornerShape(18.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = RedZoneColor,
+                    contentColor = Color.White,
+                    disabledContainerColor = RedZoneColor.copy(alpha = 0.7f),
+                    disabledContentColor = Color.White
+                )
+            ) {
+                if (isGeneratingPdf) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        color = Color.White,
+                        strokeWidth = 2.dp
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = stringResource(R.string.comparison_result_share_loading),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                } else {
+                    Text(
+                        text = stringResource(R.string.comparison_result_share_button),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            }
         }
     }
 }
