@@ -6,11 +6,14 @@ import alejandro.developer.domain.usecase.SaveNotificationUseCase
 import alejandro.developer.domain.usecase.SyncNotificationSubscriptionsUseCase
 import alejandro.developer.zonaroja.MainActivity
 import alejandro.developer.zonaroja.R
+import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import android.Manifest
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import androidx.annotation.RequiresPermission
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -44,6 +47,7 @@ class ZonaRojaFirebaseMessagingService : FirebaseMessagingService() {
         }
     }
 
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
@@ -91,7 +95,8 @@ class ZonaRojaFirebaseMessagingService : FirebaseMessagingService() {
             this,
             NotificationChannelManager.GENERAL_CHANNEL_ID
         )
-            .setSmallIcon(R.drawable.zona_roja_warning_icon_zona_roja)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setColor(RedZoneColor.toArgb())
             .setContentTitle(title)
             .setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
