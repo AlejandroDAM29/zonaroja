@@ -39,7 +39,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -242,18 +244,34 @@ fun LoginGoogle(
                         request = getCredentialRequest
                     )
 
-                    val credential = result.credential
-
-                    if (credential is GoogleIdTokenCredential) {
-                        viewModel.onGoogleTokenReceived(credential.idToken)
-                    } else {
-                        viewModel.onGoogleTokenReceived(null)
-                    }
-
-                } catch (_: GetCredentialException) {
-                    viewModel.onGoogleTokenReceived(null)
+                    viewModel.onGoogleTokenReceived(
+                        extractGoogleIdToken(result.credential)
+                    )
+                } catch (exception: GetCredentialException) {
+                    viewModel.onGoogleLoginFailure(exception)
+                } catch (exception: Exception) {
+                    viewModel.onGoogleLoginFailure(exception)
                 }
             }
         }
     )
+}
+
+private fun extractGoogleIdToken(credential: Credential): String {
+    val customCredential = credential as? CustomCredential
+        ?: throw IllegalStateException(
+            "Unexpected credential class: ${credential::class.java.name}"
+        )
+
+    val isSupportedGoogleCredential =
+        customCredential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL ||
+            customCredential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_SIWG_CREDENTIAL
+
+    if (!isSupportedGoogleCredential) {
+        throw IllegalStateException(
+            "Unexpected Google credential type: ${customCredential.type}"
+        )
+    }
+
+    return GoogleIdTokenCredential.createFrom(customCredential.data).idToken
 }

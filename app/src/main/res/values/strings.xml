@@ -17,6 +17,9 @@
     <string name="error_auth_weak_password">La contraseña es demasiado débil</string>
     <string name="error_auth_network">Error de conexión</string>
     <string name="error_auth_generic">Error al registrarse</string>
+    <string name="error_auth_google_generic">No se pudo iniciar sesion con Google</string>
+    <string name="error_auth_google_response">No se pudo leer la respuesta de Google</string>
+    <string name="error_auth_google_account_exists">Este correo ya esta asociado a otro metodo de acceso</string>
     <string name="login_with_google">Continuar con Google</string>
     <string name="title_text_1">Zona</string>
     <string name="title_text_2">Roja</string>
