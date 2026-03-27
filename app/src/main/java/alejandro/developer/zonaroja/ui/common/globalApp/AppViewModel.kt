@@ -2,6 +2,7 @@ package alejandro.developer.zonaroja.ui.common.globalApp
 
 import alejandro.developer.core.network.isNetworkConnectivityError
 import alejandro.developer.domain.models.IncomingNotificationModel
+import alejandro.developer.domain.usecase.CheckUserSessionUseCase
 import alejandro.developer.domain.usecase.GetUserPreferencesUseCase
 import alejandro.developer.domain.usecase.LogoutUseCase
 import alejandro.developer.domain.usecase.ObserveUnreadNotificationsCountUseCase
@@ -16,9 +17,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,6 +29,7 @@ import kotlinx.coroutines.withContext
 @HiltViewModel
 class AppViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
+    private val checkUserSessionUseCase: CheckUserSessionUseCase,
     private val getUserPreferencesUseCase: GetUserPreferencesUseCase,
     observeUnreadNotificationsCountUseCase: ObserveUnreadNotificationsCountUseCase,
     private val saveNotificationUseCase: SaveNotificationUseCase,
@@ -33,11 +37,16 @@ class AppViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
+    sealed interface PendingNotificationRequest {
+        data class Stored(val notificationId: Long) : PendingNotificationRequest
+        data class Incoming(val notification: IncomingNotificationModel) : PendingNotificationRequest
+    }
+
     private val _uiEffect = MutableSharedFlow<AppUiEffect>()
     val uiEffect = _uiEffect.asSharedFlow()
 
-    private val _notificationOpenRequests = MutableSharedFlow<Long>(extraBufferCapacity = 1)
-    val notificationOpenRequests = _notificationOpenRequests.asSharedFlow()
+    private val _pendingNotificationRequest = MutableStateFlow<PendingNotificationRequest?>(null)
+    val pendingNotificationRequest = _pendingNotificationRequest.asStateFlow()
 
     val unreadNotificationsCount: StateFlow<Int> =
         observeUnreadNotificationsCountUseCase().stateIn(
@@ -84,17 +93,32 @@ class AppViewModel @Inject constructor(
     }
 
     fun openStoredNotification(notificationId: Long) {
-        viewModelScope.launch {
-            if (!getUserPreferencesUseCase().notificationsEnabled) return@launch
-            _notificationOpenRequests.emit(notificationId)
-        }
+        _pendingNotificationRequest.value = PendingNotificationRequest.Stored(notificationId)
     }
 
     fun storeAndOpenNotification(notification: IncomingNotificationModel) {
-        viewModelScope.launch {
-            if (!getUserPreferencesUseCase().notificationsEnabled) return@launch
-            val notificationId = saveNotificationUseCase(notification)
-            _notificationOpenRequests.emit(notificationId)
+        _pendingNotificationRequest.value = PendingNotificationRequest.Incoming(notification)
+    }
+
+    suspend fun consumePendingNotificationId(): Long? {
+        val request = _pendingNotificationRequest.value ?: return null
+
+        if (!checkUserSessionUseCase()) return null
+        if (!getUserPreferencesUseCase().notificationsEnabled) {
+            _pendingNotificationRequest.value = null
+            return null
         }
+
+        val notificationId = when (request) {
+            is PendingNotificationRequest.Stored -> request.notificationId
+            is PendingNotificationRequest.Incoming -> saveNotificationUseCase(request.notification)
+        }
+
+        _pendingNotificationRequest.value = null
+        return notificationId
+    }
+
+    fun discardPendingNotification() {
+        _pendingNotificationRequest.value = null
     }
 }

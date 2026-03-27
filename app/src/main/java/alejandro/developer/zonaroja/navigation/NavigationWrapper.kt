@@ -29,12 +29,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.currentStateAsState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.lifecycle.compose.currentStateAsState
 import kotlin.reflect.KClass
 
 @Composable
@@ -43,8 +42,8 @@ fun NavigationWrapper() {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val appViewmodel: AppViewModel = activityHiltViewModel()
     val unreadNotificationsCount by appViewmodel.unreadNotificationsCount.collectAsState()
+    val pendingNotificationRequest by appViewmodel.pendingNotificationRequest.collectAsState()
     var stableScreen by remember { mutableStateOf<KClass<*>?>(null) }
-    var pendingNotificationId by remember { mutableStateOf<Long?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     var currentSnackbar by remember { mutableStateOf<AppSnackbarModel?>(null) }
 
@@ -71,27 +70,22 @@ fun NavigationWrapper() {
         }
     }
 
-    LaunchedEffect(appViewmodel) {
-        appViewmodel.notificationOpenRequests.collect { notificationId ->
-            pendingNotificationId = notificationId
-        }
-    }
-
-    LaunchedEffect(currentScreen, stableScreen, pendingNotificationId) {
-        val notificationId = pendingNotificationId ?: return@LaunchedEffect
+    LaunchedEffect(currentScreen, stableScreen, pendingNotificationRequest) {
+        pendingNotificationRequest ?: return@LaunchedEffect
         val resolvedScreen = currentScreen ?: stableScreen ?: return@LaunchedEffect
 
-        if (resolvedScreen !in setOf(
-                Splash::class,
-                Login::class,
-                Register::class,
-                ForgotPassword::class
-            )
-        ) {
-            navController.navigate(NotificationDetail(notificationId)) {
-                launchSingleTop = true
+        when (resolvedScreen) {
+            Splash::class -> return@LaunchedEffect
+            Login::class,
+            Register::class,
+            ForgotPassword::class -> return@LaunchedEffect
+            else -> {
+                val notificationId = appViewmodel.consumePendingNotificationId()
+                    ?: return@LaunchedEffect
+                navController.navigate(NotificationDetail(notificationId)) {
+                    launchSingleTop = true
+                }
             }
-            pendingNotificationId = null
         }
     }
 
