@@ -1,6 +1,10 @@
 package alejandro.developer.zonaroja.ui.screens.forgotpassword
 
+import androidx.annotation.StringRes
+
 interface ForgotPasswordUiEvent {
-    data object ShowErrorResendPassword : ForgotPasswordUiEvent
+    data class ShowErrorResendPassword(
+        @StringRes val messageRes: Int
+    ) : ForgotPasswordUiEvent
     data object ShowSuccessResendPassword : ForgotPasswordUiEvent
 }

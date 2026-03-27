@@ -4,6 +4,7 @@ import alejandro.developer.domain.models.DangerZoneComparisonModel
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
 import alejandro.developer.zonaroja.ui.common.globalApp.LocalAppUiController
+import alejandro.developer.zonaroja.ui.components.NoInternetCard
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -76,7 +77,9 @@ fun ComparisonSelectorScreen(
     }
 
     BaseScreen(isLoading = uiState.isLoading) {
-        if (uiState.showEmptyState) {
+        if (uiState.isOffline) {
+            ComparisonOfflineState()
+        } else if (uiState.showEmptyState) {
             ComparisonEmptyState()
         } else {
             ComparisonSelectorContent(
@@ -86,6 +89,27 @@ fun ComparisonSelectorScreen(
                 onCompareClicked = viewModel::onCompareClicked
             )
         }
+    }
+}
+
+@Composable
+private fun ComparisonOfflineState() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(20.dp)
+    ) {
+        ComparisonHeader(
+            title = stringResource(R.string.comparison_selector_title),
+            modifier = Modifier.align(Alignment.TopStart)
+        )
+
+        NoInternetCard(
+            title = stringResource(R.string.no_internet_title),
+            description = stringResource(R.string.no_internet_comparison_description),
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
 }
 

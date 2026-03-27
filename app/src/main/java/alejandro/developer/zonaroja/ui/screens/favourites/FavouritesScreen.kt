@@ -59,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -140,6 +141,7 @@ private fun FavouritesContent(
                     zoneName = uiState.selectedZone.zoneName,
                     cityName = uiState.selectedZone.city,
                     isLoading = uiState.isStatsLoading,
+                    isOffline = uiState.isStatsOffline,
                     economyStats = uiState.economyStats,
                     societyStats = uiState.societyStats,
                     demographyStats = uiState.demographyStats,
@@ -317,6 +319,7 @@ private fun EmptyFavouritesState() {
         contentAlignment = Alignment.Center
     ) {
         Column(
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
@@ -332,7 +335,9 @@ private fun EmptyFavouritesState() {
                 text = stringResource(R.string.favourites_empty_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -340,7 +345,9 @@ private fun EmptyFavouritesState() {
             Text(
                 text = stringResource(R.string.favourites_empty_description),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
             )
         }
     }

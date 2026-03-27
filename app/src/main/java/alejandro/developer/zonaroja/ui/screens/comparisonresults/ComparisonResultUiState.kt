@@ -5,6 +5,7 @@ import alejandro.developer.domain.models.ZoneComparisonChartsUiModel
 
 data class ComparisonResultUiState(
     val isLoading: Boolean = true,
+    val isOffline: Boolean = false,
     val firstZone: DangerZoneComparisonModel? = null,
     val secondZone: DangerZoneComparisonModel? = null,
     val charts: ZoneComparisonChartsUiModel? = null,

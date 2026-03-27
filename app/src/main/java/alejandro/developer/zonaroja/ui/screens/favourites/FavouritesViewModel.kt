@@ -1,5 +1,7 @@
 package alejandro.developer.zonaroja.ui.screens.favourites
 
+import alejandro.developer.core.network.NetworkMonitor
+import alejandro.developer.core.network.isNetworkConnectivityError
 import alejandro.developer.domain.models.DangerZoneModel
 import alejandro.developer.domain.usecase.DeleteDangerZoneUseCase
 import alejandro.developer.domain.usecase.GetGraphicsStatsUseCase
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -20,7 +23,8 @@ import kotlinx.coroutines.launch
 class FavouritesViewModel @Inject constructor(
     private val getSavedDangerZonesUseCase: GetSavedDangerZonesUseCase,
     private val deleteDangerZoneUseCase: DeleteDangerZoneUseCase,
-    private val getGraphicsStatsUseCase: GetGraphicsStatsUseCase
+    private val getGraphicsStatsUseCase: GetGraphicsStatsUseCase,
+    private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FavouritesUiState())
@@ -31,6 +35,7 @@ class FavouritesViewModel @Inject constructor(
 
     init {
         observeFavouriteZones()
+        observeConnectivity()
     }
 
     private fun observeFavouriteZones() {
@@ -55,6 +60,30 @@ class FavouritesViewModel @Inject constructor(
         }
     }
 
+    private fun observeConnectivity() {
+        viewModelScope.launch {
+            networkMonitor.isOnline
+                .distinctUntilChanged()
+                .collect { isOnline ->
+                    if (!_uiState.value.isStatsOpen) return@collect
+
+                    if (!isOnline) {
+                        _uiState.update {
+                            it.copy(
+                                isStatsLoading = false,
+                                isStatsOffline = true,
+                                economyStats = null,
+                                societyStats = null,
+                                demographyStats = emptyList()
+                            )
+                        }
+                    } else if (_uiState.value.isStatsOffline) {
+                        _uiState.value.selectedZone?.let(::loadStats)
+                    }
+                }
+        }
+    }
+
     fun onZoneClicked(zoneId: Int) {
         _uiState.update { currentState ->
             currentState.copy(
@@ -74,31 +103,66 @@ class FavouritesViewModel @Inject constructor(
             it.copy(
                 selectedZone = zone,
                 isStatsOpen = true,
-                isStatsLoading = true,
+                isStatsLoading = false,
+                isStatsOffline = false,
                 economyStats = null,
                 societyStats = null,
                 demographyStats = emptyList()
             )
         }
 
+        loadStats(zone)
+    }
+
+    private fun loadStats(zone: DangerZoneModel) {
         viewModelScope.launch {
-            try {
-                val stats = getGraphicsStatsUseCase(zone.id)
+            if (!networkMonitor.isCurrentlyOnline()) {
                 _uiState.update {
                     it.copy(
-                        economyStats = stats.economy,
-                        societyStats = stats.society,
-                        demographyStats = stats.demography
+                        isStatsLoading = false,
+                        isStatsOffline = true
                     )
                 }
-            } catch (e: Exception) {
-                _uiEvents.emit(
-                    FavouritesUiEvent.ShowError(e.message ?: "Unknown error")
-                )
-                Log.e("Favourites Stats Error", e.message ?: "Unknown error")
-            } finally {
-                _uiState.update { it.copy(isStatsLoading = false) }
+                return@launch
             }
+
+            _uiState.update {
+                it.copy(
+                    isStatsLoading = true,
+                    isStatsOffline = false
+                )
+            }
+
+            runCatching { getGraphicsStatsUseCase(zone.id) }
+                .onSuccess { stats ->
+                    _uiState.update {
+                        it.copy(
+                            economyStats = stats.economy,
+                            societyStats = stats.society,
+                            demographyStats = stats.demography,
+                            isStatsOffline = false
+                        )
+                    }
+                }
+                .onFailure { throwable ->
+                    if (throwable.isNetworkConnectivityError()) {
+                        _uiState.update {
+                            it.copy(
+                                isStatsOffline = true,
+                                economyStats = null,
+                                societyStats = null,
+                                demographyStats = emptyList()
+                            )
+                        }
+                    } else {
+                        _uiEvents.emit(
+                            FavouritesUiEvent.ShowError(throwable.message ?: "Unknown error")
+                        )
+                        Log.e("Favourites Stats Error", throwable.message ?: "Unknown error")
+                    }
+                }
+
+            _uiState.update { it.copy(isStatsLoading = false) }
         }
     }
 
@@ -107,7 +171,11 @@ class FavouritesViewModel @Inject constructor(
             it.copy(
                 isStatsOpen = false,
                 selectedZone = null,
-                isStatsLoading = false
+                isStatsLoading = false,
+                isStatsOffline = false,
+                economyStats = null,
+                societyStats = null,
+                demographyStats = emptyList()
             )
         }
     }

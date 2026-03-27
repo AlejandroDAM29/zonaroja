@@ -9,6 +9,10 @@ sealed interface SettingUiEvent {
     data object RequestDeleteAccountReauthentication : SettingUiEvent
 
     data object NavigateToLogin : SettingUiEvent
+
+    data class NavigateToLoginLogoutSuccess(
+        val messageRes: Int
+    ) : SettingUiEvent
 }
 
 enum class SettingMessageType {

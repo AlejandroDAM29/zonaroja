@@ -9,20 +9,20 @@ import alejandro.developer.zonaroja.ui.screens.main.MainUiState
 import alejandro.developer.zonaroja.ui.screens.main.StatsTab
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -123,12 +123,13 @@ fun InfoPanelMap(
             onClick = { onFavoriteButtonClicked(uiState.selectedZone) },
             modifier = Modifier.fillMaxWidth()
         ) {
-            if (!uiState.savedZonesIds.contains(uiState.selectedZone.id))
+            if (!uiState.savedZonesIds.contains(uiState.selectedZone.id)) {
                 Icon(
                     imageVector = Icons.Default.FavoriteBorder,
                     contentDescription = null,
                     modifier = Modifier.size(22.dp)
                 )
+            }
 
             Spacer(Modifier.width(8.dp))
 
@@ -146,7 +147,6 @@ fun InfoPanelMap(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatisticsBottomSheet(
@@ -159,6 +159,7 @@ fun StatisticsBottomSheet(
         zoneName = selectedZone.zoneName,
         cityName = selectedZone.city,
         isLoading = uiState.isStatsLoading,
+        isOffline = uiState.isStatsOffline,
         economyStats = uiState.economyStats,
         societyStats = uiState.societyStats,
         demographyStats = uiState.demographyStats,
@@ -173,15 +174,14 @@ fun DangerZoneStatisticsSheetContent(
     zoneName: String,
     cityName: String,
     isLoading: Boolean,
+    isOffline: Boolean,
     economyStats: EconomyStatsModel?,
     societyStats: SocietyStatsModel?,
     demographyStats: List<DemographyItemModel>,
     onBack: () -> Unit,
     onClose: () -> Unit
 ) {
-
     if (isLoading) {
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -194,98 +194,116 @@ fun DangerZoneStatisticsSheetContent(
                 strokeWidth = 4.dp
             )
         }
+        return
+    }
 
-    } else {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.92f)
+            .navigationBarsPadding()
+            .padding(horizontal = 20.dp, vertical = 16.dp)
+    ) {
+        StatisticsSheetHeader(
+            zoneName = zoneName,
+            onBack = onBack,
+            onClose = onClose
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (isOffline) {
+            NoInternetCard(
+                title = stringResource(R.string.no_internet_title),
+                description = stringResource(R.string.no_internet_stats_description),
+                modifier = Modifier.padding(top = 8.dp)
+            )
+            return
+        }
 
         var selectedTab by remember { mutableStateOf<StatsTab>(StatsTab.Economy) }
+        val contentScrollState = rememberScrollState()
+
+        StatsSegmentedControl(
+            selectedTab = selectedTab,
+            onTabSelected = { selectedTab = it }
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.92f)
-                .navigationBarsPadding()
-                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .weight(1f)
+                .verticalScroll(contentScrollState)
+                .animateContentSize()
         ) {
-            val contentScrollState = rememberScrollState()
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-
-                IconButton(
-                    onClick = onBack,
-                    modifier = Modifier.align(Alignment.CenterStart)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.comeback_description_statisticsbottomsheet)
-                    )
-                }
-
-                Text(
-                    text = zoneName,
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.align(Alignment.Center),
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold
+            when (selectedTab) {
+                is StatsTab.Economy -> EconomySlide(
+                    zoneName = zoneName,
+                    cityName = cityName,
+                    stats = economyStats
                 )
 
-                IconButton(
-                    onClick = onClose,
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(R.string.close_button_statisticsbottomsheet)
-                    )
-                }
+                is StatsTab.Society -> SocietySlide(societyStats)
+                is StatsTab.Demography -> DemographySlide(demographyStats)
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            StatsSegmentedControl(
-                selectedTab = selectedTab,
-                onTabSelected = { selectedTab = it }
-            )
-
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .verticalScroll(contentScrollState)
-                    .animateContentSize()
+            Button(
+                onClick = onClose,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonColors(
+                    containerColor = RedZoneColor,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    disabledContainerColor = RedZoneColor,
+                    disabledContentColor = MaterialTheme.colorScheme.onPrimary
+                )
             ) {
-                when (selectedTab) {
-                    is StatsTab.Economy -> EconomySlide(
-                        zoneName = zoneName,
-                        cityName = cityName,
-                        stats = economyStats
-                    )
-
-                    is StatsTab.Society -> SocietySlide(societyStats)
-                    is StatsTab.Demography -> DemographySlide(demographyStats)
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Button(
-                    onClick = onClose,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonColors(
-                        containerColor = RedZoneColor,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                        disabledContainerColor = RedZoneColor,
-                        disabledContentColor = MaterialTheme.colorScheme.onPrimary
-                    )
-                ) {
-                    Text(stringResource(R.string.close_button_statisticsbottomsheet))
-                }
+                Text(stringResource(R.string.close_button_statisticsbottomsheet))
             }
+        }
+    }
+}
+
+@Composable
+private fun StatisticsSheetHeader(
+    zoneName: String,
+    onBack: () -> Unit,
+    onClose: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+        IconButton(
+            onClick = onBack,
+            modifier = Modifier.align(Alignment.CenterStart)
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(R.string.comeback_description_statisticsbottomsheet)
+            )
+        }
+
+        Text(
+            text = zoneName,
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.align(Alignment.Center),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold
+        )
+
+        IconButton(
+            onClick = onClose,
+            modifier = Modifier.align(Alignment.CenterEnd)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = stringResource(R.string.close_button_statisticsbottomsheet)
+            )
         }
     }
 }

@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 interface LoginUiEvent {
     data object NavigateToMain : LoginUiEvent
     data class ShowErrorLogin(
-        val message: String
+        @StringRes val messageRes: Int
     ): LoginUiEvent
     data class ShowErrorGoogleRegister(
         @StringRes val messageRes: Int

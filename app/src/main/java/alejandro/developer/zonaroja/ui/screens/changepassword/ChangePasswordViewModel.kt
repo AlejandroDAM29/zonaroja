@@ -1,5 +1,6 @@
 package alejandro.developer.zonaroja.ui.screens.changepassword
 
+import alejandro.developer.core.network.isNetworkConnectivityError
 import alejandro.developer.domain.usecase.GetCurrentUserEmailUseCase
 import alejandro.developer.domain.usecase.SendPasswordResetEmailUseCase
 import alejandro.developer.zonaroja.R
@@ -57,10 +58,14 @@ class ChangePasswordViewModel @Inject constructor(
                         )
                     )
                 },
-                onFailure = {
+                onFailure = { throwable ->
                     _uiEvents.emit(
                         ChangePasswordUiEvent.ShowMessage(
-                            messageRes = R.string.resend_email_error_message,
+                            messageRes = if (throwable.isNetworkConnectivityError()) {
+                                R.string.error_auth_network
+                            } else {
+                                R.string.resend_email_error_message
+                            },
                             type = SettingMessageType.ERROR
                         )
                     )

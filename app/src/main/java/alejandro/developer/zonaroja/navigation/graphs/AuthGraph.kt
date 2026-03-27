@@ -4,6 +4,7 @@ import alejandro.developer.zonaroja.navigation.ForgotPassword
 import alejandro.developer.zonaroja.navigation.Login
 import alejandro.developer.zonaroja.navigation.Main
 import alejandro.developer.zonaroja.navigation.Register
+import alejandro.developer.zonaroja.navigation.REGISTER_SUCCESS_SNACKBAR_KEY
 import alejandro.developer.zonaroja.ui.screens.forgotpassword.ForgotPasswordScreen
 import alejandro.developer.zonaroja.ui.screens.login.LoginScreen
 import alejandro.developer.zonaroja.ui.screens.register.RegisterScreen
@@ -37,11 +38,12 @@ fun NavGraphBuilder.authNavGraph(
                     navController.popBackStack()
                 },
                 onNavigateToMain = {
-                    navController.navigate(
-                        Main(showSnackbarRegisterSuccess = true)
-                    ){
+                    navController.navigate(Main) {
                         popUpTo(AuthGraph) { inclusive = true }
                     }
+                    navController.currentBackStackEntry
+                        ?.savedStateHandle
+                        ?.set(REGISTER_SUCCESS_SNACKBAR_KEY, true)
                 }
             )
         }

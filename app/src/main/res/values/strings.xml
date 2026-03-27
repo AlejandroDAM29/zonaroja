@@ -177,4 +177,9 @@
     <string name="notifications_missing_title">Esta notificación ya no está disponible</string>
     <string name="notifications_missing_description">Puede que se haya eliminado del almacenamiento local.</string>
 
+    <string name="no_internet_title">No hay conexion</string>
+    <string name="no_internet_map_description">No se puede usar el mapa sin internet.</string>
+    <string name="no_internet_comparison_description">No se puede cargar el comparador sin internet.</string>
+    <string name="no_internet_stats_description">No se pueden cargar las graficas sin internet.</string>
+
 </resources>

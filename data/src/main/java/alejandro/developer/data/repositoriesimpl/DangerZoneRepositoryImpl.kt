@@ -1,5 +1,7 @@
 package alejandro.developer.data.repositoriesimpl
 
+import alejandro.developer.core.network.NetworkMonitor
+import alejandro.developer.core.network.requireInternet
 import alejandro.developer.data.local.datasources.DangerZoneLocalDataSource
 import alejandro.developer.data.mappers.toDomain
 import alejandro.developer.data.mappers.toEntity
@@ -23,15 +25,17 @@ import kotlin.collections.map
 class DangerZoneRepositoryImpl @Inject constructor(
     private val remote: DangerZoneRemoteDataSource,
     private val local: DangerZoneLocalDataSource,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val networkMonitor: NetworkMonitor
 ) : DangerZoneRepository {
 
     override suspend fun getDangerZonesForComparisonRemote(): List<DangerZoneComparisonModel> {
+        networkMonitor.requireInternet()
         return remote.getDangerZonesForComparison().map { it.toDomain() }
     }
 
     override suspend fun getDangerZonesRemote(bounds: MapBounds): List<DangerZoneModel> {
-
+        networkMonitor.requireInternet()
         return remote.getDangerZones(
             bounds
         ).map { it.toDomain() }
@@ -50,7 +54,7 @@ class DangerZoneRepositoryImpl @Inject constructor(
     override suspend fun getGraphicsStatsRemote(
         zoneId: Int
     ): StatsGraphicsModel {
-
+        networkMonitor.requireInternet()
         return remote.getGraphicsStats(zoneId).toDomain()
     }
 

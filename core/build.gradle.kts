@@ -21,6 +21,7 @@ android {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.transport.runtime)
     implementation(libs.hilt.android)
     implementation(libs.firebase.auth)

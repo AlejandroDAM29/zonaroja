@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
@@ -18,7 +19,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Zonaroja">
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Zonaroja.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,11 +40,14 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAFF4-Kel1sBceK9rixLM4J255pjax5pGE"/>
         <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/RedZoneColor" />
+        <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/zona_roja_warning_icon" />
         <service
             android:name=".notifications.ZonaRojaFirebaseMessagingService"
             android:exported="false">

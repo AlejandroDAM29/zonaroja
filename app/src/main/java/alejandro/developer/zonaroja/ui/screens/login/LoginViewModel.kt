@@ -1,12 +1,17 @@
 package alejandro.developer.zonaroja.ui.screens.login
 
+import alejandro.developer.core.network.NetworkMonitor
+import alejandro.developer.core.network.isNetworkConnectivityError
 import alejandro.developer.data.providers.FeatureFlagsProvider
+import alejandro.developer.domain.models.FeatureFlagsModel
 import alejandro.developer.domain.usecase.LoginWithEmailUseCase
 import alejandro.developer.domain.usecase.LoginWithGoogleUseCase
 import alejandro.developer.domain.usecase.SyncNotificationSubscriptionsUseCase
 import alejandro.developer.zonaroja.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,7 +27,8 @@ class LoginViewModel @Inject constructor(
     private val loginWithEmailUseCase: LoginWithEmailUseCase,
     private val loginWithGoogle: LoginWithGoogleUseCase,
     private val featureFlagsProvider: FeatureFlagsProvider,
-    private val syncNotificationSubscriptionsUseCase: SyncNotificationSubscriptionsUseCase
+    private val syncNotificationSubscriptionsUseCase: SyncNotificationSubscriptionsUseCase,
+    private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -34,7 +40,8 @@ class LoginViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val flags = featureFlagsProvider.get()
+            val flags = runCatching { featureFlagsProvider.get() }
+                .getOrDefault(FeatureFlagsModel(googleLoginEnabled = false))
             _uiState.value = LoginUiState(
                 isGoogleLoginEnabled = flags.googleLoginEnabled
             )
@@ -64,7 +71,7 @@ class LoginViewModel @Inject constructor(
                     _uiEvents.emit(LoginUiEvent.NavigateToMain)
                 },
                 onFailure = { exception ->
-                    onLoginSessionError(exception)
+                    onLoginSessionError(mapLoginErrorToStringRes(exception))
                 }
             )
 
@@ -75,19 +82,33 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onLoginSessionError(exception: Throwable) {
+    fun onGoogleLoginClicked(): Boolean {
+        if (networkMonitor.isCurrentlyOnline()) return true
+
         viewModelScope.launch {
             _uiEvents.emit(
-                LoginUiEvent.ShowErrorLogin(
-                    exception.message.toString()
-                )
+                LoginUiEvent.ShowErrorGoogleRegister(R.string.error_auth_network)
             )
+        }
+
+        return false
+    }
+
+    private fun onLoginSessionError(messageRes: Int) {
+        viewModelScope.launch {
+            _uiEvents.emit(LoginUiEvent.ShowErrorLogin(messageRes))
         }
     }
 
     fun onGoogleTokenReceived(idToken: String?) {
         if (idToken.isNullOrBlank()) {
-            emitGoogleError()
+            emitGoogleError(
+                if (networkMonitor.isCurrentlyOnline()) {
+                    R.string.error_auth_generic
+                } else {
+                    R.string.error_auth_network
+                }
+            )
             return
         }
 
@@ -103,20 +124,27 @@ class LoginViewModel @Inject constructor(
                     runCatching { syncNotificationSubscriptionsUseCase() }
                     _uiEvents.emit(LoginUiEvent.NavigateToMain)
                 },
-                onFailure = {
-                    emitGoogleError()
+                onFailure = { throwable ->
+                    emitGoogleError(mapLoginErrorToStringRes(throwable))
                 }
             )
         }
     }
 
-    private fun emitGoogleError() {
+    private fun emitGoogleError(messageRes: Int) {
         viewModelScope.launch {
             _uiEvents.emit(
-                LoginUiEvent.ShowErrorGoogleRegister(
-                    R.string.error_auth_generic
-                )
+                LoginUiEvent.ShowErrorGoogleRegister(messageRes)
             )
+        }
+    }
+
+    private fun mapLoginErrorToStringRes(throwable: Throwable): Int {
+        return when {
+            throwable.isNetworkConnectivityError() -> R.string.error_auth_network
+            throwable is FirebaseAuthInvalidCredentialsException -> R.string.error_auth_invalid_credentials
+            throwable is FirebaseAuthInvalidUserException -> R.string.error_auth_invalid_credentials
+            else -> R.string.error_auth_generic
         }
     }
 }

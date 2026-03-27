@@ -2,6 +2,7 @@ package alejandro.developer.zonaroja.notifications
 
 import alejandro.developer.domain.models.IncomingNotificationModel
 import android.content.Intent
+import com.google.firebase.messaging.RemoteMessage
 
 object NotificationNavigationContract {
 
@@ -69,11 +70,39 @@ object NotificationNavigationContract {
     ): IncomingNotificationModel? {
         if (intent == null) return null
 
-        val body = firstNotBlank(intent, bodyKeys) ?: return null
-        val title = firstNotBlank(intent, titleKeys) ?: fallbackTitle
-        val imageUrl = firstNotBlank(intent, imageKeys)
-        val remoteMessageId = firstNotBlank(intent, messageIdKeys)
-        val receivedAt = firstNotBlank(intent, receivedAtKeys)?.toLongOrNull()
+        val remoteMessage = intent.extras
+            ?.let(::RemoteMessage)
+
+        val body = remoteMessage?.notification?.body
+            ?: remoteMessage?.data?.firstNotNullOfOrNull { (key, value) ->
+                value.takeIf { key in bodyKeys && it.isNotBlank() }
+            }
+            ?: firstNotBlank(intent, bodyKeys)
+            ?: return null
+
+        val title = remoteMessage?.notification?.title
+            ?: remoteMessage?.data?.firstNotNullOfOrNull { (key, value) ->
+                value.takeIf { key in titleKeys && it.isNotBlank() }
+            }
+            ?: firstNotBlank(intent, titleKeys)
+            ?: fallbackTitle
+
+        val imageUrl = remoteMessage?.notification?.imageUrl?.toString()
+            ?: remoteMessage?.data?.firstNotNullOfOrNull { (key, value) ->
+                value.takeIf { key in imageKeys && it.isNotBlank() }
+            }
+            ?: firstNotBlank(intent, imageKeys)
+
+        val remoteMessageId = remoteMessage?.messageId
+            ?: remoteMessage?.data?.firstNotNullOfOrNull { (key, value) ->
+                value.takeIf { key in messageIdKeys && it.isNotBlank() }
+            }
+            ?: firstNotBlank(intent, messageIdKeys)
+
+        val receivedAt = remoteMessage
+            ?.sentTime
+            ?.takeIf { it > 0L }
+            ?: firstNotBlank(intent, receivedAtKeys)?.toLongOrNull()
             ?: System.currentTimeMillis()
 
         clearKeys(intent, titleKeys + bodyKeys + imageKeys + messageIdKeys + receivedAtKeys)
@@ -92,7 +121,11 @@ object NotificationNavigationContract {
         keys: List<String>
     ): String? {
         return keys.firstNotNullOfOrNull { key ->
-            intent.getStringExtra(key)?.takeIf(String::isNotBlank)
+            intent.extras
+                ?.get(key)
+                ?.toString()
+                ?.takeIf(String::isNotBlank)
+                ?: intent.getStringExtra(key)?.takeIf(String::isNotBlank)
         }
     }
 

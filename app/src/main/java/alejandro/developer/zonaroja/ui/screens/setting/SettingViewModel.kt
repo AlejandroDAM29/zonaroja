@@ -1,5 +1,6 @@
 package alejandro.developer.zonaroja.ui.screens.setting
 
+import alejandro.developer.core.network.isNetworkConnectivityError
 import alejandro.developer.domain.models.AppCurrency
 import alejandro.developer.domain.usecase.DeleteCurrentUserUseCase
 import alejandro.developer.domain.usecase.GetCurrentUserEmailUseCase
@@ -12,10 +13,8 @@ import alejandro.developer.domain.usecase.SetNotificationsEnabledUseCase
 import alejandro.developer.domain.usecase.SetSelectedCurrencyUseCase
 import alejandro.developer.domain.usecase.SyncNotificationSubscriptionsUseCase
 import alejandro.developer.zonaroja.R
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,6 +51,8 @@ class SettingViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             observeUserPreferencesUseCase().collect { preferences ->
+                if (_uiState.value.isSessionClosing) return@collect
+
                 _uiState.update {
                     it.copy(
                         email = getCurrentUserEmailUseCase().orEmpty(),
@@ -93,23 +94,26 @@ class SettingViewModel @Inject constructor(
 
     fun onLogoutClicked() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, isSessionClosing = true) }
 
             runCatching { logoutUseCase() }
                 .onSuccess {
                     _uiEvents.emit(
-                        SettingUiEvent.ShowMessage(
-                            messageRes = R.string.logout_snackbar_success,
-                            type = SettingMessageType.SUCCESS
+                        SettingUiEvent.NavigateToLoginLogoutSuccess(
+                            messageRes = R.string.logout_snackbar_success
                         )
                     )
-                    _uiEvents.emit(SettingUiEvent.NavigateToLogin)
                     syncNotificationSubscriptionsAfterNavigation()
                 }
-                .onFailure {
+                .onFailure { throwable ->
+                    _uiState.update { it.copy(isSessionClosing = false) }
                     _uiEvents.emit(
                         SettingUiEvent.ShowMessage(
-                            messageRes = R.string.logout_snackbar_error,
+                            messageRes = if (throwable.isNetworkConnectivityError()) {
+                                R.string.error_auth_network
+                            } else {
+                                R.string.logout_snackbar_error
+                            },
                             type = SettingMessageType.ERROR
                         )
                     )
@@ -120,7 +124,6 @@ class SettingViewModel @Inject constructor(
     }
 
     fun onDeleteAccountConfirmed(password: String? = null) {
-        Log.i("test-100", "El email es: ${_uiState.value.email} y la password es: $password");
         viewModelScope.launch {
             if (_uiState.value.requiresPasswordReauthForDelete && password.isNullOrBlank()) {
                 _uiEvents.emit(SettingUiEvent.RequestDeleteAccountReauthentication)
@@ -156,10 +159,9 @@ class SettingViewModel @Inject constructor(
 
             reauthResult.fold(
                 onSuccess = {
-                    Log.i("test-100", "Entra en opcion 1");
                     deleteCurrentUserUseCase().fold(
                         onSuccess = {
-                            Log.i("test-100", "Entra en opcion 3");
+                            _uiState.update { it.copy(isSessionClosing = true) }
                             runCatching { logoutUseCase() }
                             _uiEvents.emit(
                                 SettingUiEvent.ShowMessage(
@@ -171,7 +173,6 @@ class SettingViewModel @Inject constructor(
                             syncNotificationSubscriptionsAfterNavigation()
                         },
                         onFailure = { throwable ->
-                            Log.i("test-100", "Entra en opcion 4");
                             _uiEvents.emit(
                                 SettingUiEvent.ShowMessage(
                                     messageRes = mapDeleteAccountError(throwable),
@@ -182,7 +183,6 @@ class SettingViewModel @Inject constructor(
                     )
                 },
                 onFailure = { throwable ->
-                    Log.i("test-100", "Entra en opcion 2");
                     _uiEvents.emit(
                         SettingUiEvent.ShowMessage(
                             messageRes = mapDeleteAccountError(throwable),
@@ -203,17 +203,17 @@ class SettingViewModel @Inject constructor(
     }
 
     private fun mapDeleteAccountError(throwable: Throwable): Int {
-        return when (throwable) {
-            is FirebaseAuthRecentLoginRequiredException ->
+        return when {
+            throwable is FirebaseAuthRecentLoginRequiredException ->
                 R.string.settings_delete_account_recent_login_required
 
-            is FirebaseAuthInvalidCredentialsException ->
+            throwable is FirebaseAuthInvalidCredentialsException ->
                 R.string.settings_delete_account_invalid_password
 
-            is IllegalStateException ->
+            throwable is IllegalStateException ->
                 R.string.settings_email_not_available
 
-            is FirebaseNetworkException ->
+            throwable.isNetworkConnectivityError() ->
                 R.string.error_auth_network
 
             else ->

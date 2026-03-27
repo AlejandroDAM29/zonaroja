@@ -2,6 +2,7 @@ package alejandro.developer.zonaroja.ui.common.globalApp
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.withFrameNanos
 
 @Composable
 fun AppUiEffectHandler(
@@ -29,6 +30,7 @@ fun AppUiEffectHandler(
                 }
                 is AppUiEffect.NavigateToLoginLogoutSuccess -> {
                     navigateToLoginLogoutSuccess()
+                    withFrameNanos { }
                     appUiController.showSnackbarSuccess(effect.message)
                 }
             }

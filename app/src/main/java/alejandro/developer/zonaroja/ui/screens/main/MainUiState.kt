@@ -9,7 +9,9 @@ import com.google.android.gms.maps.model.LatLng
 data class MainUiState(
     val currentText: String = "",
     val isLoading: Boolean = false,
+    val isMapOffline: Boolean = false,
     val isStatsLoading: Boolean = false,
+    val isStatsOffline: Boolean = false,
     val dangerZonesPointModels: List<DangerZoneModel> = emptyList(),
     val economyStats: EconomyStatsModel? = null,
     val societyStats: SocietyStatsModel? = null,
