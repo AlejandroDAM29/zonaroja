@@ -2,6 +2,7 @@ package alejandro.developer.zonaroja.ui.screens.main
 
 import alejandro.developer.core.network.NetworkMonitor
 import alejandro.developer.core.network.isNetworkConnectivityError
+import alejandro.developer.core.runtime.AppDataMode
 import alejandro.developer.domain.models.DangerZoneModel
 import alejandro.developer.domain.models.MapBounds
 import alejandro.developer.domain.repositories.LocationSearchRepository
@@ -36,13 +37,14 @@ class MainViewModel @Inject constructor(
     private val saveDangerZoneUseCase: SaveDangerZoneUseCase,
     private val getSavedZonesUseCase: GetSavedZonesUseCase,
     private val deleteDangerZoneUseCase: DeleteDangerZoneUseCase,
-    private val networkMonitor: NetworkMonitor
+    private val networkMonitor: NetworkMonitor,
+    private val appDataMode: AppDataMode
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         MainUiState(
             isLoading = false,
-            isMapOffline = !networkMonitor.isCurrentlyOnline()
+            isMapOffline = !canLoadDangerZoneData()
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -174,6 +176,11 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeConnectivity() {
+        if (appDataMode.usesModsData) {
+            _uiState.update { it.copy(isMapOffline = false) }
+            return
+        }
+
         viewModelScope.launch {
             networkMonitor.isOnline
                 .distinctUntilChanged()
@@ -208,7 +215,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             val zone = _uiState.value.selectedZone ?: return@launch
 
-            if (!networkMonitor.isCurrentlyOnline()) {
+            if (!canLoadDangerZoneData()) {
                 _uiState.update {
                     it.copy(
                         isStatsLoading = false,
@@ -266,7 +273,7 @@ class MainViewModel @Inject constructor(
                 .debounce(500)
                 .distinctUntilChanged()
                 .collectLatest { bounds ->
-                    if (!networkMonitor.isCurrentlyOnline()) {
+                    if (!canLoadDangerZoneData()) {
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
@@ -318,5 +325,9 @@ class MainViewModel @Inject constructor(
 
     fun onBoundsChanged(bounds: MapBounds) {
         boundsFlow.tryEmit(bounds)
+    }
+
+    private fun canLoadDangerZoneData(): Boolean {
+        return appDataMode.usesModsData || networkMonitor.isCurrentlyOnline()
     }
 }

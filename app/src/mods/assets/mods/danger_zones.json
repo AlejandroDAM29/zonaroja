@@ -1,0 +1,47 @@
+[
+  {
+    "id": 101,
+    "nombre": "Tres Barrios-Amate",
+    "ciudad": "Sevilla",
+    "nivel_riesgo": "HIGH",
+    "coordenadas": [
+      { "lat": 37.3776, "lng": -5.9455, "order": 0 },
+      { "lat": 37.3802, "lng": -5.9395, "order": 1 },
+      { "lat": 37.3748, "lng": -5.9348, "order": 2 },
+      { "lat": 37.3722, "lng": -5.9410, "order": 3 }
+    ],
+    "riesgo_pobreza": 34.8,
+    "tasa_paro": 29.4,
+    "precio_metro_cuadrado": 1120
+  },
+  {
+    "id": 102,
+    "nombre": "Los Pajaritos",
+    "ciudad": "Sevilla",
+    "nivel_riesgo": "HIGH",
+    "coordenadas": [
+      { "lat": 37.3863, "lng": -5.9555, "order": 0 },
+      { "lat": 37.3893, "lng": -5.9490, "order": 1 },
+      { "lat": 37.3842, "lng": -5.9441, "order": 2 },
+      { "lat": 37.3814, "lng": -5.9504, "order": 3 }
+    ],
+    "riesgo_pobreza": 31.2,
+    "tasa_paro": 27.8,
+    "precio_metro_cuadrado": 1185
+  },
+  {
+    "id": 103,
+    "nombre": "Poligono Sur",
+    "ciudad": "Sevilla",
+    "nivel_riesgo": "MEDIUM",
+    "coordenadas": [
+      { "lat": 37.3565, "lng": -5.9774, "order": 0 },
+      { "lat": 37.3612, "lng": -5.9694, "order": 1 },
+      { "lat": 37.3558, "lng": -5.9626, "order": 2 },
+      { "lat": 37.3511, "lng": -5.9701, "order": 3 }
+    ],
+    "riesgo_pobreza": 26.9,
+    "tasa_paro": 22.3,
+    "precio_metro_cuadrado": 1350
+  }
+]

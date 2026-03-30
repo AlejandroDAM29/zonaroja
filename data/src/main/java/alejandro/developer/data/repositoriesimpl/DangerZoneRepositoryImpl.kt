@@ -1,12 +1,10 @@
 package alejandro.developer.data.repositoriesimpl
 
-import alejandro.developer.core.network.NetworkMonitor
-import alejandro.developer.core.network.requireInternet
+import alejandro.developer.data.datasources.DangerZoneDataSource
 import alejandro.developer.data.local.datasources.DangerZoneLocalDataSource
 import alejandro.developer.data.mappers.toDomain
 import alejandro.developer.data.mappers.toEntity
 import alejandro.developer.data.mappers.toGeoEntities
-import alejandro.developer.data.remote.datasources.DangerZoneRemoteDataSource
 import alejandro.developer.data.session.toUserScopeKey
 import alejandro.developer.domain.models.DangerZoneComparisonModel
 import alejandro.developer.domain.models.DangerZoneModel
@@ -23,20 +21,17 @@ import kotlin.collections.map
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DangerZoneRepositoryImpl @Inject constructor(
-    private val remote: DangerZoneRemoteDataSource,
+    private val dataSource: DangerZoneDataSource,
     private val local: DangerZoneLocalDataSource,
-    private val authRepository: AuthRepository,
-    private val networkMonitor: NetworkMonitor
+    private val authRepository: AuthRepository
 ) : DangerZoneRepository {
 
     override suspend fun getDangerZonesForComparisonRemote(): List<DangerZoneComparisonModel> {
-        networkMonitor.requireInternet()
-        return remote.getDangerZonesForComparison().map { it.toDomain() }
+        return dataSource.getDangerZonesForComparison().map { it.toDomain() }
     }
 
     override suspend fun getDangerZonesRemote(bounds: MapBounds): List<DangerZoneModel> {
-        networkMonitor.requireInternet()
-        return remote.getDangerZones(
+        return dataSource.getDangerZones(
             bounds
         ).map { it.toDomain() }
     }
@@ -54,8 +49,7 @@ class DangerZoneRepositoryImpl @Inject constructor(
     override suspend fun getGraphicsStatsRemote(
         zoneId: Int
     ): StatsGraphicsModel {
-        networkMonitor.requireInternet()
-        return remote.getGraphicsStats(zoneId).toDomain()
+        return dataSource.getGraphicsStats(zoneId).toDomain()
     }
 
     override fun getSavedZoneIds(): Flow<List<Int>> {

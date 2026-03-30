@@ -6,5 +6,7 @@ interface ForgotPasswordUiEvent {
     data class ShowErrorResendPassword(
         @StringRes val messageRes: Int
     ) : ForgotPasswordUiEvent
-    data object ShowSuccessResendPassword : ForgotPasswordUiEvent
+    data class ShowSuccessResendPassword(
+        @StringRes val messageRes: Int
+    ) : ForgotPasswordUiEvent
 }

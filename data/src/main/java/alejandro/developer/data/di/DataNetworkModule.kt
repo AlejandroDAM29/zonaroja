@@ -26,6 +26,13 @@ object DataNetworkModule {
 
     @Provides
     @Singleton
+    fun provideMoshi(): Moshi =
+        Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+
+    @Provides
+    @Singleton
     fun provideOkHttp(
         authInterceptor: AuthInterceptor,
         authRetryInterceptor: AuthRetryInterceptor
@@ -39,14 +46,13 @@ object DataNetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(
-        okHttpClient: OkHttpClient
+        okHttpClient: OkHttpClient,
+        moshi: Moshi
     ): Retrofit =
         Retrofit.Builder()
             .baseUrl("https://alejandroexpdeveloper.com/zona_roja_app_api/")
             .client(okHttpClient)
-            .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder()
-                .add(KotlinJsonAdapterFactory())
-                .build()))
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
 
     @Provides

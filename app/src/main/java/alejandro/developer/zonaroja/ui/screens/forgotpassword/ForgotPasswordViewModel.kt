@@ -1,6 +1,7 @@
 package alejandro.developer.zonaroja.ui.screens.forgotpassword
 
 import alejandro.developer.core.network.isNetworkConnectivityError
+import alejandro.developer.core.runtime.AppDataMode
 import alejandro.developer.domain.usecase.SendPasswordResetEmailUseCase
 import alejandro.developer.zonaroja.R
 import androidx.lifecycle.ViewModel
@@ -17,7 +18,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ForgotPasswordViewModel @Inject constructor(
-    private val sendPasswordResetEmailUseCase: SendPasswordResetEmailUseCase
+    private val sendPasswordResetEmailUseCase: SendPasswordResetEmailUseCase,
+    private val appDataMode: AppDataMode
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ForgotPasswordUiState())
@@ -36,7 +38,15 @@ class ForgotPasswordViewModel @Inject constructor(
 
             sendPasswordResetEmailUseCase(email).fold(
                 onSuccess = {
-                    _uiEvents.emit(ForgotPasswordUiEvent.ShowSuccessResendPassword)
+                    _uiEvents.emit(
+                        ForgotPasswordUiEvent.ShowSuccessResendPassword(
+                            messageRes = if (appDataMode.usesModsData) {
+                                R.string.mods_password_reset_disabled_message
+                            } else {
+                                R.string.resend_password_success_message
+                            }
+                        )
+                    )
                 },
                 onFailure = { throwable ->
                     _uiEvents.emit(
@@ -56,6 +66,4 @@ class ForgotPasswordViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = false) }
         }
     }
-
-
 }

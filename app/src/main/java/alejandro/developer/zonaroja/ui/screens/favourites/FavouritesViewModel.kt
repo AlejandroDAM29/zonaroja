@@ -2,6 +2,7 @@ package alejandro.developer.zonaroja.ui.screens.favourites
 
 import alejandro.developer.core.network.NetworkMonitor
 import alejandro.developer.core.network.isNetworkConnectivityError
+import alejandro.developer.core.runtime.AppDataMode
 import alejandro.developer.domain.models.DangerZoneModel
 import alejandro.developer.domain.usecase.DeleteDangerZoneUseCase
 import alejandro.developer.domain.usecase.GetGraphicsStatsUseCase
@@ -24,7 +25,8 @@ class FavouritesViewModel @Inject constructor(
     private val getSavedDangerZonesUseCase: GetSavedDangerZonesUseCase,
     private val deleteDangerZoneUseCase: DeleteDangerZoneUseCase,
     private val getGraphicsStatsUseCase: GetGraphicsStatsUseCase,
-    private val networkMonitor: NetworkMonitor
+    private val networkMonitor: NetworkMonitor,
+    private val appDataMode: AppDataMode
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FavouritesUiState())
@@ -61,6 +63,8 @@ class FavouritesViewModel @Inject constructor(
     }
 
     private fun observeConnectivity() {
+        if (appDataMode.usesModsData) return
+
         viewModelScope.launch {
             networkMonitor.isOnline
                 .distinctUntilChanged()
@@ -116,7 +120,7 @@ class FavouritesViewModel @Inject constructor(
 
     private fun loadStats(zone: DangerZoneModel) {
         viewModelScope.launch {
-            if (!networkMonitor.isCurrentlyOnline()) {
+            if (!canLoadDangerZoneData()) {
                 _uiState.update {
                     it.copy(
                         isStatsLoading = false,
@@ -178,5 +182,9 @@ class FavouritesViewModel @Inject constructor(
                 demographyStats = emptyList()
             )
         }
+    }
+
+    private fun canLoadDangerZoneData(): Boolean {
+        return appDataMode.usesModsData || networkMonitor.isCurrentlyOnline()
     }
 }

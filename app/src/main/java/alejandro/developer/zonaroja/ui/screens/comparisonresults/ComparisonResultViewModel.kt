@@ -2,6 +2,7 @@ package alejandro.developer.zonaroja.ui.screens.comparisonresults
 
 import alejandro.developer.core.network.NetworkMonitor
 import alejandro.developer.core.network.isNetworkConnectivityError
+import alejandro.developer.core.runtime.AppDataMode
 import alejandro.developer.domain.usecase.GetDangerZonesComparisonUseCase
 import alejandro.developer.zonaroja.ui.mappers.buildZoneComparisonCharts
 import androidx.lifecycle.ViewModel
@@ -19,13 +20,14 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ComparisonResultViewModel @Inject constructor(
     private val getDangerZonesComparisonUseCase: GetDangerZonesComparisonUseCase,
-    private val networkMonitor: NetworkMonitor
+    private val networkMonitor: NetworkMonitor,
+    private val appDataMode: AppDataMode
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         ComparisonResultUiState(
-            isLoading = networkMonitor.isCurrentlyOnline(),
-            isOffline = !networkMonitor.isCurrentlyOnline()
+            isLoading = canLoadDangerZoneData(),
+            isOffline = !canLoadDangerZoneData()
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -37,7 +39,9 @@ class ComparisonResultViewModel @Inject constructor(
     private var requestedComparisonIds: Pair<Int, Int>? = null
 
     init {
-        observeConnectivity()
+        if (!appDataMode.usesModsData) {
+            observeConnectivity()
+        }
     }
 
     private fun observeConnectivity() {
@@ -78,7 +82,7 @@ class ComparisonResultViewModel @Inject constructor(
             return
         }
 
-        if (!networkMonitor.isCurrentlyOnline()) {
+        if (!canLoadDangerZoneData()) {
             _uiState.update {
                 it.copy(
                     isLoading = false,
@@ -155,5 +159,9 @@ class ComparisonResultViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    private fun canLoadDangerZoneData(): Boolean {
+        return appDataMode.usesModsData || networkMonitor.isCurrentlyOnline()
     }
 }

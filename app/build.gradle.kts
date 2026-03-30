@@ -34,11 +34,24 @@ android {
             )
         }
     }
+    flavorDimensions += "dataMode"
+    productFlavors {
+        create("backend") {
+            dimension = "dataMode"
+            buildConfigField("boolean", "USE_MODS", "false")
+        }
+        create("mods") {
+            dimension = "dataMode"
+            versionNameSuffix = "-mods"
+            buildConfigField("boolean", "USE_MODS", "true")
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }

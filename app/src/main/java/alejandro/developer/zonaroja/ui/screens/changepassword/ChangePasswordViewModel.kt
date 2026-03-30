@@ -1,6 +1,7 @@
 package alejandro.developer.zonaroja.ui.screens.changepassword
 
 import alejandro.developer.core.network.isNetworkConnectivityError
+import alejandro.developer.core.runtime.AppDataMode
 import alejandro.developer.domain.usecase.GetCurrentUserEmailUseCase
 import alejandro.developer.domain.usecase.SendPasswordResetEmailUseCase
 import alejandro.developer.zonaroja.R
@@ -19,7 +20,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ChangePasswordViewModel @Inject constructor(
     getCurrentUserEmailUseCase: GetCurrentUserEmailUseCase,
-    private val sendPasswordResetEmailUseCase: SendPasswordResetEmailUseCase
+    private val sendPasswordResetEmailUseCase: SendPasswordResetEmailUseCase,
+    private val appDataMode: AppDataMode
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -53,7 +55,11 @@ class ChangePasswordViewModel @Inject constructor(
                 onSuccess = {
                     _uiEvents.emit(
                         ChangePasswordUiEvent.ShowMessage(
-                            messageRes = R.string.resend_password_success_message,
+                            messageRes = if (appDataMode.usesModsData) {
+                                R.string.mods_password_reset_disabled_message
+                            } else {
+                                R.string.resend_password_success_message
+                            },
                             type = SettingMessageType.SUCCESS
                         )
                     )

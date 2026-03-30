@@ -1,0 +1,71 @@
+[
+  {
+    "zoneId": 101,
+    "stats": {
+      "economy": {
+        "rentaBarrio": 14700,
+        "rentaCiudad": 22100,
+        "precioBarrio": 1120,
+        "precioCiudad": 2290
+      },
+      "society": {
+        "paroBarrio": 29.4,
+        "paroCiudad": 14.1,
+        "pobrezaBarrio": 34.8,
+        "pobrezaCiudad": 18.5
+      },
+      "demography": [
+        { "name": "Española", "percentage": 71.0 },
+        { "name": "Marroquí", "percentage": 11.0 },
+        { "name": "Latinoamericana", "percentage": 10.0 },
+        { "name": "Rumana", "percentage": 8.0 }
+      ]
+    }
+  },
+  {
+    "zoneId": 102,
+    "stats": {
+      "economy": {
+        "rentaBarrio": 15350,
+        "rentaCiudad": 22100,
+        "precioBarrio": 1185,
+        "precioCiudad": 2290
+      },
+      "society": {
+        "paroBarrio": 27.8,
+        "paroCiudad": 14.1,
+        "pobrezaBarrio": 31.2,
+        "pobrezaCiudad": 18.5
+      },
+      "demography": [
+        { "name": "Española", "percentage": 68.0 },
+        { "name": "Marroquí", "percentage": 13.0 },
+        { "name": "Latinoamericana", "percentage": 12.0 },
+        { "name": "Rumana", "percentage": 7.0 }
+      ]
+    }
+  },
+  {
+    "zoneId": 103,
+    "stats": {
+      "economy": {
+        "rentaBarrio": 16600,
+        "rentaCiudad": 22100,
+        "precioBarrio": 1350,
+        "precioCiudad": 2290
+      },
+      "society": {
+        "paroBarrio": 22.3,
+        "paroCiudad": 14.1,
+        "pobrezaBarrio": 26.9,
+        "pobrezaCiudad": 18.5
+      },
+      "demography": [
+        { "name": "Española", "percentage": 75.0 },
+        { "name": "Latinoamericana", "percentage": 9.0 },
+        { "name": "Marroquí", "percentage": 8.0 },
+        { "name": "Rumana", "percentage": 8.0 }
+      ]
+    }
+  }
+]

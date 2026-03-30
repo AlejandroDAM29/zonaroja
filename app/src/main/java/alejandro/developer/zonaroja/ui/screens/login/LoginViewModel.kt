@@ -1,6 +1,7 @@
 package alejandro.developer.zonaroja.ui.screens.login
 
 import alejandro.developer.core.network.NetworkMonitor
+import alejandro.developer.core.runtime.AppDataMode
 import alejandro.developer.data.providers.FeatureFlagsProvider
 import alejandro.developer.domain.models.FeatureFlagsModel
 import alejandro.developer.domain.usecase.LoginWithEmailUseCase
@@ -27,7 +28,8 @@ class LoginViewModel @Inject constructor(
     private val loginWithGoogle: LoginWithGoogleUseCase,
     private val featureFlagsProvider: FeatureFlagsProvider,
     private val syncNotificationSubscriptionsUseCase: SyncNotificationSubscriptionsUseCase,
-    private val networkMonitor: NetworkMonitor
+    private val networkMonitor: NetworkMonitor,
+    private val appDataMode: AppDataMode
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -41,9 +43,12 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             val flags = runCatching { featureFlagsProvider.get() }
                 .getOrDefault(FeatureFlagsModel(googleLoginEnabled = false))
-            _uiState.value = LoginUiState(
-                isGoogleLoginEnabled = flags.googleLoginEnabled
-            )
+            _uiState.update {
+                it.copy(
+                    isGoogleLoginEnabled = !appDataMode.usesModsData && flags.googleLoginEnabled,
+                    isValidationBypassed = appDataMode.usesModsData
+                )
+            }
         }
     }
 

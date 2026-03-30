@@ -54,7 +54,7 @@ fun ForgotPasswordScreen(
         viewModel.uiEvents.collect { event ->
             when (event) {
                 is ForgotPasswordUiEvent.ShowSuccessResendPassword ->
-                    appUiEvents.showSnackbarSuccess(currentContext.getString(R.string.resend_password_success_message))
+                    appUiEvents.showSnackbarSuccess(currentContext.getString(event.messageRes))
 
                 is ForgotPasswordUiEvent.ShowErrorResendPassword -> {
                     appUiEvents.showSnackbarError(currentContext.getString(event.messageRes))
