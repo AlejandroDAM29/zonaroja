@@ -1,6 +1,7 @@
 package alejandro.developer.zonaroja.ui.screens.register
 
 import alejandro.developer.core.network.isNetworkConnectivityError
+import alejandro.developer.core.runtime.AppDataMode
 import alejandro.developer.domain.usecase.RegisterWithEmailUseCase
 import alejandro.developer.domain.usecase.SyncNotificationSubscriptionsUseCase
 import alejandro.developer.zonaroja.R
@@ -21,10 +22,16 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val registerWithEmail: RegisterWithEmailUseCase,
-    private val syncNotificationSubscriptionsUseCase: SyncNotificationSubscriptionsUseCase
+    private val syncNotificationSubscriptionsUseCase: SyncNotificationSubscriptionsUseCase,
+    appDataMode: AppDataMode
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(RegisterUiState(isLoading = false))
+    private val _uiState = MutableStateFlow(
+        RegisterUiState(
+            isLoading = false,
+            isValidationBypassed = appDataMode.usesModsData
+        )
+    )
     val uiState = _uiState.asStateFlow()
 
     private val _uiEvents = MutableSharedFlow<RegisterUiEvent>()

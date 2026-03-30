@@ -2,6 +2,7 @@ package alejandro.developer.zonaroja.ui.screens.comparisonselector
 
 import alejandro.developer.core.network.NetworkMonitor
 import alejandro.developer.core.network.isNetworkConnectivityError
+import alejandro.developer.core.runtime.AppDataMode
 import alejandro.developer.domain.usecase.GetDangerZonesComparisonUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,13 +19,14 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ComparisonSelectorViewModel @Inject constructor(
     private val getDangerZonesComparisonUseCase: GetDangerZonesComparisonUseCase,
-    private val networkMonitor: NetworkMonitor
+    private val networkMonitor: NetworkMonitor,
+    private val appDataMode: AppDataMode
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         ComparisonSelectorUiState(
-            isLoading = networkMonitor.isCurrentlyOnline(),
-            isOffline = !networkMonitor.isCurrentlyOnline()
+            isLoading = canLoadDangerZoneData(),
+            isOffline = !canLoadDangerZoneData()
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -33,7 +35,11 @@ class ComparisonSelectorViewModel @Inject constructor(
     val uiEvents = _uiEvents.asSharedFlow()
 
     init {
-        observeConnectivity()
+        if (appDataMode.usesModsData) {
+            loadZones()
+        } else {
+            observeConnectivity()
+        }
     }
 
     private fun observeConnectivity() {
@@ -58,7 +64,7 @@ class ComparisonSelectorViewModel @Inject constructor(
     }
 
     private fun loadZones() {
-        if (!networkMonitor.isCurrentlyOnline()) {
+        if (!canLoadDangerZoneData()) {
             _uiState.update {
                 it.copy(
                     isLoading = false,
@@ -150,5 +156,9 @@ class ComparisonSelectorViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    private fun canLoadDangerZoneData(): Boolean {
+        return appDataMode.usesModsData || networkMonitor.isCurrentlyOnline()
     }
 }

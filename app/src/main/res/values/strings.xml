@@ -45,6 +45,7 @@
     <string name="forgot_password_title">OLVIDASTE TU CONTRASEÑA</string>
     <string name="email_forgot_password">Correo electrónico</string>
     <string name="resend_password_success_message">¡Mensaje enviado! Si el email está registrado, recibirás un correo para restablecer tu contraseña. Revisa la carpeta de spam</string>
+    <string name="mods_password_reset_disabled_message">Modo mods activo: no se enviará ningún correo de recuperación.</string>
     <string name="resend_email_error_message">Error al enviar email</string>
     <string name="resend_email_description">Ingresa tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.</string>
     <string name="remember_password">¿Recordaste tu contraseña?</string>

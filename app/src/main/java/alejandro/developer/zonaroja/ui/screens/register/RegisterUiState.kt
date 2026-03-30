@@ -6,16 +6,22 @@ data class RegisterUiState(
     val isLoading: Boolean,
     val email: String = "",
     val password: String = "",
-    val confirmPassword: String = ""
+    val confirmPassword: String = "",
+    val isValidationBypassed: Boolean = false
 ) {
     val canRegister: Boolean
-        get() = email.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        get() = if (isValidationBypassed) {
+            true
+        } else {
+            email.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
                 && password.length >= 6
                 && password == confirmPassword
+        }
 
     val showEmailErrorFormat: Boolean
-        get() = !Patterns.EMAIL_ADDRESS.matcher(email).matches()
-                && email.isNotBlank()
+        get() = !isValidationBypassed &&
+            !Patterns.EMAIL_ADDRESS.matcher(email).matches() &&
+            email.isNotBlank()
     val showPasswordsDoNotMatchMessageText: Boolean
-        get() = password != confirmPassword
+        get() = !isValidationBypassed && password != confirmPassword
 }

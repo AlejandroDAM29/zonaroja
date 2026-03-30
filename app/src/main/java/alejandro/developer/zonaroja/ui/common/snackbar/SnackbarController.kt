@@ -2,23 +2,28 @@ import alejandro.developer.zonaroja.ui.common.snackbar.AppSnackbarModel
 import alejandro.developer.zonaroja.ui.common.snackbar.SnackbarType
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class SnackbarController(
     private val snackbarHostState: SnackbarHostState
 ) {
 
     var currentSnackbar: ((AppSnackbarModel) -> Unit)? = null
+    private val snackbarMutex = Mutex()
 
     private suspend fun show(snackbar: AppSnackbarModel) {
-        currentSnackbar?.invoke(snackbar)
+        snackbarMutex.withLock {
+            currentSnackbar?.invoke(snackbar)
 
-        val result = snackbarHostState.showSnackbar(
-            message = snackbar.message,
-            actionLabel = snackbar.actionLabel
-        )
+            val result = snackbarHostState.showSnackbar(
+                message = snackbar.message,
+                actionLabel = snackbar.actionLabel
+            )
 
-        if (result == SnackbarResult.ActionPerformed) {
-            snackbar.onAction?.invoke()
+            if (result == SnackbarResult.ActionPerformed) {
+                snackbar.onAction?.invoke()
+            }
         }
     }
 

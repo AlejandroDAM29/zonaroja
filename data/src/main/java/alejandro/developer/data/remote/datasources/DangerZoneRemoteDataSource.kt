@@ -1,5 +1,8 @@
 package alejandro.developer.data.remote.datasources
 
+import alejandro.developer.core.network.NetworkMonitor
+import alejandro.developer.core.network.requireInternet
+import alejandro.developer.data.datasources.DangerZoneDataSource
 import alejandro.developer.data.remote.apis.DangerZoneApi
 import alejandro.developer.data.remote.dto.DangerZoneComparisonDto
 import alejandro.developer.data.remote.dto.DangerZoneDto
@@ -8,15 +11,17 @@ import alejandro.developer.domain.models.MapBounds
 import jakarta.inject.Inject
 
 class DangerZoneRemoteDataSource @Inject constructor(
-    private val api: DangerZoneApi
-) {
+    private val api: DangerZoneApi,
+    private val networkMonitor: NetworkMonitor
+) : DangerZoneDataSource {
 
-    suspend fun getDangerZonesForComparison(): List<DangerZoneComparisonDto> {
+    override suspend fun getDangerZonesForComparison(): List<DangerZoneComparisonDto> {
+        networkMonitor.requireInternet()
         return api.getDangerZonesForComparison()
     }
 
-    suspend fun getDangerZones(bounds: MapBounds): List<DangerZoneDto> {
-
+    override suspend fun getDangerZones(bounds: MapBounds): List<DangerZoneDto> {
+        networkMonitor.requireInternet()
         return api.getDangerZones(
             bounds.minLat,
             bounds.maxLat,
@@ -25,10 +30,10 @@ class DangerZoneRemoteDataSource @Inject constructor(
         )
     }
 
-    suspend fun getGraphicsStats(
+    override suspend fun getGraphicsStats(
         zoneId: Int
     ): StatsGraphicsDto {
-
+        networkMonitor.requireInternet()
         return api.getGraphicsStats(zoneId)
     }
 }
