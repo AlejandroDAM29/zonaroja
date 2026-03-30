@@ -1,4 +1,4 @@
-package alejandro.developer.zonaroja.ui.screens.notifications
+package alejandro.developer.zonaroja.ui.screens.notificationdetail
 
 import alejandro.developer.domain.usecase.MarkNotificationAsReadUseCase
 import alejandro.developer.domain.usecase.ObserveNotificationByIdUseCase

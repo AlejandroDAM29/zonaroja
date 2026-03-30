@@ -1,8 +1,9 @@
-package alejandro.developer.zonaroja.ui.screens.notifications
+package alejandro.developer.zonaroja.ui.screens.notificationdetail
 
 import alejandro.developer.domain.models.AppNotificationModel
 import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.globalApp.BaseScreen
+import alejandro.developer.zonaroja.ui.screens.notifications.formatNotificationDateTime
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
@@ -10,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -217,7 +218,7 @@ private fun DetailMetaRow(
             containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
         )
     ) {
-        androidx.compose.foundation.layout.Row(
+        Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
