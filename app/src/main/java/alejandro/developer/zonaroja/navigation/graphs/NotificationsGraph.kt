@@ -2,7 +2,7 @@ package alejandro.developer.zonaroja.navigation.graphs
 
 import alejandro.developer.zonaroja.navigation.NotificationDetail
 import alejandro.developer.zonaroja.navigation.Notifications
-import alejandro.developer.zonaroja.ui.screens.notifications.NotificationDetailScreen
+import alejandro.developer.zonaroja.ui.screens.notificationdetail.NotificationDetailScreen
 import alejandro.developer.zonaroja.ui.screens.notifications.NotificationsScreen
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
