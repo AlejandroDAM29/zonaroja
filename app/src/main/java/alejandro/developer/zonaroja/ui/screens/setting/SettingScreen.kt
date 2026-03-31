@@ -73,6 +73,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -227,7 +228,7 @@ fun SettingScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SettingsContent(
+internal fun SettingsContent(
     uiState: SettingUiState,
     hasNotificationPermission: Boolean,
     showDeleteDialog: Boolean,
@@ -396,7 +397,8 @@ private fun SettingsContent(
                     },
                     checked = uiState.notificationsEnabled && hasNotificationPermission,
                     onCheckedChange = onNotificationsChanged,
-                    switchColors = switchColors
+                    switchColors = switchColors,
+                    switchTestTag = "settings_notifications_switch"
                 )
 
                 SettingsToggleRow(
@@ -409,7 +411,8 @@ private fun SettingsContent(
                     },
                     checked = uiState.darkThemeEnabled,
                     onCheckedChange = onChangeTheme,
-                    switchColors = switchColors
+                    switchColors = switchColors,
+                    switchTestTag = "settings_theme_switch"
                 )
 
                 SettingsNavigationRow(
@@ -417,7 +420,8 @@ private fun SettingsContent(
                     title = stringResource(R.string.settings_currency),
                     subtitle = uiState.selectedCurrency.displayName,
                     leadingBadge = uiState.selectedCurrency.symbol,
-                    onClick = onOpenCurrencySelector
+                    onClick = onOpenCurrencySelector,
+                    rowTestTag = "settings_currency_row"
                 )
 
                 SettingsNavigationRow(
@@ -537,6 +541,7 @@ private fun SettingsContent(
                 AppCurrency.entries.forEach { currency ->
                     Card(
                         modifier = Modifier
+                            .testTag("settings_currency_option_${currency.code}")
                             .fillMaxWidth()
                             .clickable { onCurrencySelected(currency) },
                         shape = RoundedCornerShape(18.dp),
@@ -593,7 +598,8 @@ private fun SettingsToggleRow(
     subtitle: String?,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    switchColors: SwitchColors
+    switchColors: SwitchColors,
+    switchTestTag: String
 ) {
     Row(
         modifier = Modifier
@@ -622,7 +628,8 @@ private fun SettingsToggleRow(
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
-            colors = switchColors
+            colors = switchColors,
+            modifier = Modifier.testTag(switchTestTag)
         )
     }
 }
@@ -633,10 +640,18 @@ private fun SettingsNavigationRow(
     title: String,
     subtitle: String?,
     onClick: () -> Unit,
-    leadingBadge: String? = null
+    leadingBadge: String? = null,
+    rowTestTag: String? = null
 ) {
     Row(
         modifier = Modifier
+            .then(
+                if (rowTestTag != null) {
+                    Modifier.testTag(rowTestTag)
+                } else {
+                    Modifier
+                }
+            )
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 14.dp),
