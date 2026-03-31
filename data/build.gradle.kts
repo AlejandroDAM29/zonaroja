@@ -16,6 +16,9 @@ android {
     defaultConfig {
         minSdk = 24
     }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -47,6 +50,11 @@ dependencies {
 
     //Testing
     testImplementation(libs.junit)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.turbine)
 
     //Room
     implementation(libs.androidx.room.runtime)
