@@ -1,6 +1,7 @@
 package alejandro.developer.data.repositoriesimpl
 
 import alejandro.developer.data.session.toUserScopeKey
+import alejandro.developer.data.subscriptions.NotificationSubscriptionManager
 import alejandro.developer.domain.models.AppCurrency
 import alejandro.developer.domain.models.UserPreferencesModel
 import alejandro.developer.domain.repositories.AuthRepository
@@ -12,7 +13,6 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
@@ -21,10 +21,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.tasks.await
 
 private const val SETTINGS_DATASTORE_NAME = "user_settings"
-private const val FCM_GENERAL_TOPIC = "zonaroja_general"
 
 private val Context.userSettingsDataStore: DataStore<Preferences> by preferencesDataStore(
     name = SETTINGS_DATASTORE_NAME
@@ -34,7 +32,7 @@ private val Context.userSettingsDataStore: DataStore<Preferences> by preferences
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserSettingsRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val firebaseMessaging: FirebaseMessaging,
+    private val notificationSubscriptionManager: NotificationSubscriptionManager,
     private val authRepository: AuthRepository
 ) : UserSettingsRepository {
 
@@ -84,9 +82,9 @@ class UserSettingsRepositoryImpl @Inject constructor(
 
         runCatching {
             if (notificationsEnabled) {
-                firebaseMessaging.subscribeToTopic(FCM_GENERAL_TOPIC).await()
+                notificationSubscriptionManager.subscribeToGeneralTopic()
             } else {
-                firebaseMessaging.unsubscribeFromTopic(FCM_GENERAL_TOPIC).await()
+                notificationSubscriptionManager.unsubscribeFromGeneralTopic()
             }
         }
     }

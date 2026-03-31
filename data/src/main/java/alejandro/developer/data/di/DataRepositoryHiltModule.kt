@@ -11,6 +11,8 @@ import alejandro.developer.data.repositoriesimpl.GraphicsRepositoryImpl
 import alejandro.developer.data.repositoriesimpl.ModsAuthRepositoryImpl
 import alejandro.developer.data.repositoriesimpl.NotificationRepositoryImpl
 import alejandro.developer.data.repositoriesimpl.UserSettingsRepositoryImpl
+import alejandro.developer.data.subscriptions.FirebaseNotificationSubscriptionManager
+import alejandro.developer.data.subscriptions.NotificationSubscriptionManager
 import alejandro.developer.domain.repositories.AuthRepository
 import alejandro.developer.domain.repositories.FeatureFlagsRepository
 import alejandro.developer.domain.repositories.DangerZoneRepository
@@ -55,6 +57,12 @@ abstract class DataRepositoryHiltModule {
     abstract fun bindUserSettingsRepository(
         impl: UserSettingsRepositoryImpl
     ): UserSettingsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationSubscriptionManager(
+        impl: FirebaseNotificationSubscriptionManager
+    ): NotificationSubscriptionManager
 
     companion object {
         @Provides
