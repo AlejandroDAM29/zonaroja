@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,9 +25,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -49,6 +50,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -204,6 +207,27 @@ private fun ZoneSelectorDropdown(
     onZoneSelected: (Int?) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    var searchQuery by remember(
+        selectedZone?.id,
+        selectedZone?.zoneName,
+        selectedZone?.city
+    ) {
+        mutableStateOf(selectedZone.toDropdownLabel())
+    }
+    val filteredOptions = remember(options, searchQuery) {
+        val normalizedQuery = searchQuery.trim()
+        if (normalizedQuery.isBlank()) {
+            options
+        } else {
+            options.filter { zone ->
+                zone.zoneName.contains(normalizedQuery, ignoreCase = true) ||
+                    zone.city.contains(normalizedQuery, ignoreCase = true) ||
+                    zone.toDropdownLabel().contains(normalizedQuery, ignoreCase = true)
+            }
+        }
+    }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -217,15 +241,23 @@ private fun ZoneSelectorDropdown(
 
         ExposedDropdownMenuBox(
             expanded = expanded,
-            onExpandedChange = { expanded = !expanded },
+            onExpandedChange = { shouldExpand ->
+                if (shouldExpand && !expanded && searchQuery == selectedZone.toDropdownLabel()) {
+                    searchQuery = ""
+                }
+                expanded = shouldExpand
+            },
         ) {
             OutlinedTextField(
-                value = selectedZone.toDropdownLabel(),
-                onValueChange = {},
+                value = searchQuery,
+                onValueChange = { newValue ->
+                    searchQuery = newValue
+                    expanded = true
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .menuAnchor(),
-                readOnly = true,
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
+                singleLine = true,
                 placeholder = {
                     Text(text = stringResource(R.string.comparison_selector_placeholder))
                 },
@@ -238,27 +270,46 @@ private fun ZoneSelectorDropdown(
                 )
             )
 
-            DropdownMenu(
+            ExposedDropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                onDismissRequest = {
+                    expanded = false
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                },
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surface)
+                    .heightIn(max = 224.dp)
             ) {
-                options.forEachIndexed { index, zone ->
+                if (filteredOptions.isEmpty()) {
                     DropdownMenuItem(
                         text = {
-                            Text(zone.toDropdownLabel())
+                            Text(stringResource(R.string.comparison_selector_no_results))
                         },
-                        onClick = {
-                            onZoneSelected(zone.id)
-                            expanded = false
-                        },
+                        onClick = {},
+                        enabled = false,
                         modifier = Modifier.background(MaterialTheme.colorScheme.surface)
                     )
+                } else {
+                    filteredOptions.forEachIndexed { index, zone ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(zone.toDropdownLabel())
+                            },
+                            onClick = {
+                                searchQuery = zone.toDropdownLabel()
+                                onZoneSelected(zone.id)
+                                expanded = false
+                                focusManager.clearFocus()
+                                keyboardController?.hide()
+                            },
+                            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                        )
 
-                    if (index != options.lastIndex) {
-                        HorizontalDivider(Modifier.fillMaxWidth(), thickness = 1.dp)
+                        if (index != filteredOptions.lastIndex) {
+                            HorizontalDivider(Modifier.fillMaxWidth(), thickness = 1.dp)
+                        }
                     }
-
                 }
             }
         }
