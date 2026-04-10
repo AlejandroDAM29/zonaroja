@@ -11,6 +11,8 @@ import alejandro.developer.zonaroja.R
 import alejandro.developer.zonaroja.ui.common.format.formatCompactPricePerSquareMeter
 import alejandro.developer.zonaroja.ui.common.format.formatPricePerSquareMeter
 import alejandro.developer.zonaroja.ui.theme.RedZoneColor
+import alejandro.developer.zonaroja.ui.theme.badgeContainerColor
+import alejandro.developer.zonaroja.ui.theme.badgeContentColor
 import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.Context
@@ -688,8 +690,10 @@ private class ComparisonPdfPainter(
         riskLevel: RiskLevel
     ): Float {
         val text = riskLabel(riskLevel)
+        val badgeTextColor = riskLevel.badgeContentColor().toArgb()
+        val badgeContainerColor = riskLevel.badgeContainerColor().toArgb()
         val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = if (riskLevel == RiskLevel.MEDIUM) colorDarkText else android.graphics.Color.WHITE
+            color = badgeTextColor
             textSize = 18f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         }
@@ -698,7 +702,7 @@ private class ComparisonPdfPainter(
             RectF(left, top, left + textWidth + 34f, top + 34f),
             24f,
             24f,
-            Paint(Paint.ANTI_ALIAS_FLAG).apply { color = riskColor(riskLevel) }
+            Paint(Paint.ANTI_ALIAS_FLAG).apply { color = badgeContainerColor }
         )
         canvas.drawText(text, left + 17f, top + 23f, textPaint)
         return 34f
