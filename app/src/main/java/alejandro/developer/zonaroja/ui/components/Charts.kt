@@ -387,7 +387,14 @@ fun EconomyBarChart(
             }
 
             val middleValueLabel = formatCurrencyAmount(maxValue, userPreferences)
-            val textWidth = textPaint.measureText(middleValueLabel)
+            val middleLabelX = axisX - textPaint.measureText(middleValueLabel) / 2
+            val middleLabelY = size.height * 0.3f - 10f
+            val middleLabelBounds = android.graphics.RectF(
+                middleLabelX,
+                middleLabelY + textPaint.fontMetrics.ascent,
+                middleLabelX + textPaint.measureText(middleValueLabel),
+                middleLabelY + textPaint.fontMetrics.descent
+            )
 
             val dashEffect = PathEffect.dashPathEffect(
                 floatArrayOf(10f, 10f),
@@ -404,14 +411,6 @@ fun EconomyBarChart(
                 pathEffect = dashEffect
             )
 
-            drawContext.canvas.nativeCanvas.drawText(
-                middleValueLabel,
-                axisX - textWidth / 2,
-                size.height * 0.3f - 10f,
-                textPaint
-            )
-
-
             drawLine(
                 color = chartBoundaryColor,
                 start = Offset(groupWidth / 5, size.height * 0.3f),
@@ -419,6 +418,8 @@ fun EconomyBarChart(
                 strokeWidth = 2f
             )
 
+
+            var shouldDrawMiddleValueLabel = true
 
             categories.forEachIndexed { index, _ ->
 
@@ -452,11 +453,24 @@ fun EconomyBarChart(
                     }
                     val entryLabel = formatCurrencyAmount(value, userPreferences)
                     val textWidth = textPaint.measureText(entryLabel)
+                    val entryLabelX = startX + offset + textWidth / 4
+                    val entryLabelY = size.height - barHeight - 10f
+
+                    if (index == 0 && offset == 0f) {
+                        val entryLabelBounds = android.graphics.RectF(
+                            entryLabelX,
+                            entryLabelY + textPaint.fontMetrics.ascent,
+                            entryLabelX + textWidth,
+                            entryLabelY + textPaint.fontMetrics.descent
+                        )
+                        shouldDrawMiddleValueLabel =
+                            !android.graphics.RectF.intersects(middleLabelBounds, entryLabelBounds)
+                    }
 
                     drawContext.canvas.nativeCanvas.drawText(
                         entryLabel,
-                        startX + offset + textWidth / 4,
-                        size.height - barHeight - 10f,
+                        entryLabelX,
+                        entryLabelY,
                         textPaint
                     )
                 }
@@ -464,6 +478,15 @@ fun EconomyBarChart(
                 drawBar(hoodAnimatedValue, 0f, Color(0xFFE53935))
                 drawBar(cityAnimatedValue, barWidth * 1.5f, Color(0xFFDADADA))
 
+            }
+
+            if (shouldDrawMiddleValueLabel) {
+                drawContext.canvas.nativeCanvas.drawText(
+                    middleValueLabel,
+                    middleLabelX,
+                    middleLabelY,
+                    textPaint
+                )
             }
 
             drawLine(
