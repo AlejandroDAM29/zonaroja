@@ -32,6 +32,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,7 +47,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
@@ -74,11 +79,17 @@ fun DangerMapContent(
 
     val inititalPositionMap = LatLng(LATITUDE_INITIAL_POSITION_MAP, LONGITUDE_INITIAL_POSITION_MAP)
     val cameraPositionState = rememberCameraPositionState()
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     var currentZoom by remember { mutableFloatStateOf(cameraPositionState.position.zoom) }
     val zoomBucket = when {
         currentZoom < 13f -> 0
         currentZoom < 15f -> 1
         else -> 2
+    }
+    val closeKeyboardAndClearFocus = {
+        focusManager.clearFocus()
+        keyboardController?.hide()
     }
 
     var hasLoadedInitialBounds by remember { mutableStateOf(false) }
@@ -160,6 +171,7 @@ fun DangerMapContent(
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
+            onMapClick = { closeKeyboardAndClearFocus() },
             properties = MapProperties(
                 maxZoomPreference = 16f,
                 minZoomPreference = 12f
@@ -173,7 +185,10 @@ fun DangerMapContent(
                     fillColor = zone.riskLevel.toColor(),
                     strokeColor = Black,
                     strokeWidth = 2f,
-                    onClick = { onOpenPanel(zone) }
+                    onClick = {
+                        closeKeyboardAndClearFocus()
+                        onOpenPanel(zone)
+                    }
                 )
 
                 val center = polygonCenter(zone.points)
@@ -184,6 +199,7 @@ fun DangerMapContent(
                             state = remember { MarkerState(position = center) },
                             anchor = Offset(0.5f, 0.5f),
                             onClick = {
+                                closeKeyboardAndClearFocus()
                                 onOpenPanel(zone)
                                 true
                             }
@@ -243,13 +259,26 @@ fun DangerMapContent(
                         modifier = Modifier.fillMaxSize(),
                         placeholder = { Text(stringResource(R.string.look_for_city)) },
                         singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                        keyboardActions = KeyboardActions(
+                            onSearch = {
+                                onSearchTriggered()
+                                closeKeyboardAndClearFocus()
+                            }
+                        ),
                         leadingIcon = {
-                            IconButton(onClick = onExpandHideClick) {
+                            IconButton(onClick = {
+                                closeKeyboardAndClearFocus()
+                                onExpandHideClick()
+                            }) {
                                 Icon(Icons.Default.Close, contentDescription = null)
                             }
                         },
                         trailingIcon = {
-                            IconButton(onClick = onSearchTriggered) {
+                            IconButton(onClick = {
+                                onSearchTriggered()
+                                closeKeyboardAndClearFocus()
+                            }) {
                                 Icon(Icons.Default.Search, contentDescription = null)
                             }
                         },

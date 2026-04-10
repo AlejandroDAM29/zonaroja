@@ -116,6 +116,7 @@
     <string name="comparison_first_selector_label">Primer barrio</string>
     <string name="comparison_second_selector_label">Segundo barrio</string>
     <string name="comparison_selector_placeholder">Selecciona un barrio</string>
+    <string name="comparison_selector_no_results">No hay coincidencias</string>
     <string name="comparison_button_label">Comparar</string>
     <string name="comparison_close_description">Cerrar comparador</string>
     <string name="comparison_empty_title">No hay zonas disponibles</string>
