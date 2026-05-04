@@ -19,13 +19,13 @@ val hasReleaseSigning = keystorePropertiesFile.exists().also { exists ->
 }
 
 android {
-    namespace = "com.alejandroexposito.zonaroja"
+    namespace = "alejandro.developer.zonaroja"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.alejandroexposito.zonaroja"
+        applicationId = "alejandro.developer.zonaroja"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
