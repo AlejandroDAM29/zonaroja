@@ -1,18 +1,20 @@
 package alejandro.developer.data.remote.dto
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class EconomyStatsDto(
 
-    @Json(name = "rentaBarrio")
+    @param:Json(name = "rentaBarrio")
     val hoodRent: Int,
 
-    @Json(name = "rentaCiudad")
+    @param:Json(name = "rentaCiudad")
     val cityRent: Int,
 
-    @Json(name = "precioBarrio")
+    @param:Json(name = "precioBarrio")
     val hoodPrice: Int,
 
-    @Json(name = "precioCiudad")
+    @param:Json(name = "precioCiudad")
     val cityPrice: Int
 )

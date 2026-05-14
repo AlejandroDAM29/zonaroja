@@ -1,26 +1,28 @@
 package alejandro.developer.data.remote.dto
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class DangerZoneComparisonDto(
 
     val id: Int,
 
-    @Json(name = "nombre")
+    @param:Json(name = "nombre")
     val zoneName: String,
 
-    @Json(name = "ciudad")
+    @param:Json(name = "ciudad")
     val city: String,
 
-    @Json(name = "nivel_riesgo")
+    @param:Json(name = "nivel_riesgo")
     val riskLevel: String,
 
-    @Json(name = "riesgo_pobreza")
+    @param:Json(name = "riesgo_pobreza")
     val povertyRiskRate: Double,
 
-    @Json(name = "tasa_paro")
+    @param:Json(name = "tasa_paro")
     val unemploymentRate: Double,
 
-    @Json(name = "precio_metro_cuadrado")
+    @param:Json(name = "precio_metro_cuadrado")
     val priceSquareMeter: Int
 )

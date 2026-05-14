@@ -1,14 +1,16 @@
 package alejandro.developer.data.remote.dto
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class StatsGraphicsDto(
-    @Json(name = "economy")
+    @param:Json(name = "economy")
     val economy: EconomyStatsDto,
 
-    @Json(name = "society")
+    @param:Json(name = "society")
     val society: SocietyStatsDto,
 
-    @Json(name = "demography")
+    @param:Json(name = "demography")
     val demography: List<DemographyItemDto>
 )

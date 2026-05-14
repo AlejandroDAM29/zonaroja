@@ -1,12 +1,14 @@
 package alejandro.developer.data.remote.dto
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class DemographyItemDto(
 
-    @Json(name = "name")
+    @param:Json(name = "name")
     val name: String,
 
-    @Json(name = "percentage")
+    @param:Json(name = "percentage")
     val percentage: Float
 )
