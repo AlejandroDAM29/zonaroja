@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.firabseconfiguration)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 val keystoreProperties = Properties()
@@ -121,6 +122,9 @@ dependencies {
 
     //Firebase messaging
     implementation(libs.firebase.messaging)
+
+    //Firebase Crashlytics
+    implementation(libs.firebase.crashlytics)
 
     //Testing
     testImplementation(libs.junit)
