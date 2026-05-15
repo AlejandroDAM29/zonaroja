@@ -151,7 +151,7 @@
 
     <!--Settings-->
     <string name="settings_preferences">Preferencias</string>
-    <string name="settings_logout">Log out</string>
+    <string name="settings_logout">Cerrar sesion</string>
     <string name="settings_notifications">Notificaciones</string>
     <string name="settings_notifications_permission_required">Activa el permiso para recibir avisos en primer plano y en segundo plano.</string>
     <string name="settings_theme">Tema</string>
@@ -195,5 +195,15 @@
     <string name="no_internet_map_description">No se puede usar el mapa sin internet.</string>
     <string name="no_internet_comparison_description">No se puede cargar el comparador sin internet.</string>
     <string name="no_internet_stats_description">No se pueden cargar las graficas sin internet.</string>
+    <string name="bottom_nav_home">Inicio</string>
+    <string name="bottom_nav_comparison">Comparador</string>
+    <string name="bottom_nav_favourites">Favoritos</string>
+    <string name="drawer_main">Zonas peligrosas</string>
+    <string name="drawer_settings">Ajustes</string>
+    <string name="menu_description">Menu</string>
+    <string name="currency_eur">Euro</string>
+    <string name="currency_usd">Dolar estadounidense</string>
+    <string name="currency_mxn">Peso mexicano</string>
+    <string name="currency_gbp">Libra esterlina</string>
 
 </resources>

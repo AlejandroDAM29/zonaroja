@@ -60,13 +60,14 @@ fun AppDrawer(
         HorizontalDivider(color = RedZoneColor)
 
         DrawerItem.items.forEachIndexed { index, item ->
+            val label = stringResource(item.labelRes)
             NavigationDrawerItem(
                 label = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(item.label)
+                        Text(label)
                         if (item == DrawerItem.Notifications && unreadNotificationsCount > 0) {
                             Badge {
                                 Text(unreadNotificationsCount.toString())
@@ -77,7 +78,7 @@ fun AppDrawer(
                 icon = {
                     Icon(
                         imageVector = item.icon,
-                        contentDescription = item.label
+                        contentDescription = label
                     )
                 },
                 colors = NavigationDrawerItemDefaults.colors(

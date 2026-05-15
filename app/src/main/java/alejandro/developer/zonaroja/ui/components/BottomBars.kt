@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -18,17 +19,18 @@ fun AppBottomBar(
         containerColor = Color(0xFF8E0000)
     ) {
         BottomBarItem.items.forEach { item ->
+            val label = stringResource(item.labelRes)
             NavigationBarItem(
                 selected = item == selectedItem,
                 onClick = { onItemSelected(item) },
                 icon = {
                     Icon(
                         imageVector = item.icon,
-                        contentDescription = item.label
+                        contentDescription = label
                     )
                 },
                 label = {
-                    Text(item.label)
+                    Text(label)
                 },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = Color.White,

@@ -1,0 +1,208 @@
+<resources>
+    <string name="app_name">Zona Roja</string>
+    <string name="close_snackbar_button">Close</string>
+    <string name="zona_roja_title">Zona Roja</string>
+
+    <!--Splash-->
+    <string name="alejandro_studios">Alejandro Studios</string>
+
+    <!--Login-->
+    <string name="mail_placeholder">Email</string>
+    <string name="password_placeholder">Password</string>
+    <string name="show_password_button">Show</string>
+    <string name="hide_password_button">Hide</string>
+    <string name="init_session_button">Sign in</string>
+    <string name="error_auth_invalid_credentials">Incorrect credentials</string>
+    <string name="error_auth_user_exists">The user already exists</string>
+    <string name="error_auth_weak_password">The password is too weak</string>
+    <string name="error_auth_network">Connection error</string>
+    <string name="error_auth_generic">Error while signing up</string>
+    <string name="error_auth_google_generic">Could not sign in with Google</string>
+    <string name="error_auth_google_response">Could not read Google\'s response</string>
+    <string name="error_auth_google_account_exists">This email is already linked to another sign-in method</string>
+    <string name="login_with_google">Continue with Google</string>
+    <string name="title_text_1">Zona</string>
+    <string name="title_text_2">Roja</string>
+    <string name="logout_snackbar_success">You have signed out successfully!</string>
+    <string name="logout_snackbar_error">Something went wrong. Please try again</string>
+    <string name="forgot_password">Forgot your password?</string>
+    <string name="create_account_login">Create account</string>
+
+    <!--Register-->
+    <string name="register_new_user_button">Create your account</string>
+    <string name="have_account">Already have an account?</string>
+    <string name="init_session_text_bottom">Sign in</string>
+    <string name="confirm_password_register">Confirm password</string>
+    <string name="password_register">Password</string>
+    <string name="email_register">Email</string>
+    <string name="create_new_account">CREATE ACCOUNT</string>
+    <string name="register_success_snackbar">Registration completed successfully</string>
+    <string name="email_format_invalid">The email address is invalid</string>
+    <string name="passwords_not_match">Passwords do not match</string>
+    <string name="select_category">Select a category</string>
+
+    <!--Forgot password-->
+    <string name="forgot_password_title">FORGOT YOUR PASSWORD</string>
+    <string name="email_forgot_password">Email</string>
+    <string name="resend_password_success_message">Message sent! If the email is registered, you will receive an email to reset your password. Check your spam folder</string>
+    <string name="mods_password_reset_disabled_message">Mods mode is enabled: no recovery email will be sent.</string>
+    <string name="resend_email_error_message">Error sending email</string>
+    <string name="resend_email_description">Enter your email address and we will send you a link to reset your password.</string>
+    <string name="remember_password">Remembered your password?</string>
+    <string name="comeback_login_from_resend_password">Back to sign in</string>
+
+    <!--Main-->
+    <string name="high_danger_map_legend">High danger</string>
+    <string name="medium_danger_map_legend">Medium danger</string>
+    <string name="low_danger_map_legend">Low danger</string>
+
+    <!--Map Graphics Slides-->
+    <string name="economy_title">Economy</string>
+    <string name="empty_map_stat_economy">No economic data available for this area.</string>
+    <string name="empty_map_stat_society">No social data available for this area.</string>
+    <string name="society_title">Society</string>
+    <string name="demography_title">Demographics</string>
+    <string name="empty_map_stat_demography">No demographic data available for this area.</string>
+    <string name="dist_nationality">Distribution of nationalities in the area:</string>
+    <string name="unemployment_higher_city">Unemployment is %1$d%% higher than the city average.</string>
+    <string name="unemployment_lower_city">Unemployment is %1$d%% lower than the city average.</string>
+    <string name="average_income_chart">Average income</string>
+    <string name="Price_m">Price/sq m</string>
+    <string name="close_button_statisticsbottomsheet">Close</string>
+    <string name="comeback_description_statisticsbottomsheet">Back</string>
+    <string name="unemployed_population">Unemployed population</string>
+    <string name="risk_poverty">Population at
+risk of poverty</string>
+    <string name="low">Low</string>
+    <string name="medium">Medium</string>
+    <string name="high">High</string>
+    <string name="average_rent_first_part">The average income is </string>
+    <string name="average_rent_lower_second_part"> lower than the city average.</string>
+    <string name="average_rent_higher_second_part"> higher than the city average.</string>
+    <string name="unemployment_line_first_part">Unemployment is</string>
+    <string name="unemployment_high_second_part">higher than the city average</string>
+    <string name="unemployment_low_second_part">lower than the city average</string>
+    <string name="favourite_zone_lbel_description">Favorite area</string>
+
+    <!--InfoPanelMap-->
+    <string name="see_stadistics_button">View statistics</string>
+    <string name="save_favourites_button">Save to favorites</string>
+    <string name="sup_from_favourites">Remove from favorites</string>
+
+    <!--RadialComparison-->
+    <string name="hood_legend">Neighborhood</string>
+    <string name="city_legend">City</string>
+    <string name="label_animation_demography">Label animation</string>
+    <string name="look_for_city">Search city...</string>
+
+    <!--Favourites Screen-->
+    <string name="favourites_empty_title">No saved areas</string>
+    <string name="favourites_empty_description">Save an area from the map and it will appear here automatically.</string>
+    <string name="expand_favourite_description">Expand favorite</string>
+    <string name="collapse_favourite_description">Collapse favorite</string>
+    <string name="delete_favourite_description">Delete favorite</string>
+    <string name="favourites_city_label">City</string>
+    <string name="favourites_price_label">Price</string>
+    <string name="favourites_poverty_label">Poverty risk</string>
+    <string name="favourites_unemployment_label">Unemployment rate</string>
+    <string name="favourites_points_label">Points</string>
+    <string name="square_meter_price">%1$s/sq m</string>
+    <string name="poberty_taxes">poverty rate</string>
+    <string name="unemployment_rate">unemployment rate</string>
+
+    <string name="comparison_entry_button">Compare neighborhoods</string>
+    <string name="comparison_selector_title">Neighborhood comparison</string>
+    <string name="comparison_selector_description">Select two neighborhoods to compare their indicators side by side.</string>
+    <string name="comparison_first_selector_label">First neighborhood</string>
+    <string name="comparison_second_selector_label">Second neighborhood</string>
+    <string name="comparison_selector_placeholder">Select a neighborhood</string>
+    <string name="comparison_selector_no_results">No matches found</string>
+    <string name="comparison_button_label">Compare</string>
+    <string name="comparison_close_description">Close comparison</string>
+    <string name="comparison_empty_title">No areas available</string>
+    <string name="comparison_empty_description">The service has not returned any dangerous areas to compare right now.</string>
+    <string name="comparison_empty_share_button">Share PDF</string>
+    <string name="comparison_empty_share_subject">Neighborhood comparison report</string>
+    <string name="comparison_empty_share_chooser">Share PDF report</string>
+    <string name="comparison_empty_share_error">The PDF could not be generated.</string>
+    <string name="comparison_empty_pdf_title">Neighborhood comparison</string>
+    <string name="comparison_empty_pdf_subtitle">Report with no available areas</string>
+    <string name="comparison_empty_pdf_body_line_1">There is no neighborhood data available to populate the dropdowns.</string>
+    <string name="comparison_empty_pdf_body_line_2">Please try again when the remote service returns results.</string>
+    <string name="comparison_empty_pdf_date_label">Generated on:</string>
+    <string name="comparison_result_title">Comparison result</string>
+    <string name="comparison_result_description">Press back to return to the selection and change either neighborhood.</string>
+    <string name="comparison_result_share_button">Share PDF</string>
+    <string name="comparison_result_share_loading">Generating PDF...</string>
+    <string name="comparison_result_share_subject">Neighborhood comparison report</string>
+    <string name="comparison_result_share_chooser">Share PDF report</string>
+    <string name="comparison_result_share_error">The PDF could not be generated.</string>
+    <string name="comparison_pdf_generated_on">Generated on</string>
+    <string name="comparison_pdf_overview">Comparison of risk, poverty, unemployment, and price per square meter for the selected neighborhoods.</string>
+    <string name="comparison_pdf_summary_title">Area summary</string>
+    <string name="comparison_pdf_metrics_title">Compared indicators</string>
+    <string name="comparison_metric_risk_level">Risk level</string>
+    <string name="comparison_metric_poverty">Poverty risk</string>
+    <string name="comparison_metric_unemployment">Unemployment rate</string>
+    <string name="comparison_metric_price">Price per square meter</string>
+    <string name="comparison_unavailable_title">Comparison cannot be shown</string>
+    <string name="comparison_unavailable_description">The selected areas are no longer available in the remote service.</string>
+    <string name="comparison_back_to_selector">Back to selection</string>
+
+    <!--Settings-->
+    <string name="settings_preferences">Preferences</string>
+    <string name="settings_logout">Log out</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_notifications_permission_required">Enable permission to receive alerts in the foreground and background.</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_currency">Currency</string>
+    <string name="settings_selected_currency">Current</string>
+    <string name="settings_change_password">Change password</string>
+    <string name="settings_change_password_description">We will send a reset email to the address associated with your current account.</string>
+    <string name="settings_current_email">Email that will receive the password:</string>
+    <string name="settings_send_reset_email">Send reset email</string>
+    <string name="settings_email_fallback">user@zonaroja.app</string>
+    <string name="settings_email_not_available">There is no email associated with this session.</string>
+    <string name="settings_delete_account">Delete account</string>
+    <string name="settings_delete_account_confirm">Delete</string>
+    <string name="settings_delete_account_dialog_message">This action will delete your current Firebase account. If Firebase requires a recent login, you will need to sign in again before trying one more time.</string>
+    <string name="settings_delete_account_reauth_title">Confirm your password</string>
+    <string name="settings_delete_account_reauth_message">For security, enter your current password to reauthenticate before deleting the account.</string>
+    <string name="settings_delete_account_success">Account deleted successfully.</string>
+    <string name="settings_delete_account_error">The account could not be deleted.</string>
+    <string name="settings_delete_account_recent_login_required">Firebase requires you to reauthenticate before deleting the account.</string>
+    <string name="settings_delete_account_invalid_password">The password is incorrect.</string>
+    <string name="default_notification_channel_id">zonaroja_general_channel</string>
+    <string name="default_notification_channel_name">General notifications</string>
+    <string name="default_notification_channel_description">Push notifications sent from Firebase Cloud Messaging.</string>
+    <string name="notifications_screen_title">Notifications</string>
+    <string name="notifications_screen_subtitle">Review all alerts received from Firebase.</string>
+    <string name="notifications_back_description">Back to previous screen</string>
+    <string name="notifications_close_description">Close notification details</string>
+    <string name="notifications_open_description">Open notification</string>
+    <string name="notifications_delete_description">Delete notification</string>
+    <string name="notifications_read_label">Read</string>
+    <string name="notifications_empty_title">No notifications yet</string>
+    <string name="notifications_empty_description">When a new alert arrives it will appear here automatically.</string>
+    <string name="notifications_received_at_value">Received %1$s</string>
+    <string name="notifications_message_section_title">Message</string>
+    <string name="notifications_missing_title">This notification is no longer available</string>
+    <string name="notifications_missing_description">It may have been removed from local storage.</string>
+
+    <string name="no_internet_title">No connection</string>
+    <string name="no_internet_map_description">You cannot use the map without an internet connection.</string>
+    <string name="no_internet_comparison_description">The comparison view cannot be loaded without an internet connection.</string>
+    <string name="no_internet_stats_description">Charts cannot be loaded without an internet connection.</string>
+    <string name="bottom_nav_home">Home</string>
+    <string name="bottom_nav_comparison">Compare</string>
+    <string name="bottom_nav_favourites">Favorites</string>
+    <string name="drawer_main">Danger zones</string>
+    <string name="drawer_settings">Settings</string>
+    <string name="menu_description">Menu</string>
+    <string name="currency_eur">Euro</string>
+    <string name="currency_usd">US Dollar</string>
+    <string name="currency_mxn">Mexican Peso</string>
+    <string name="currency_gbp">British Pound</string>
+</resources>

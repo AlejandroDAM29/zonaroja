@@ -418,7 +418,7 @@ internal fun SettingsContent(
                 SettingsNavigationRow(
                     icon = Icons.Default.CurrencyExchange,
                     title = stringResource(R.string.settings_currency),
-                    subtitle = uiState.selectedCurrency.displayName,
+                    subtitle = uiState.selectedCurrency.localizedDisplayName(),
                     leadingBadge = uiState.selectedCurrency.symbol,
                     onClick = onOpenCurrencySelector,
                     rowTestTag = "settings_currency_row"
@@ -563,7 +563,7 @@ internal fun SettingsContent(
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text(
-                                    text = currency.displayName,
+                                    text = currency.localizedDisplayName(),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
@@ -728,6 +728,16 @@ private fun CurrencyBadge(symbol: String) {
             fontWeight = FontWeight.Bold,
             color = RedZoneColor
         )
+    }
+}
+
+@Composable
+private fun AppCurrency.localizedDisplayName(): String {
+    return when (this) {
+        AppCurrency.EUR -> stringResource(R.string.currency_eur)
+        AppCurrency.USD -> stringResource(R.string.currency_usd)
+        AppCurrency.MXN -> stringResource(R.string.currency_mxn)
+        AppCurrency.GBP -> stringResource(R.string.currency_gbp)
     }
 }
 

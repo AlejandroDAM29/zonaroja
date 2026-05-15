@@ -16,6 +16,7 @@ android {
     defaultConfig {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("proguard-rules.pro")
     }
     testOptions {
         unitTests.isIncludeAndroidResources = true

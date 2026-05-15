@@ -19,3 +19,16 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep Kotlin metadata for Moshi fallback/reflection paths.
+-keep class kotlin.Metadata { *; }
+
+# Keep classes annotated for Moshi codegen and their generated adapters so
+# minified app builds can still resolve them at runtime.
+-if @com.squareup.moshi.JsonClass class *
+-keep class <1> { *; }
+
+-if @com.squareup.moshi.JsonClass class *
+-keep class <1>JsonAdapter {
+    public <init>(com.squareup.moshi.Moshi);
+}

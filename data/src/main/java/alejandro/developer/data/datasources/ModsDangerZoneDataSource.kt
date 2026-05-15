@@ -6,6 +6,7 @@ import alejandro.developer.data.remote.dto.StatsGraphicsDto
 import alejandro.developer.domain.models.MapBounds
 import android.content.Context
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -94,7 +95,8 @@ class ModsDangerZoneDataSource @Inject constructor(
     }
 }
 
-private data class ModZoneStatsEntry(
+@JsonClass(generateAdapter = true)
+data class ModZoneStatsEntry(
     val zoneId: Int,
     val stats: StatsGraphicsDto
 )
