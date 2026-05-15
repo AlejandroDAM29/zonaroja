@@ -153,7 +153,7 @@ private class ComparisonPdfPainter(
     private val context: Context,
     private val userPreferences: UserPreferencesModel
 ) {
-    private val locale = Locale.forLanguageTag("es-ES")
+    private val locale = context.resources.configuration.locales[0] ?: Locale.getDefault()
     private val contentWidth = PDF_PAGE_WIDTH - (PDF_MARGIN * 2f)
     private val pageCount = 2
 

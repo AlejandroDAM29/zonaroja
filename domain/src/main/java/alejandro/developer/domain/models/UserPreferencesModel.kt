@@ -9,7 +9,7 @@ enum class AppCurrency(
     EUR(
         code = "EUR",
         displayName = "Euro",
-        symbol = "€",
+        symbol = "\u20AC",
         rateFromEuro = 1.0
     ),
     USD(
@@ -27,7 +27,7 @@ enum class AppCurrency(
     GBP(
         code = "GBP",
         displayName = "Libra esterlina",
-        symbol = "£",
+        symbol = "\u00A3",
         rateFromEuro = 0.86
     );
 

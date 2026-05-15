@@ -5,10 +5,10 @@ import java.text.NumberFormat
 import java.util.Locale
 import kotlin.math.abs
 
-private val spanishLocale = Locale.forLanguageTag("es-ES")
+private fun currentLocale(): Locale = Locale.getDefault()
 
 private fun Double.toCurrencyNumberString(maxDecimals: Int): String {
-    val formatter = NumberFormat.getNumberInstance(spanishLocale).apply {
+    val formatter = NumberFormat.getNumberInstance(currentLocale()).apply {
         minimumFractionDigits = 0
         maximumFractionDigits = maxDecimals
     }
@@ -36,7 +36,7 @@ fun formatPricePerSquareMeter(
     amountInEuro: Number,
     preferences: UserPreferencesModel
 ): String {
-    return "${formatCurrencyAmount(amountInEuro, preferences)}/m²"
+    return "${formatCurrencyAmount(amountInEuro, preferences)}/m\u00B2"
 }
 
 fun formatCompactPricePerSquareMeter(
@@ -51,16 +51,16 @@ fun formatCompactPricePerSquareMeter(
 
     return when {
         convertedAmount >= 10_000 -> {
-            "$symbol ${(convertedAmount / 1_000).toCurrencyNumberString(0)}K/m²"
+            "$symbol ${(convertedAmount / 1_000).toCurrencyNumberString(0)}K/m\u00B2"
         }
 
         convertedAmount >= 1_000 -> {
-            "$symbol ${(convertedAmount / 1_000).toCurrencyNumberString(compactDecimals)}K/m²"
+            "$symbol ${(convertedAmount / 1_000).toCurrencyNumberString(compactDecimals)}K/m\u00B2"
         }
 
         else -> {
             val decimals = if (abs(convertedAmount % 1) < 0.01) 0 else unitDecimals
-            "$symbol ${convertedAmount.toCurrencyNumberString(decimals)}/m²"
+            "$symbol ${convertedAmount.toCurrencyNumberString(decimals)}/m\u00B2"
         }
     }
 }
