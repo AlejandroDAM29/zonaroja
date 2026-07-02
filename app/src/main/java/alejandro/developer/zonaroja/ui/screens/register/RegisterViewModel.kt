@@ -12,12 +12,14 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
@@ -61,9 +63,11 @@ class RegisterViewModel @Inject constructor(
 
             result.fold(
                 onSuccess = {
-                    runCatching { syncNotificationSubscriptionsUseCase() }
+                    _uiState.update { it.copy(isLoading = false) }
                     _uiEvents.emit(
-                        RegisterUiEvent.NavigateToMain)
+                        RegisterUiEvent.NavigateToMain
+                    )
+                    syncNotificationSubscriptionsAfterNavigation()
                 },
                 onFailure = { throwable ->
                     _uiEvents.emit(
@@ -71,9 +75,15 @@ class RegisterViewModel @Inject constructor(
                             mapErrorToStringRes(throwable)
                         )
                     )
+                    _uiState.update { it.copy(isLoading = false) }
                 }
             )
-            _uiState.update { it.copy(isLoading = false) }
+        }
+    }
+
+    private suspend fun syncNotificationSubscriptionsAfterNavigation() {
+        withContext(NonCancellable) {
+            runCatching { syncNotificationSubscriptionsUseCase() }
         }
     }
 

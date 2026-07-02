@@ -14,6 +14,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuthException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -71,18 +73,27 @@ class LoginViewModel @Inject constructor(
 
             result.fold(
                 onSuccess = {
-                    runCatching { syncNotificationSubscriptionsUseCase() }
+                    _uiState.update {
+                        it.copy(
+                            email = "",
+                            password = "",
+                            isLoading = false
+                        )
+                    }
                     _uiEvents.emit(LoginUiEvent.NavigateToMain)
+                    syncNotificationSubscriptionsAfterNavigation()
                 },
                 onFailure = { exception ->
                     onLoginSessionError(mapEmailLoginErrorToStringRes(exception))
+                    _uiState.update {
+                        it.copy(
+                            email = "",
+                            password = "",
+                            isLoading = false
+                        )
+                    }
                 }
             )
-
-            _uiState.update { it.copy(email = "") }
-            _uiState.update { it.copy(password = "") }
-
-            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
@@ -125,8 +136,8 @@ class LoginViewModel @Inject constructor(
 
             result.fold(
                 onSuccess = {
-                    runCatching { syncNotificationSubscriptionsUseCase() }
                     _uiEvents.emit(LoginUiEvent.NavigateToMain)
+                    syncNotificationSubscriptionsAfterNavigation()
                 },
                 onFailure = { throwable ->
                     onGoogleLoginFailure(throwable)
@@ -147,7 +158,7 @@ class LoginViewModel @Inject constructor(
 
         Log.e(
             TAG,
-            "Google login failed$firebaseErrorCode: ${throwable.message ?: "Unknown error"}",
+            "Google login failed (${throwable::class.java.simpleName})$firebaseErrorCode: ${throwable.message ?: "Unknown error"}",
             throwable
         )
 
@@ -159,6 +170,12 @@ class LoginViewModel @Inject constructor(
             _uiEvents.emit(
                 LoginUiEvent.ShowErrorGoogleRegister(messageRes)
             )
+        }
+    }
+
+    private suspend fun syncNotificationSubscriptionsAfterNavigation() {
+        withContext(NonCancellable) {
+            runCatching { syncNotificationSubscriptionsUseCase() }
         }
     }
 
