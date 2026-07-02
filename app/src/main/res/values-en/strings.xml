@@ -18,6 +18,7 @@
     <string name="error_auth_network">Connection error</string>
     <string name="error_auth_generic">Error while signing up</string>
     <string name="error_auth_google_generic">Could not sign in with Google</string>
+    <string name="error_auth_google_no_account">There is no Google account available on this device</string>
     <string name="error_auth_google_response">Could not read Google\'s response</string>
     <string name="error_auth_google_account_exists">This email is already linked to another sign-in method</string>
     <string name="login_with_google">Continue with Google</string>

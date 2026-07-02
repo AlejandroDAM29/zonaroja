@@ -3,6 +3,7 @@ package alejandro.developer.zonaroja.ui.screens.login
 import alejandro.developer.core.network.isNetworkConnectivityError
 import alejandro.developer.zonaroja.R
 import androidx.credentials.exceptions.GetCredentialException
+import androidx.credentials.exceptions.NoCredentialException
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -43,6 +44,9 @@ internal fun mapGoogleLoginErrorToStringRes(throwable: Throwable): Int {
 
         throwable is IllegalStateException ->
             R.string.error_auth_google_response
+
+        throwable is NoCredentialException ->
+            R.string.error_auth_google_no_account
 
         throwable is GetCredentialException ->
             R.string.error_auth_google_generic

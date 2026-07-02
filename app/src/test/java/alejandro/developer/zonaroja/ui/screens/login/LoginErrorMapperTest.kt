@@ -4,6 +4,7 @@ import alejandro.developer.core.network.NoInternetException
 import alejandro.developer.zonaroja.R
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.GetCredentialException
+import androidx.credentials.exceptions.NoCredentialException
 import androidx.credentials.exceptions.GetCredentialUnknownException
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.firebase.auth.FirebaseAuthException
@@ -95,6 +96,14 @@ class LoginErrorMapperTest {
         assertEquals(
             R.string.error_auth_google_generic,
             mapGoogleLoginErrorToStringRes(throwable)
+        )
+    }
+
+    @Test
+    fun googleLogin_mapsMissingDeviceAccount_toDedicatedMessage() {
+        assertEquals(
+            R.string.error_auth_google_no_account,
+            mapGoogleLoginErrorToStringRes(NoCredentialException())
         )
     }
 
