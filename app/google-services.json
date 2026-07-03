@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "1039725734105-n9c4d79ru4b47o575b7boo930akc9vfj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "alejandro.developer.zonaroja",
+            "certificate_hash": "23ada35e2dd8a9f2128d5b7e3c9766e30f67367f"
+          }
+        },
+        {
           "client_id": "1039725734105-qsp9lufe0f1sdj3l1m8f1mri907ckm6e.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
